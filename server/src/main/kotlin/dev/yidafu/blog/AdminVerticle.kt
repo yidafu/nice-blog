@@ -1,8 +1,10 @@
 package dev.yidafu.blog
 
 import dev.yidafu.blog.routes.mountAdminRoutes
+import dev.yidafu.blog.routes.mountPublicRoutes
 import dev.yidafu.blog.routes.mountSyncRoutes
 import io.vertx.ext.web.Router
+import io.vertx.ext.web.handler.LoggerHandler
 import io.vertx.kotlin.coroutines.CoroutineRouterSupport
 import io.vertx.kotlin.coroutines.CoroutineVerticle
 import io.vertx.kotlin.coroutines.coAwait
@@ -14,7 +16,11 @@ class AdminVerticle(private val koin: Koin): CoroutineVerticle(), CoroutineRoute
 
     val server = vertx.createHttpServer()
     val router = Router.router(vertx)
+    router.route().handler(LoggerHandler.create())
+
     mountAdminRoutes(router, koin)
+    mountPublicRoutes(router)
+
     router.errorHandler(404) {ctx ->
       ctx.end("<h1>404 Not Found</h1>")
     }

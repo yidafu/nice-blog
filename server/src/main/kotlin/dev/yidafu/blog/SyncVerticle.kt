@@ -19,7 +19,7 @@ class SyncVerticle(private val koin: Koin): CoroutineVerticle(), CoroutineRouter
     }
     server
       .requestHandler(router)
-      .listen(8081).coAwait()
-    println("HTTP Sync server started on port 8081")
+      .listen(8082).coAwait()
+    println("HTTP Sync server started on port 8082")
   }
 }

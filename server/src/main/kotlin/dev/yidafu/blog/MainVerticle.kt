@@ -54,7 +54,7 @@ class MainVerticle : CoroutineVerticle(), CoroutineRouterSupport {
 
 
     vertx.deployVerticle(FrontendVerticle(koin.koin))
-    vertx.deployVerticle(SyncVerticle(koin.koin))
     vertx.deployVerticle(AdminVerticle(koin.koin))
+    vertx.deployVerticle(SyncVerticle(koin.koin))
   }
 }
