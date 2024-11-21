@@ -1,7 +1,10 @@
 package dev.yidafu.blog.handler
 
+import dev.yidafu.blog.ext.html
 import dev.yidafu.blog.service.ArticleService
+import dev.yidafu.blog.views.layouts.BaseLayout
 import io.vertx.ext.web.RoutingContext
+import kotlinx.html.h1
 import org.koin.core.annotation.Single
 import org.slf4j.LoggerFactory
 
@@ -13,7 +16,9 @@ class HomePageHandler(
 
   suspend fun indexPage(ctx: RoutingContext) {
     log.info("首页请求")
-    val list = articleService.getAll()
-    ctx.json(list)
+
+    ctx.html(BaseLayout().layout {
+      h1 { +"Index Page!" }
+    })
   }
 }

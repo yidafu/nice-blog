@@ -5,6 +5,7 @@ import io.vertx.core.http.HttpHeaders
 import io.vertx.core.impl.ContextInternal
 import io.vertx.core.json.EncodeException
 import io.vertx.ext.web.RoutingContext
+import kotlinx.html.TagConsumer
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
@@ -38,4 +39,11 @@ internal inline fun <reified T> RoutingContext.kJson(obj: T): Future<Void>? {
     fail(e)
     return (vertx().getOrCreateContext() as ContextInternal).failedFuture<Void>(e)
   }
+}
+
+
+internal inline fun RoutingContext.html(tag: TagConsumer<String>) {
+  val str = tag.finalize()
+  response().putHeader(HttpHeaders.CONTENT_TYPE, "text/html")
+  end(str)
 }
