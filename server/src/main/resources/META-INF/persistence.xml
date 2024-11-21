@@ -6,12 +6,13 @@
   <persistence-unit name="nice-db">
     <provider>org.hibernate.reactive.provider.ReactivePersistenceProvider</provider>
 
-    <class>dev.yidafu.blog.modal.Articlemodel</class>
+    <class>dev.yidafu.blog.modal.ArticleModel</class>
     <class>dev.yidafu.blog.modal.SyncTaskModel</class>
+    <class>dev.yidafu.blog.modal.ConfigurationModal</class>
 
     <properties>
 
-      <!-- PostgreSQL -->
+      <!-- MySQL -->
       <property name="javax.persistence.jdbc.url"
                 value="jdbc:mysql://localhost:3306/nice-blog?allowPublicKeyRetrieval=true&amp;useSSL=false"/>
 
@@ -35,6 +36,10 @@
       <property name="hibernate.show_sql" value="true"/>
       <property name="hibernate.format_sql" value="true"/>
       <property name="hibernate.highlight_sql" value="true"/>
+      <property name="org.hibernate.SQL" value="debug"/>
+      <property name="hibernate.use_sql_comments" value="true" />
+
+      <property name="javax.persistence.sql-load-script-source" value="META-INF/sql/setup.sql"/>
 
     </properties>
 

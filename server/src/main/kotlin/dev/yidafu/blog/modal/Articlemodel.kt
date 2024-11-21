@@ -6,7 +6,7 @@ import jakarta.persistence.Table
 
 @Entity
 @Table(name = "b_article")
-class Articlemodel(
+class ArticleModel(
   @Column
   val title: String = "",
   @Column
