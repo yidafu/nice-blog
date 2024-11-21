@@ -4,10 +4,14 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   kotlin("jvm") version "2.0.21"
+  kotlin("kapt") version "2.0.21"
   application
   id("com.github.johnrengelman.shadow") version "7.1.2"
   id("com.google.devtools.ksp") version "2.0.21-1.0.27"
   kotlin("plugin.serialization") version "2.0.21"
+
+  id("de.comahe.i18n4k") version "0.9.0"
+
 }
 
 group = "dev.yidafu.blog"
@@ -63,7 +67,27 @@ dependencies {
 
   implementation("ch.qos.logback:logback-classic:1.5.6")
   implementation("com.github.sya-ri:kgit:1.1.0")
+
+  implementation("org.jetbrains.kotlinx:kotlinx-html:0.8.0")
+  implementation("org.jetbrains.kotlin-wrappers:kotlin-css:1.0.0-pre.832")
+
+  implementation("de.comahe.i18n4k:i18n4k-core:0.9.0")
+  implementation("io.github.allangomes:kotlinwind-css:0.0.3")
+
+  implementation("org.mapstruct:mapstruct:1.6.0")
+  kapt("org.mapstruct:mapstruct-processor:1.6.0")
 }
+
+kapt {
+  arguments {
+    // Set Mapstruct Configuration options here
+    // https://kotlinlang.org/docs/reference/kapt.html#annotation-processor-arguments
+    // https://mapstruct.org/documentation/stable/reference/html/#configuration-options
+    arg("mapstruct.verbose", true)
+    // arg("mapstruct.defaultComponentModel", "spring")
+  }
+}
+
 
 val compileKotlin: KotlinCompile by tasks
 compileKotlin.kotlinOptions.jvmTarget = "17"
@@ -91,4 +115,10 @@ tasks.withType<JavaExec> {
     "--launcher-class=$launcherClassName",
     "--on-redeploy=$doOnChange"
   )
+}
+
+
+i18n4k {
+  commentLocale = "zh-CN"
+  sourceCodeLocales = listOf("en", "zh-CN")
 }
