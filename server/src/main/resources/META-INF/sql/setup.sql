@@ -6,5 +6,5 @@ INSERT INTO `nice-blog`.b_configuration (id, configKey, configValue) VALUES(2, '
 INSERT INTO `nice-blog`.b_configuration (id, configKey, configValue) VALUES(3, 'synchronous.cron_expr', '0 0 1 1/1 * ?')
 
 INSERT INTO `nice-blog`.b_configuration (id, configKey, configValue) VALUES(4, 'data_source.type', 'git')
-INSERT INTO `nice-blog`.b_configuration (id, configKey, configValue) VALUES(5, 'data_source.url', 'https://github.com/yidafu/simple-blog')
+INSERT INTO `nice-blog`.b_configuration (id, configKey, configValue) VALUES(5, 'data_source.url', 'https://github.com/yidafu/example-blog.git')
 INSERT INTO `nice-blog`.b_configuration (id, configKey, configValue) VALUES(6, 'data_source.token', '')

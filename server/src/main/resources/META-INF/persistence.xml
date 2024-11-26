@@ -6,9 +6,9 @@
   <persistence-unit name="nice-db">
     <provider>org.hibernate.reactive.provider.ReactivePersistenceProvider</provider>
 
-    <class>dev.yidafu.blog.modal.ArticleModel</class>
-    <class>dev.yidafu.blog.modal.SyncTaskModel</class>
-    <class>dev.yidafu.blog.modal.ConfigurationModal</class>
+    <class>dev.yidafu.blog.common.modal.ArticleModel</class>
+    <class>dev.yidafu.blog.common.modal.SyncTaskModel</class>
+    <class>dev.yidafu.blog.common.modal.ConfigurationModal</class>
 
     <properties>
 
