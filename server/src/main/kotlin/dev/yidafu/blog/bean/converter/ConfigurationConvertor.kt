@@ -5,7 +5,7 @@ import dev.yidafu.blog.modal.ConfigurationModal
 import org.mapstruct.Mapper
 
 @Mapper
-interface ConfigurationMapper {
+interface ConfigurationConvertor {
   fun toModal(dto: ConfigurationDTO): ConfigurationModal
 
   fun toModal(dotList: List<ConfigurationDTO>): List<ConfigurationModal>

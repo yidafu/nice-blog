@@ -8,10 +8,11 @@ import kotlinx.html.*
 import kotlinx.html.stream.createHTML
 
 open class BaseLayout : Layout {
+  val tagConsumer: TagConsumer<String> = createHTML()
   override fun layout(layoutBlock: DIV.() -> Unit): TagConsumer<String> {
-    return createHTML().apply {
+    return tagConsumer.apply {
       head {
-//        link { rel = "stylesheet";href = "/public/chota.css" }
+        link { rel = "stylesheet";href = "/public/normalize.css" }
         link { rel = "shortcut icon"; href = "/public/favicon.ico" }
         meta { charset = "UTF-8" }
         title {
@@ -25,6 +26,12 @@ open class BaseLayout : Layout {
               }
               kotlinx.css.a {
                 textDecoration = TextDecoration.none
+                visited {
+                  color = Color.unset
+                }
+              }
+              kotlinx.css.li {
+                listStyleType = ListStyleType.none
               }
               ".m-auto" {
                 margin = Margin(LinearDimension.auto)
@@ -73,6 +80,14 @@ open class BaseLayout : Layout {
                  ".dropdown-content" {
                    put("display", "block !important")
                  }
+                }
+              }
+              ".flex" {
+                display = Display.flex;
+              }
+              ".nav-list" {
+                not(":last-child") {
+                  marginBottom = 16.px
                 }
               }
             }.toString())

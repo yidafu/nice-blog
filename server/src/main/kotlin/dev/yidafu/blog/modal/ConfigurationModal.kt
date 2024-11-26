@@ -10,9 +10,10 @@ import jakarta.persistence.UniqueConstraint
 @Table(name = "b_configuration", uniqueConstraints = [
   UniqueConstraint(columnNames = ["configKey"])
 ])
-class ConfigurationModal(
+data class ConfigurationModal(
   @Column
   val configKey: String = "",
   @Column
   val configValue: String = "",
-) : BaseModel()
+) : BaseModel() {
+}

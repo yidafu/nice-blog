@@ -1,4 +1,4 @@
 package dev.yidafu.blog.bean.dto
 
-data class ConfigurationDTO(val key: String, val value: String) {
-}
+data class ConfigurationDTO(val configKey: String, val configValue: String)
+
