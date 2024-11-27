@@ -5,7 +5,7 @@ import dev.yidafu.blog.common.ConstantKeys
 import dev.yidafu.blog.common.Routes
 import dev.yidafu.blog.common.bean.vo.AdminBaseVo
 import dev.yidafu.blog.common.ext.html
-import dev.yidafu.blog.admin.services.ConfigurationService
+import dev.yidafu.blog.common.services.ConfigurationService
 import dev.yidafu.blog.admin.views.layouts.AdminLayout
 import io.vertx.ext.web.RoutingContext
 import kotlinx.html.h1

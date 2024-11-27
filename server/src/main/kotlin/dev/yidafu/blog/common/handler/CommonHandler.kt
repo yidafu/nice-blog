@@ -4,7 +4,7 @@ import de.comahe.i18n4k.Locale
 import dev.yidafu.blog.common.ConfigurationKeys
 import dev.yidafu.blog.common.ConstantKeys
 import dev.yidafu.blog.common.bean.bo.ConfigurationBO
-import dev.yidafu.blog.admin.services.ConfigurationService
+import dev.yidafu.blog.common.services.ConfigurationService
 import io.vertx.core.http.Cookie
 import io.vertx.core.http.HttpHeaders
 import io.vertx.ext.web.RoutingContext

@@ -13,7 +13,7 @@ import dev.yidafu.blog.common.Routes
 import dev.yidafu.blog.common.ext.html
 import dev.yidafu.blog.common.handler.CommonHandler
 import dev.yidafu.blog.common.modal.ConfigurationModal
-import dev.yidafu.blog.admin.services.ConfigurationService
+import dev.yidafu.blog.common.services.ConfigurationService
 import dev.yidafu.blog.admin.views.pages.AdminConfigAppearancePage
 import dev.yidafu.blog.admin.views.pages.AdminConfigDataSourcePage
 import dev.yidafu.blog.admin.views.pages.AdminConfigSyncPage
@@ -64,8 +64,12 @@ class ConfigurationHandler(
         ConfigurationDTO(keyPair.second, value)
       }
     }
+    dtoList.find { it.configKey == ConfigurationKeys.SYNC_CRON_EXPR }?.let { config ->
+      log.info("send update cron expression event => ${config.configValue}")
+      ctx.vertx().eventBus().send(ConstantKeys.UPDATE_CRON_EXPR, config.configValue)
+    }
 
-    log.info("开始更新配置 ${dtoList.joinToString(",")}}")
+    log.info("start update config ${dtoList.joinToString(",")}}")
     configService.updateConfig(dtoList)
     ctx.redirect(referer)
   }

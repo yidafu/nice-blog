@@ -76,6 +76,8 @@ dependencies {
 
   implementation("org.mapstruct:mapstruct:1.6.0")
   kapt("org.mapstruct:mapstruct-processor:1.6.0")
+
+  implementation("org.quartz-scheduler:quartz:2.5.0")
 }
 
 kapt {

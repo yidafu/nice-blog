@@ -4,6 +4,7 @@ import dev.yidafu.blog.admin.AdminVerticle
 import dev.yidafu.blog.admin.handler.AdminHandlerModule
 import dev.yidafu.blog.admin.services.AdminServiceModule
 import dev.yidafu.blog.common.handler.HandlerModule
+import dev.yidafu.blog.common.services.CommonServiceModule
 import dev.yidafu.blog.fe.FrontendVerticle
 import dev.yidafu.blog.fe.handler.FeHandlerModule
 import dev.yidafu.blog.fe.service.FeServiceModule
@@ -55,6 +56,7 @@ class MainVerticle : CoroutineVerticle(), CoroutineRouterSupport {
       modules(
         entityModule,
         HandlerModule().module,
+        CommonServiceModule().module,
         FeServiceModule().module,
         AdminHandlerModule().module,
         AdminServiceModule().module,

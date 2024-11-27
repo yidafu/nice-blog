@@ -1,4 +1,4 @@
-package dev.yidafu.blog.admin.services
+package dev.yidafu.blog.common.services
 
 import dev.yidafu.blog.common.bean.converter.ConfigurationConvertor
 import dev.yidafu.blog.common.bean.dto.ConfigurationDTO
