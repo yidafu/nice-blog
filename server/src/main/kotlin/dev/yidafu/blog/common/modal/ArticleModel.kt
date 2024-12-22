@@ -2,23 +2,32 @@ package dev.yidafu.blog.common.modal
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.Enumerated
 import jakarta.persistence.Table
+
+
 
 @Entity
 @Table(name = "b_article")
 class ArticleModel(
   @Column
-  val title: String = "",
+  var title: String = "",
   @Column
   var cover: String? = null,
   @Column
   var identifier: String? = null,
+  @Column(name = "series")
+  var series: String? = null,
+
+  @Enumerated
   @Column
-  var seriesId: Long? = null,
-  @Column
-  var status: Int? = null,
+  var status: ArticleStatus? = null,
   @Column
   var summary: String? = null,
-  @Column
-  var content: String? = null
+  @Column(columnDefinition = "text")
+  var content: String? = null,
+  @Column(columnDefinition = "text")
+  var html: String? = null,
 ) : BaseModel()
+
+

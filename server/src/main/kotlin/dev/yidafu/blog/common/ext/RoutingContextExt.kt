@@ -1,13 +1,21 @@
 package dev.yidafu.blog.common.ext
 
+import de.comahe.i18n4k.Locale
+import dev.yidafu.blog.common.ConstantKeys
+import dev.yidafu.blog.common.bean.bo.ConfigurationBO
+import dev.yidafu.blog.common.handler.CommonHandler
+import dev.yidafu.blog.common.view.tpl.Page
+import dev.yidafu.blog.common.vo.BaseVO
+import dev.yidafu.blog.common.vo.PageVO
 import io.vertx.core.Future
 import io.vertx.core.http.HttpHeaders
 import io.vertx.core.impl.ContextInternal
 import io.vertx.core.json.EncodeException
 import io.vertx.ext.web.RoutingContext
-import kotlinx.html.TagConsumer
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import kotlin.reflect.KClass
+import kotlin.reflect.full.primaryConstructor
 
 internal val jsonCodec = Json {
   encodeDefaults = true
@@ -42,8 +50,22 @@ internal inline fun <reified T> RoutingContext.kJson(obj: T): Future<Void>? {
 }
 
 
-internal inline fun RoutingContext.html(tag: TagConsumer<String>) {
-  val str = tag.finalize()
+internal inline fun < V: PageVO, T: Page<V>> RoutingContext.html(pageClass: KClass<T>, vo: V) {
+  val local = this.get<Locale>(ConstantKeys.LANGUAGE_CONTEXT)
+
+  val configBo = this.get<ConfigurationBO>(CommonHandler.GLOBAL_CONFIGURATION)
+
+  val baseVO = BaseVO(
+    locale = local,
+    currentPath = request().path(),
+    siteTitle = configBo.siteTitle,
+    githubUrl = configBo.githubUrl,
+  )
+  vo.baseVO = baseVO
+  val page = pageClass.primaryConstructor?.call(vo)
+
+  val htmlStr = page?.render()
+
   response().putHeader(HttpHeaders.CONTENT_TYPE, "text/html")
-  end(str)
+  this.end(htmlStr)
 }

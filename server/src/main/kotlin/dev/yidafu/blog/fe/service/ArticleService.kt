@@ -13,20 +13,34 @@ class ArticleService(
   private val emf: EntityManagerFactory,
   private val sessionFactory: SessionFactory,
 ) {
-private val log = LoggerFactory.getLogger(ArticleService::class.java)
+  private val log = LoggerFactory.getLogger(ArticleService::class.java)
 
-  suspend fun getAll(): List<ArticleModel>? {
+  suspend fun getAll(): List<ArticleModel> {
     val criteriaBuilder = sessionFactory.criteriaBuilder
 
-   return sessionFactory.withSession { session ->
+    return sessionFactory.withSession { session ->
       val query = criteriaBuilder.createQuery(ArticleModel::class.java)
-        val form = query.from(ArticleModel::class.java)
-        query.select(form)
-          .where(
-            criteriaBuilder.equal(form.get<String>(ArticleModel::status.name), ArticleStatus.Candidate.ordinal)
-          )
-        log.info("开始查询文章列表")
-        session.createQuery(query).resultList
+      val form = query.from(ArticleModel::class.java)
+      query.select(form)
+        .where(
+          criteriaBuilder.ge(form.get(ArticleModel::status.name), ArticleStatus.Candidate.ordinal)
+        )
+      log.info("开始查询文章列表")
+      session.createQuery(query).resultList
+    }.await() ?: emptyList()
+  }
+
+  suspend fun getOneByIdentifier(identifier: String): ArticleModel? {
+    val criteriaBuilder = sessionFactory.criteriaBuilder
+
+    return sessionFactory.withSession { session ->
+      val query = criteriaBuilder.createQuery(ArticleModel::class.java)
+      val form = query.from(ArticleModel::class.java)
+      query.select(form)
+        .where(
+          criteriaBuilder.equal(form.get<String>(ArticleModel::identifier.name), identifier)
+        )
+      session.createQuery(query).singleResultOrNull
     }.await()
   }
 }

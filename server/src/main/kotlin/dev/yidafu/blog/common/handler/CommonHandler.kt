@@ -50,6 +50,10 @@ class CommonHandler(
     ctx.next()
   }
 
+  fun uploadStaticFiles(ctx: RoutingContext) {
+
+  }
+
   companion object {
     const val GLOBAL_CONFIGURATION = "global_configuration"
   }

@@ -3,10 +3,12 @@ package dev.yidafu.blog.admin.handler
 import de.comahe.i18n4k.Locale
 import dev.yidafu.blog.common.ConstantKeys
 import dev.yidafu.blog.common.Routes
-import dev.yidafu.blog.common.bean.vo.AdminBaseVo
+import dev.yidafu.blog.common.vo.AdminBaseVO
 import dev.yidafu.blog.common.ext.html
 import dev.yidafu.blog.common.services.ConfigurationService
 import dev.yidafu.blog.admin.views.layouts.AdminLayout
+import dev.yidafu.blog.admin.views.pages.PicturePage
+import dev.yidafu.blog.common.vo.PageVO
 import io.vertx.ext.web.RoutingContext
 import kotlinx.html.h1
 import org.koin.core.annotation.Single
@@ -20,17 +22,8 @@ class AdminHandler(
 
   suspend fun indexPage(ctx: RoutingContext) {
     val local = ctx.get<Locale>(ConstantKeys.LANGUAGE_CONTEXT)
-    val vo = AdminBaseVo(
-      local,
-      ctx.normalizedPath(),
-      "Dov Yih",
-      "https://github.com/yidafu",
-    )
-    ctx.html(AdminLayout(vo).layout {
-      h1 {
-        +"Admin Page"
-      }
-    })
+
+    ctx.redirect(Routes.CONFIG_APPEARANCE_URL)
   }
 
 
@@ -39,18 +32,7 @@ class AdminHandler(
   }
 
   suspend fun picturesPage(ctx: RoutingContext) {
-    val local = ctx.get<Locale>(ConstantKeys.LANGUAGE_CONTEXT)
-
-    val vo = AdminBaseVo(
-      local,
-      ctx.normalizedPath(),
-      "Dov Yih",
-      "https://github.com/yidafu",
-    )
-    ctx.html(AdminLayout(vo).layout {
-      h1 {
-        +"Pictures Page"
-      }
-    })
+    val vo = PageVO()
+    ctx.html(PicturePage::class, vo)
   }
 }

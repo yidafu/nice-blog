@@ -7,4 +7,8 @@ object FormKeys {
   const val SOURCE_TYPE = "sourceType"
   const val SOURCE_URL = "sourceUrl"
   const val SOURCE_TOKEN = "sourceToken"
+  const val USER_NAME = "username"
+  const val PASSWORD = "password"
+  const val SUBMIT = "submit"
+  const val PUBLIC_KEY = "public_key"
 }

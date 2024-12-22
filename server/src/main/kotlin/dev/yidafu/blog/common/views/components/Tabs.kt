@@ -1,5 +1,6 @@
 package dev.yidafu.blog.common.views.components
 
+import dev.yidafu.blog.common.view.icons.Icon
 import io.github.allangomes.kotlinwind.css.I50
 import io.github.allangomes.kotlinwind.css.I700
 import io.github.allangomes.kotlinwind.css.LG
@@ -9,8 +10,8 @@ import kotlinx.html.*
 class TABS(initialAttributes: Map<String, String>, consumer: TagConsumer<*>) : DIV(initialAttributes, consumer)
 
 class TabOption(
-    val title: String, val url: String, val  icon:
-    Icon, val active: Boolean
+  val title: String, val url: String, val  icon:
+  Icon, val active: Boolean
 )
 inline fun FlowContent.tabs(
     classes: String? = null,
@@ -32,7 +33,7 @@ inline fun FlowContent.tabs(
   return TABS(
     attributesMapOf(
       "class",
-      "flex $classes"
+      "flex ${classes ?: ""}"
     ), consumer
   ).visit(layout)
 }

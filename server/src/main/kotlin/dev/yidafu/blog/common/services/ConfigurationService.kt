@@ -1,7 +1,7 @@
 package dev.yidafu.blog.common.services
 
-import dev.yidafu.blog.common.bean.converter.ConfigurationConvertor
-import dev.yidafu.blog.common.bean.dto.ConfigurationDTO
+import dev.yidafu.blog.common.converter.ConfigurationConvertor
+import dev.yidafu.blog.common.dto.ConfigurationDTO
 import dev.yidafu.blog.common.modal.ConfigurationModal
 import io.vertx.kotlin.coroutines.vertxFuture
 import kotlinx.coroutines.future.await

@@ -9,4 +9,8 @@ internal object ConstantKeys {
    const val GLOBAL_CONFIGURATION = "global_configuration"
 
   const val UPDATE_CRON_EXPR = "update_cron_expr"
+
+  const val AUTH_RSA_PUBLIC_KEY = "rsa_public_key"
+  const val AUTH_RSA_PRIVATE_KEY = "rsa_private_key"
+  const val AUTH_CURRENT_USERNAME = "current_username"
 }

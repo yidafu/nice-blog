@@ -1,13 +1,11 @@
 package dev.yidafu.blog.admin.views.layouts
 
 import dev.yidafu.blog.common.Routes
-import dev.yidafu.blog.common.bean.vo.AdminBaseVo
+import dev.yidafu.blog.common.view.components.footerBlock
+import dev.yidafu.blog.common.view.icons.*
+import dev.yidafu.blog.common.view.layouts.BaseLayout
+import dev.yidafu.blog.common.vo.PageVO
 import dev.yidafu.blog.i18n.AdminTxt
-import dev.yidafu.blog.common.views.icons.Chniese
-import dev.yidafu.blog.common.views.icons.English
-import dev.yidafu.blog.common.views.icons.Github
-import dev.yidafu.blog.common.views.icons.Language
-import dev.yidafu.blog.common.views.layouts.BaseLayout
 import io.github.allangomes.kotlinwind.css.*
 import kotlinx.html.*
 
@@ -29,7 +27,14 @@ fun FlowOrInteractiveOrPhrasingContent.link(link: String, url: String, active: B
   }
 }
 
-class AdminLayout(private val vo: AdminBaseVo) : BaseLayout() {
+class AdminLayout<P :PageVO>(private val vo: P) : BaseLayout(headScript = {
+  script {
+    src ="/public/htmx.min.js"
+  }
+  script {
+    src = "/public/htmx-ext-sse.js"
+  }
+}) {
 
   private val linkList = listOf(
 //    Triple(AdminTxt.appearance.toString(vo.locale), Routes.CONFIG_APPEARANCE_URL, vo.currentPath == Routes.CONFIG_APPEARANCE_URL),
@@ -38,16 +43,17 @@ class AdminLayout(private val vo: AdminBaseVo) : BaseLayout() {
       Routes.CONFIGURATION_URL,
       vo.currentPath.startsWith(Routes.CONFIGURATION_URL)
     ),
+    Triple(AdminTxt.sync.toString(vo.locale), Routes.SYNC_URL, vo.currentPath == Routes.SYNC_URL),
     Triple(AdminTxt.pictures.toString(vo.locale), Routes.PICTURES_URL, vo.currentPath == Routes.PICTURES_URL),
   )
 
   override fun layout(laoutBlock: DIV.() -> Unit): TagConsumer<String> {
     return super.layout {
       div {
-        style = kw.inline { border.gray[I200].bottom[1] }
+        style = kw.inline { border.gray[I200].bottom[1]; background.white }
 
         nav("m-auto") {
-          style = kw.inline { padding[6]; flex.row.items_center.justify_between.wrap; max_width[256] }
+          style = kw.inline { padding[6]; flex.row.items_center.justify_between.wrap; max_width[256];}
           div {
             style = kw.inline { flex.row.items_center.shrink_0; text.black; margin.right[6] }
 
@@ -90,7 +96,7 @@ class AdminLayout(private val vo: AdminBaseVo) : BaseLayout() {
                     href = "?lang=zh-CN"
                     div {
                       style = kw.inline { inline_block.width[4].height[4].margin.right[2] }
-                      Chniese()
+                      Chinese()
                     }
                     +"中文"
                   }
@@ -102,15 +108,30 @@ class AdminLayout(private val vo: AdminBaseVo) : BaseLayout() {
                 href = vo.githubUrl
                 Github()
               }
+
+              a {
+                style = kw.inline { font.size[SM]; height[6]; text.slate[I600]; margin.left[4]; flex.row.items_center }
+                href = Routes.LOGOUT_URL
+                span {
+                  style = kw.inline { font.size[SM]; }
+                  +AdminTxt.logout.toString(vo.locale)
+                }
+                i {
+                  style = kw.inline { size[5] }
+                  Logout()
+                }
+              }
             }
           }
         }
       }
 
       div("m-auto") {
-        style = kw.inline { max_width[256]; padding[6]; background.white; border.rounded[LG]; margin.top[8] }
+        style = kw.inline { max_width[256]; padding[6]; background.white; border.rounded[LG]; margin.y[8] }
         laoutBlock()
       }
+
+      footerBlock()
     }
   }
 }

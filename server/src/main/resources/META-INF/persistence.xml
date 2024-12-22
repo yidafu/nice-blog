@@ -9,8 +9,16 @@
     <class>dev.yidafu.blog.common.modal.ArticleModel</class>
     <class>dev.yidafu.blog.common.modal.SyncTaskModel</class>
     <class>dev.yidafu.blog.common.modal.ConfigurationModal</class>
+    <class>dev.yidafu.blog.common.modal.UserModal</class>
+    <class>dev.yidafu.blog.common.modal.UserTokenModal</class>
 
     <properties>
+      <!-- sqlite -->
+<!--      <property name="dialect" value="org.hibernate.dialect.SQLiteDialect" />-->
+<!--      <property name="javax.persistence.jdbc.driver" value="org.sqlite.JDBC" />-->
+<!--      <property name="javax.persistence.jdbc.url" value="jdbc:sqlite::memory:" />-->
+<!--      <property name="javax.persistence.jdbc.user" value="" />-->
+<!--      <property name="javax.persistence.jdbc.password" value="" />-->
 
       <!-- MySQL -->
       <property name="javax.persistence.jdbc.url"

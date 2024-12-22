@@ -1,22 +1,22 @@
 package dev.yidafu.blog.admin.handler
 
 import de.comahe.i18n4k.Locale
-import dev.yidafu.blog.common.bean.bo.ConfigurationBO
-import dev.yidafu.blog.common.bean.dto.ConfigurationDTO
-import dev.yidafu.blog.common.bean.vo.AdminAppearanceVo
-import dev.yidafu.blog.common.bean.vo.AdminDataSourceVO
-import dev.yidafu.blog.common.bean.vo.AdminSynchronousVO
+import dev.yidafu.blog.admin.views.pages.config.AdminConfigAppearancePage
+import dev.yidafu.blog.admin.views.pages.config.AdminConfigDataSourcePage
+import dev.yidafu.blog.admin.views.pages.config.AdminConfigSyncPage
 import dev.yidafu.blog.common.ConfigurationKeys
 import dev.yidafu.blog.common.ConstantKeys
 import dev.yidafu.blog.common.FormKeys
 import dev.yidafu.blog.common.Routes
+import dev.yidafu.blog.common.bean.bo.ConfigurationBO
+import dev.yidafu.blog.common.dto.ConfigurationDTO
 import dev.yidafu.blog.common.ext.html
 import dev.yidafu.blog.common.handler.CommonHandler
 import dev.yidafu.blog.common.modal.ConfigurationModal
 import dev.yidafu.blog.common.services.ConfigurationService
-import dev.yidafu.blog.admin.views.pages.AdminConfigAppearancePage
-import dev.yidafu.blog.admin.views.pages.AdminConfigDataSourcePage
-import dev.yidafu.blog.admin.views.pages.AdminConfigSyncPage
+import dev.yidafu.blog.common.vo.AdminAppearanceVO
+import dev.yidafu.blog.common.vo.AdminDataSourceVO
+import dev.yidafu.blog.common.vo.AdminSynchronousVO
 import io.vertx.core.http.HttpHeaders
 import io.vertx.ext.web.RoutingContext
 import org.koin.core.annotation.Single
@@ -27,19 +27,11 @@ class ConfigurationHandler(
   private val configService: ConfigurationService,
 
   ) {
-  private val log = LoggerFactory.getLogger(AdminHandler::class.java)
+  private val log = LoggerFactory.getLogger(ConfigurationHandler::class.java)
 
   suspend fun appearancePage(ctx: RoutingContext) {
-    val local = ctx.get<Locale>(ConstantKeys.LANGUAGE_CONTEXT)
-
-    val configBo = ctx.get<ConfigurationBO>(CommonHandler.GLOBAL_CONFIGURATION)
-    val vo = AdminAppearanceVo(
-      local,
-      ctx.normalizedPath(),
-      configBo.siteTitle,
-      configBo.githubUrl,
-    )
-    ctx.html(AdminConfigAppearancePage(vo).render())
+    val vo = AdminAppearanceVO()
+    ctx.html(AdminConfigAppearancePage::class, vo)
   }
 
   /**
@@ -75,23 +67,14 @@ class ConfigurationHandler(
   }
 
   suspend fun synchronousPage(ctx: RoutingContext) {
-    val local = ctx.get<Locale>(ConstantKeys.LANGUAGE_CONTEXT)
-
-    val configBo = ctx.get<ConfigurationBO>(CommonHandler.GLOBAL_CONFIGURATION)
     val config = configService.getByKey(ConfigurationKeys.SYNC_CRON_EXPR)
     val vo = AdminSynchronousVO(
       config.configValue,
-      local,
-      ctx.normalizedPath(),
-      configBo.siteTitle,
-      configBo.githubUrl,
     )
-    ctx.html(AdminConfigSyncPage(vo).render())
+    ctx.html(AdminConfigSyncPage::class, vo)
   }
 
   suspend fun dataSourcePage(ctx: RoutingContext) {
-    val local = ctx.get<Locale>(ConstantKeys.LANGUAGE_CONTEXT)
-    val configBo = ctx.get<ConfigurationBO>(CommonHandler.GLOBAL_CONFIGURATION)
     val configs = configService.getByKeys(listOf(
       ConfigurationKeys.SOURCE_TYPE,
       ConfigurationKeys.SOURCE_URL,
@@ -102,17 +85,12 @@ class ConfigurationHandler(
       configs.getByKey(ConfigurationKeys.SOURCE_TYPE) ?: "",
       configs.getByKey(ConfigurationKeys.SOURCE_URL) ?: "",
       configs.getByKey(ConfigurationKeys.SOURCE_TOKEN) ?: "",
-      local,
-      ctx.normalizedPath(),
-      configBo.siteTitle,
-      configBo.githubUrl,
     )
 
-    ctx.html(AdminConfigDataSourcePage(vo).render())
-
+    ctx.html(AdminConfigDataSourcePage::class, vo)
   }
 
-  fun List<ConfigurationModal>.getByKey(key: String): String? {
+  private fun List<ConfigurationModal>.getByKey(key: String): String? {
     return find { it.configKey == key }?.configValue
   }
 }

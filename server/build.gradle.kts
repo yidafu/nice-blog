@@ -11,19 +11,10 @@ plugins {
   kotlin("plugin.serialization") version "2.0.21"
 
   id("de.comahe.i18n4k") version "0.9.0"
-
 }
 
 group = "dev.yidafu.blog"
 version = "1.0.0-SNAPSHOT"
-
-repositories {
-  maven {
-    name = "华为开源镜像库"
-    setUrl("https://mirrors.huaweicloud.com/repository/maven/")
-  }
-  mavenCentral()
-}
 
 val vertxVersion = "4.5.10"
 val junitJupiterVersion = "5.9.1"
@@ -41,12 +32,17 @@ application {
 }
 
 dependencies {
+  implementation(project(":common"))
+  implementation(project(":engine"))
   implementation(platform("io.vertx:vertx-stack-depchain:$vertxVersion"))
   implementation("io.vertx:vertx-web-validation")
   implementation("io.vertx:vertx-health-check")
   implementation("io.vertx:vertx-web")
   implementation("io.vertx:vertx-web-openapi")
   implementation("io.vertx:vertx-mysql-client")
+  implementation("io.vertx:vertx-jdbc-client")
+  // https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc
+  implementation("org.xerial:sqlite-jdbc:3.47.1.0")
   implementation("io.vertx:vertx-lang-kotlin-coroutines")
   implementation("io.vertx:vertx-lang-kotlin")
   implementation("io.vertx:vertx-config")
@@ -57,16 +53,20 @@ dependencies {
 
 
   implementation(kotlin("stdlib-jdk8"))
+  implementation(kotlin("reflect"))
+
   testImplementation("io.vertx:vertx-junit5")
   testImplementation("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
 
+  implementation("com.github.sya-ri:kgit:1.1.0")
+
   implementation("io.insert-koin:koin-annotations:$koin_annotations_version")
   ksp("io.insert-koin:koin-ksp-compiler:$koin_annotations_version")
+
   implementation(platform("io.insert-koin:koin-bom:$koin_version"))
   implementation("io.insert-koin:koin-core")
 
   implementation("ch.qos.logback:logback-classic:1.5.6")
-  implementation("com.github.sya-ri:kgit:1.1.0")
 
   implementation("org.jetbrains.kotlinx:kotlinx-html:0.8.0")
   implementation("org.jetbrains.kotlin-wrappers:kotlin-css:1.0.0-pre.832")
@@ -78,6 +78,13 @@ dependencies {
   kapt("org.mapstruct:mapstruct-processor:1.6.0")
 
   implementation("org.quartz-scheduler:quartz:2.5.0")
+
+  implementation("org.jetbrains:markdown:0.7.3")
+
+
+  implementation("dev.whyoleg.cryptography:cryptography-core:0.4.0")
+  implementation("dev.whyoleg.cryptography:cryptography-provider-jdk:0.4.0")
+
 }
 
 kapt {
