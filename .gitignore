@@ -188,3 +188,5 @@ server/build/
 build/
 .kotlin
 local.*
+sample-blog/
+server/upload/
