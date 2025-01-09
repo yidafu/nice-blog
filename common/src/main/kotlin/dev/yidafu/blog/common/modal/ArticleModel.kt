@@ -1,15 +1,25 @@
 package dev.yidafu.blog.common.modal
 
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.Enumerated
-import jakarta.persistence.Table
-
+import jakarta.persistence.*
+import org.hibernate.annotations.CreationTimestamp
+import org.hibernate.annotations.UpdateTimestamp
+import java.time.LocalTime
 
 
 @Entity
 @Table(name = "b_article")
 class ArticleModel(
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  var id: Long? = null,
+
+  @CreationTimestamp
+@Column(name = "created_at")
+var createdAt: LocalTime? = null,
+
+@UpdateTimestamp
+@Column(name = "updated_at")
+var updatedAt: LocalTime? = null,
   @Column
   var title: String = "",
   @Column
@@ -28,6 +38,6 @@ class ArticleModel(
   var content: String? = null,
   @Column(columnDefinition = "text")
   var html: String? = null,
-) : BaseModel()
+) // : BaseModel()
 
 

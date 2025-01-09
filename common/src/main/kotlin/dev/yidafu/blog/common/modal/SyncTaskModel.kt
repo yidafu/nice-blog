@@ -1,10 +1,9 @@
 package dev.yidafu.blog.common.modal
 
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.Enumerated
-import jakarta.persistence.NamedQueries
-import jakarta.persistence.NamedQuery
+import jakarta.persistence.*
+import org.hibernate.annotations.CreationTimestamp
+import org.hibernate.annotations.UpdateTimestamp
+import java.time.LocalTime
 import kotlin.uuid.Uuid
 
 enum class SyncTaskStatus() {
@@ -22,6 +21,17 @@ enum class SyncTaskStatus() {
 )
 @Entity(name = "b_sync_task")
 class SyncTaskModel(
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  var id: Long? = null,
+
+  @CreationTimestamp
+  @Column(name = "created_at")
+  var createdAt: LocalTime? = null,
+
+  @UpdateTimestamp
+  @Column(name = "updated_at")
+  var updatedAt: LocalTime? = null,
   @Column
   var callbackUrl: String? = null,
 
@@ -34,7 +44,8 @@ class SyncTaskModel(
 
   @Column(columnDefinition = "MEDIUMTEXT")
   var logs: String? = null,
-) : BaseModel() {
+) /*: BaseModel() */
+{
   companion object {
     const val APPEND_LOG_TEXT = "APPEND_LOG_TEXT"
   }
