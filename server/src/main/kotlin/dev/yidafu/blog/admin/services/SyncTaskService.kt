@@ -1,7 +1,6 @@
 package dev.yidafu.blog.admin.services
 
 import dev.yidafu.blog.common.Routes
-import dev.yidafu.blog.common.modal.ConfigurationModal
 import dev.yidafu.blog.common.modal.SyncTaskModel
 import dev.yidafu.blog.common.modal.SyncTaskStatus
 import kotlinx.coroutines.future.await
@@ -14,10 +13,9 @@ class SyncTaskService(
 ) {
   suspend fun createSyncTask(uuid: String): Boolean {
     val task = SyncTaskModel(
-      Routes.SYNC_LOG_URL.replace(":uuid", uuid),
-      uuid,
-      SyncTaskStatus.Created,
-      ""
+      uuid = uuid,
+      status = SyncTaskStatus.Created,
+      callbackUrl =  Routes.SYNC_LOG_URL.replace(":uuid", uuid)
     )
     sessionFactory.withSession { session ->
       session.persist(task)
