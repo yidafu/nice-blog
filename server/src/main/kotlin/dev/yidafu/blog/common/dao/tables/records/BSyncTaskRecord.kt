@@ -22,25 +22,25 @@ open class BSyncTaskRecord() : UpdatableRecordImpl<BSyncTaskRecord>(BSyncTask.B_
         set(value): Unit = set(0, value)
         get(): Long? = get(0) as Long?
 
-    open var callbackurl: String?
-        set(value): Unit = set(1, value)
-        get(): String? = get(1) as String?
-
     open var createdAt: LocalTime?
+        set(value): Unit = set(1, value)
+        get(): LocalTime? = get(1) as LocalTime?
+
+    open var updatedAt: LocalTime?
         set(value): Unit = set(2, value)
         get(): LocalTime? = get(2) as LocalTime?
 
-    open var logs: String?
+    open var callbackurl: String?
         set(value): Unit = set(3, value)
         get(): String? = get(3) as String?
 
-    open var status: Int?
+    open var logs: String?
         set(value): Unit = set(4, value)
-        get(): Int? = get(4) as Int?
+        get(): String? = get(4) as String?
 
-    open var updatedAt: LocalTime?
+    open var status: Int?
         set(value): Unit = set(5, value)
-        get(): LocalTime? = get(5) as LocalTime?
+        get(): Int? = get(5) as Int?
 
     open var uuid: String?
         set(value): Unit = set(6, value)
@@ -55,13 +55,13 @@ open class BSyncTaskRecord() : UpdatableRecordImpl<BSyncTaskRecord>(BSyncTask.B_
     /**
      * Create a detached, initialised BSyncTaskRecord
      */
-    constructor(id: Long? = null, callbackurl: String? = null, createdAt: LocalTime? = null, logs: String? = null, status: Int? = null, updatedAt: LocalTime? = null, uuid: String? = null): this() {
+    constructor(id: Long? = null, createdAt: LocalTime? = null, updatedAt: LocalTime? = null, callbackurl: String? = null, logs: String? = null, status: Int? = null, uuid: String? = null): this() {
         this.id = id
-        this.callbackurl = callbackurl
         this.createdAt = createdAt
+        this.updatedAt = updatedAt
+        this.callbackurl = callbackurl
         this.logs = logs
         this.status = status
-        this.updatedAt = updatedAt
         this.uuid = uuid
         resetChangedOnNotNull()
     }

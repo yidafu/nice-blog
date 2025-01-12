@@ -27,29 +27,29 @@ open class BUserTokenRecord() : UpdatableRecordImpl<BUserTokenRecord>(BUserToken
         set(value): Unit = set(1, value)
         get(): LocalTime? = get(1) as LocalTime?
 
-    open var createdBy: LocalDate?
+    open var updatedAt: LocalTime?
         set(value): Unit = set(2, value)
-        get(): LocalDate? = get(2) as LocalDate?
+        get(): LocalTime? = get(2) as LocalTime?
+
+    open var createdBy: LocalDate?
+        set(value): Unit = set(3, value)
+        get(): LocalDate? = get(3) as LocalDate?
 
     open var description: String?
-        set(value): Unit = set(3, value)
-        get(): String? = get(3) as String?
+        set(value): Unit = set(4, value)
+        get(): String? = get(4) as String?
 
     open var expiresAt: LocalDate?
-        set(value): Unit = set(4, value)
-        get(): LocalDate? = get(4) as LocalDate?
+        set(value): Unit = set(5, value)
+        get(): LocalDate? = get(5) as LocalDate?
 
     open var name: String?
-        set(value): Unit = set(5, value)
-        get(): String? = get(5) as String?
-
-    open var token: String?
         set(value): Unit = set(6, value)
         get(): String? = get(6) as String?
 
-    open var updatedAt: LocalTime?
+    open var token: String?
         set(value): Unit = set(7, value)
-        get(): LocalTime? = get(7) as LocalTime?
+        get(): String? = get(7) as String?
 
     // -------------------------------------------------------------------------
     // Primary key information
@@ -60,15 +60,15 @@ open class BUserTokenRecord() : UpdatableRecordImpl<BUserTokenRecord>(BUserToken
     /**
      * Create a detached, initialised BUserTokenRecord
      */
-    constructor(id: Long? = null, createdAt: LocalTime? = null, createdBy: LocalDate? = null, description: String? = null, expiresAt: LocalDate? = null, name: String? = null, token: String? = null, updatedAt: LocalTime? = null): this() {
+    constructor(id: Long? = null, createdAt: LocalTime? = null, updatedAt: LocalTime? = null, createdBy: LocalDate? = null, description: String? = null, expiresAt: LocalDate? = null, name: String? = null, token: String? = null): this() {
         this.id = id
         this.createdAt = createdAt
+        this.updatedAt = updatedAt
         this.createdBy = createdBy
         this.description = description
         this.expiresAt = expiresAt
         this.name = name
         this.token = token
-        this.updatedAt = updatedAt
         resetChangedOnNotNull()
     }
 }

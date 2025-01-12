@@ -76,14 +76,19 @@ open class BSyncTask(
     val ID: TableField<BSyncTaskRecord, Long?> = createField(DSL.name("ID"), SQLDataType.BIGINT.nullable(false), this, "")
 
     /**
-     * The column <code>B_SYNC_TASK.CALLBACKURL</code>.
-     */
-    val CALLBACKURL: TableField<BSyncTaskRecord, String?> = createField(DSL.name("CALLBACKURL"), SQLDataType.VARCHAR(255), this, "")
-
-    /**
      * The column <code>B_SYNC_TASK.CREATED_AT</code>.
      */
     val CREATED_AT: TableField<BSyncTaskRecord, LocalTime?> = createField(DSL.name("CREATED_AT"), SQLDataType.LOCALTIME, this, "")
+
+    /**
+     * The column <code>B_SYNC_TASK.UPDATED_AT</code>.
+     */
+    val UPDATED_AT: TableField<BSyncTaskRecord, LocalTime?> = createField(DSL.name("UPDATED_AT"), SQLDataType.LOCALTIME, this, "")
+
+    /**
+     * The column <code>B_SYNC_TASK.CALLBACKURL</code>.
+     */
+    val CALLBACKURL: TableField<BSyncTaskRecord, String?> = createField(DSL.name("CALLBACKURL"), SQLDataType.VARCHAR(255), this, "")
 
     /**
      * The column <code>B_SYNC_TASK.LOGS</code>.
@@ -94,11 +99,6 @@ open class BSyncTask(
      * The column <code>B_SYNC_TASK.STATUS</code>.
      */
     val STATUS: TableField<BSyncTaskRecord, Int?> = createField(DSL.name("STATUS"), SQLDataType.INTEGER, this, "")
-
-    /**
-     * The column <code>B_SYNC_TASK.UPDATED_AT</code>.
-     */
-    val UPDATED_AT: TableField<BSyncTaskRecord, LocalTime?> = createField(DSL.name("UPDATED_AT"), SQLDataType.LOCALTIME, this, "")
 
     /**
      * The column <code>B_SYNC_TASK.UUID</code>.

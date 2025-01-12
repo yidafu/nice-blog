@@ -27,7 +27,7 @@ import org.jooq.impl.Internal
 
 val CONSTRAINT_C: UniqueKey<BArticleRecord> = Internal.createUniqueKey(BArticle.B_ARTICLE, DSL.name("CONSTRAINT_C"), arrayOf(BArticle.B_ARTICLE.ID), true)
 val CONSTRAINT_2: UniqueKey<BConfigurationRecord> = Internal.createUniqueKey(BConfiguration.B_CONFIGURATION, DSL.name("CONSTRAINT_2"), arrayOf(BConfiguration.B_CONFIGURATION.ID), true)
-val UKLQ3G6MXY1GXWP3A67OWOK926O: UniqueKey<BConfigurationRecord> = Internal.createUniqueKey(BConfiguration.B_CONFIGURATION, DSL.name("UKLQ3G6MXY1GXWP3A67OWOK926O"), arrayOf(BConfiguration.B_CONFIGURATION.CONFIGKEY), true)
+val UKR9EYOBGIOQOJSDRAYEEYMUNJH: UniqueKey<BConfigurationRecord> = Internal.createUniqueKey(BConfiguration.B_CONFIGURATION, DSL.name("UKR9EYOBGIOQOJSDRAYEEYMUNJH"), arrayOf(BConfiguration.B_CONFIGURATION.CONFIG_KEY), true)
 val CONSTRAINT_CF: UniqueKey<BSyncTaskRecord> = Internal.createUniqueKey(BSyncTask.B_SYNC_TASK, DSL.name("CONSTRAINT_CF"), arrayOf(BSyncTask.B_SYNC_TASK.ID), true)
 val CONSTRAINT_7: UniqueKey<BUserRecord> = Internal.createUniqueKey(BUser.B_USER, DSL.name("CONSTRAINT_7"), arrayOf(BUser.B_USER.ID), true)
 val UK_9X6TW7BOCI1EVWR46R5OMOUKA: UniqueKey<BUserRecord> = Internal.createUniqueKey(BUser.B_USER, DSL.name("UK_9X6TW7BOCI1EVWR46R5OMOUKA"), arrayOf(BUser.B_USER.USERNAME), true)

@@ -22,21 +22,21 @@ open class BConfigurationRecord() : UpdatableRecordImpl<BConfigurationRecord>(BC
         set(value): Unit = set(0, value)
         get(): Long? = get(0) as Long?
 
-    open var configkey: String?
-        set(value): Unit = set(1, value)
-        get(): String? = get(1) as String?
-
-    open var configvalue: String?
-        set(value): Unit = set(2, value)
-        get(): String? = get(2) as String?
-
     open var createdAt: LocalTime?
-        set(value): Unit = set(3, value)
-        get(): LocalTime? = get(3) as LocalTime?
+        set(value): Unit = set(1, value)
+        get(): LocalTime? = get(1) as LocalTime?
 
     open var updatedAt: LocalTime?
+        set(value): Unit = set(2, value)
+        get(): LocalTime? = get(2) as LocalTime?
+
+    open var configKey: String?
+        set(value): Unit = set(3, value)
+        get(): String? = get(3) as String?
+
+    open var configValue: String?
         set(value): Unit = set(4, value)
-        get(): LocalTime? = get(4) as LocalTime?
+        get(): String? = get(4) as String?
 
     // -------------------------------------------------------------------------
     // Primary key information
@@ -47,12 +47,12 @@ open class BConfigurationRecord() : UpdatableRecordImpl<BConfigurationRecord>(BC
     /**
      * Create a detached, initialised BConfigurationRecord
      */
-    constructor(id: Long? = null, configkey: String? = null, configvalue: String? = null, createdAt: LocalTime? = null, updatedAt: LocalTime? = null): this() {
+    constructor(id: Long? = null, createdAt: LocalTime? = null, updatedAt: LocalTime? = null, configKey: String? = null, configValue: String? = null): this() {
         this.id = id
-        this.configkey = configkey
-        this.configvalue = configvalue
         this.createdAt = createdAt
         this.updatedAt = updatedAt
+        this.configKey = configKey
+        this.configValue = configValue
         resetChangedOnNotNull()
     }
 }

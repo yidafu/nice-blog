@@ -76,6 +76,16 @@ open class BArticle(
     val ID: TableField<BArticleRecord, Long?> = createField(DSL.name("ID"), SQLDataType.BIGINT.nullable(false), this, "")
 
     /**
+     * The column <code>B_ARTICLE.CREATED_AT</code>.
+     */
+    val CREATED_AT: TableField<BArticleRecord, LocalTime?> = createField(DSL.name("CREATED_AT"), SQLDataType.LOCALTIME, this, "")
+
+    /**
+     * The column <code>B_ARTICLE.UPDATED_AT</code>.
+     */
+    val UPDATED_AT: TableField<BArticleRecord, LocalTime?> = createField(DSL.name("UPDATED_AT"), SQLDataType.LOCALTIME, this, "")
+
+    /**
      * The column <code>B_ARTICLE.CONTENT</code>.
      */
     val CONTENT: TableField<BArticleRecord, String?> = createField(DSL.name("CONTENT"), SQLDataType.VARCHAR(1000000000), this, "")
@@ -84,11 +94,6 @@ open class BArticle(
      * The column <code>B_ARTICLE.COVER</code>.
      */
     val COVER: TableField<BArticleRecord, String?> = createField(DSL.name("COVER"), SQLDataType.VARCHAR(255), this, "")
-
-    /**
-     * The column <code>B_ARTICLE.CREATED_AT</code>.
-     */
-    val CREATED_AT: TableField<BArticleRecord, LocalTime?> = createField(DSL.name("CREATED_AT"), SQLDataType.LOCALTIME, this, "")
 
     /**
      * The column <code>B_ARTICLE.HTML</code>.
@@ -119,11 +124,6 @@ open class BArticle(
      * The column <code>B_ARTICLE.TITLE</code>.
      */
     val TITLE: TableField<BArticleRecord, String?> = createField(DSL.name("TITLE"), SQLDataType.VARCHAR(255), this, "")
-
-    /**
-     * The column <code>B_ARTICLE.UPDATED_AT</code>.
-     */
-    val UPDATED_AT: TableField<BArticleRecord, LocalTime?> = createField(DSL.name("UPDATED_AT"), SQLDataType.LOCALTIME, this, "")
 
     private constructor(alias: Name, aliased: Table<BArticleRecord>?): this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<BArticleRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, null, aliased, parameters, null)

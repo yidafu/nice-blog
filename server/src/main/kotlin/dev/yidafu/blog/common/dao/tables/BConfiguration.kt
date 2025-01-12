@@ -6,7 +6,7 @@ package dev.yidafu.blog.common.dao.tables
 
 import dev.yidafu.blog.common.dao.DefaultSchema
 import dev.yidafu.blog.common.dao.keys.CONSTRAINT_2
-import dev.yidafu.blog.common.dao.keys.UKLQ3G6MXY1GXWP3A67OWOK926O
+import dev.yidafu.blog.common.dao.keys.UKR9EYOBGIOQOJSDRAYEEYMUNJH
 import dev.yidafu.blog.common.dao.tables.records.BConfigurationRecord
 
 import java.time.LocalTime
@@ -78,16 +78,6 @@ open class BConfiguration(
     val ID: TableField<BConfigurationRecord, Long?> = createField(DSL.name("ID"), SQLDataType.BIGINT.nullable(false), this, "")
 
     /**
-     * The column <code>B_CONFIGURATION.CONFIGKEY</code>.
-     */
-    val CONFIGKEY: TableField<BConfigurationRecord, String?> = createField(DSL.name("CONFIGKEY"), SQLDataType.VARCHAR(255), this, "")
-
-    /**
-     * The column <code>B_CONFIGURATION.CONFIGVALUE</code>.
-     */
-    val CONFIGVALUE: TableField<BConfigurationRecord, String?> = createField(DSL.name("CONFIGVALUE"), SQLDataType.VARCHAR(255), this, "")
-
-    /**
      * The column <code>B_CONFIGURATION.CREATED_AT</code>.
      */
     val CREATED_AT: TableField<BConfigurationRecord, LocalTime?> = createField(DSL.name("CREATED_AT"), SQLDataType.LOCALTIME, this, "")
@@ -96,6 +86,16 @@ open class BConfiguration(
      * The column <code>B_CONFIGURATION.UPDATED_AT</code>.
      */
     val UPDATED_AT: TableField<BConfigurationRecord, LocalTime?> = createField(DSL.name("UPDATED_AT"), SQLDataType.LOCALTIME, this, "")
+
+    /**
+     * The column <code>B_CONFIGURATION.CONFIG_KEY</code>.
+     */
+    val CONFIG_KEY: TableField<BConfigurationRecord, String?> = createField(DSL.name("CONFIG_KEY"), SQLDataType.VARCHAR(255), this, "")
+
+    /**
+     * The column <code>B_CONFIGURATION.CONFIG_VALUE</code>.
+     */
+    val CONFIG_VALUE: TableField<BConfigurationRecord, String?> = createField(DSL.name("CONFIG_VALUE"), SQLDataType.VARCHAR(255), this, "")
 
     private constructor(alias: Name, aliased: Table<BConfigurationRecord>?): this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<BConfigurationRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, null, aliased, parameters, null)
@@ -117,7 +117,7 @@ open class BConfiguration(
     constructor(): this(DSL.name("B_CONFIGURATION"), null)
     override fun getSchema(): Schema? = if (aliased()) null else DefaultSchema.DEFAULT_SCHEMA
     override fun getPrimaryKey(): UniqueKey<BConfigurationRecord> = CONSTRAINT_2
-    override fun getUniqueKeys(): List<UniqueKey<BConfigurationRecord>> = listOf(UKLQ3G6MXY1GXWP3A67OWOK926O)
+    override fun getUniqueKeys(): List<UniqueKey<BConfigurationRecord>> = listOf(UKR9EYOBGIOQOJSDRAYEEYMUNJH)
     override fun `as`(alias: String): BConfiguration = BConfiguration(DSL.name(alias), this)
     override fun `as`(alias: Name): BConfiguration = BConfiguration(alias, this)
     override fun `as`(alias: Table<*>): BConfiguration = BConfiguration(alias.qualifiedName, this)

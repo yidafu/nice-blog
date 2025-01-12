@@ -84,6 +84,11 @@ open class BUserToken(
     val CREATED_AT: TableField<BUserTokenRecord, LocalTime?> = createField(DSL.name("CREATED_AT"), SQLDataType.LOCALTIME, this, "")
 
     /**
+     * The column <code>B_USER_TOKEN.UPDATED_AT</code>.
+     */
+    val UPDATED_AT: TableField<BUserTokenRecord, LocalTime?> = createField(DSL.name("UPDATED_AT"), SQLDataType.LOCALTIME, this, "")
+
+    /**
      * The column <code>B_USER_TOKEN.CREATED_BY</code>.
      */
     val CREATED_BY: TableField<BUserTokenRecord, LocalDate?> = createField(DSL.name("CREATED_BY"), SQLDataType.LOCALDATE.nullable(false), this, "")
@@ -107,11 +112,6 @@ open class BUserToken(
      * The column <code>B_USER_TOKEN.TOKEN</code>.
      */
     val TOKEN: TableField<BUserTokenRecord, String?> = createField(DSL.name("TOKEN"), SQLDataType.VARCHAR(32).nullable(false), this, "")
-
-    /**
-     * The column <code>B_USER_TOKEN.UPDATED_AT</code>.
-     */
-    val UPDATED_AT: TableField<BUserTokenRecord, LocalTime?> = createField(DSL.name("UPDATED_AT"), SQLDataType.LOCALTIME, this, "")
 
     private constructor(alias: Name, aliased: Table<BUserTokenRecord>?): this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<BUserTokenRecord>?, parameters: Array<Field<*>?>?): this(alias, null, null, null, aliased, parameters, null)

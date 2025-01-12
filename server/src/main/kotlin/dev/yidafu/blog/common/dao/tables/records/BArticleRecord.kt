@@ -22,45 +22,45 @@ open class BArticleRecord() : UpdatableRecordImpl<BArticleRecord>(BArticle.B_ART
         set(value): Unit = set(0, value)
         get(): Long? = get(0) as Long?
 
-    open var content: String?
+    open var createdAt: LocalTime?
         set(value): Unit = set(1, value)
-        get(): String? = get(1) as String?
+        get(): LocalTime? = get(1) as LocalTime?
+
+    open var updatedAt: LocalTime?
+        set(value): Unit = set(2, value)
+        get(): LocalTime? = get(2) as LocalTime?
+
+    open var content: String?
+        set(value): Unit = set(3, value)
+        get(): String? = get(3) as String?
 
     open var cover: String?
-        set(value): Unit = set(2, value)
-        get(): String? = get(2) as String?
-
-    open var createdAt: LocalTime?
-        set(value): Unit = set(3, value)
-        get(): LocalTime? = get(3) as LocalTime?
-
-    open var html: String?
         set(value): Unit = set(4, value)
         get(): String? = get(4) as String?
 
-    open var identifier: String?
+    open var html: String?
         set(value): Unit = set(5, value)
         get(): String? = get(5) as String?
 
-    open var series: String?
+    open var identifier: String?
         set(value): Unit = set(6, value)
         get(): String? = get(6) as String?
 
-    open var status: Int?
+    open var series: String?
         set(value): Unit = set(7, value)
-        get(): Int? = get(7) as Int?
+        get(): String? = get(7) as String?
+
+    open var status: Int?
+        set(value): Unit = set(8, value)
+        get(): Int? = get(8) as Int?
 
     open var summary: String?
-        set(value): Unit = set(8, value)
-        get(): String? = get(8) as String?
-
-    open var title: String?
         set(value): Unit = set(9, value)
         get(): String? = get(9) as String?
 
-    open var updatedAt: LocalTime?
+    open var title: String?
         set(value): Unit = set(10, value)
-        get(): LocalTime? = get(10) as LocalTime?
+        get(): String? = get(10) as String?
 
     // -------------------------------------------------------------------------
     // Primary key information
@@ -71,18 +71,18 @@ open class BArticleRecord() : UpdatableRecordImpl<BArticleRecord>(BArticle.B_ART
     /**
      * Create a detached, initialised BArticleRecord
      */
-    constructor(id: Long? = null, content: String? = null, cover: String? = null, createdAt: LocalTime? = null, html: String? = null, identifier: String? = null, series: String? = null, status: Int? = null, summary: String? = null, title: String? = null, updatedAt: LocalTime? = null): this() {
+    constructor(id: Long? = null, createdAt: LocalTime? = null, updatedAt: LocalTime? = null, content: String? = null, cover: String? = null, html: String? = null, identifier: String? = null, series: String? = null, status: Int? = null, summary: String? = null, title: String? = null): this() {
         this.id = id
+        this.createdAt = createdAt
+        this.updatedAt = updatedAt
         this.content = content
         this.cover = cover
-        this.createdAt = createdAt
         this.html = html
         this.identifier = identifier
         this.series = series
         this.status = status
         this.summary = summary
         this.title = title
-        this.updatedAt = updatedAt
         resetChangedOnNotNull()
     }
 }

@@ -83,6 +83,11 @@ open class BUser(
     val CREATED_AT: TableField<BUserRecord, LocalTime?> = createField(DSL.name("CREATED_AT"), SQLDataType.LOCALTIME, this, "")
 
     /**
+     * The column <code>B_USER.UPDATED_AT</code>.
+     */
+    val UPDATED_AT: TableField<BUserRecord, LocalTime?> = createField(DSL.name("UPDATED_AT"), SQLDataType.LOCALTIME, this, "")
+
+    /**
      * The column <code>B_USER.EMAIL</code>.
      */
     val EMAIL: TableField<BUserRecord, String?> = createField(DSL.name("EMAIL"), SQLDataType.VARCHAR(255), this, "")
@@ -101,11 +106,6 @@ open class BUser(
      * The column <code>B_USER.STATUS</code>.
      */
     val STATUS: TableField<BUserRecord, Int?> = createField(DSL.name("STATUS"), SQLDataType.INTEGER, this, "")
-
-    /**
-     * The column <code>B_USER.UPDATED_AT</code>.
-     */
-    val UPDATED_AT: TableField<BUserRecord, LocalTime?> = createField(DSL.name("UPDATED_AT"), SQLDataType.LOCALTIME, this, "")
 
     /**
      * The column <code>B_USER.USERNAME</code>.

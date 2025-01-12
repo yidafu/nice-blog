@@ -26,25 +26,25 @@ open class BUserRecord() : UpdatableRecordImpl<BUserRecord>(BUser.B_USER) {
         set(value): Unit = set(1, value)
         get(): LocalTime? = get(1) as LocalTime?
 
-    open var email: String?
+    open var updatedAt: LocalTime?
         set(value): Unit = set(2, value)
-        get(): String? = get(2) as String?
+        get(): LocalTime? = get(2) as LocalTime?
 
-    open var logincount: String?
+    open var email: String?
         set(value): Unit = set(3, value)
         get(): String? = get(3) as String?
 
-    open var password: String?
+    open var logincount: String?
         set(value): Unit = set(4, value)
         get(): String? = get(4) as String?
 
-    open var status: Int?
+    open var password: String?
         set(value): Unit = set(5, value)
-        get(): Int? = get(5) as Int?
+        get(): String? = get(5) as String?
 
-    open var updatedAt: LocalTime?
+    open var status: Int?
         set(value): Unit = set(6, value)
-        get(): LocalTime? = get(6) as LocalTime?
+        get(): Int? = get(6) as Int?
 
     open var username: String?
         set(value): Unit = set(7, value)
@@ -59,14 +59,14 @@ open class BUserRecord() : UpdatableRecordImpl<BUserRecord>(BUser.B_USER) {
     /**
      * Create a detached, initialised BUserRecord
      */
-    constructor(id: Long? = null, createdAt: LocalTime? = null, email: String? = null, logincount: String? = null, password: String? = null, status: Int? = null, updatedAt: LocalTime? = null, username: String? = null): this() {
+    constructor(id: Long? = null, createdAt: LocalTime? = null, updatedAt: LocalTime? = null, email: String? = null, logincount: String? = null, password: String? = null, status: Int? = null, username: String? = null): this() {
         this.id = id
         this.createdAt = createdAt
+        this.updatedAt = updatedAt
         this.email = email
         this.logincount = logincount
         this.password = password
         this.status = status
-        this.updatedAt = updatedAt
         this.username = username
         resetChangedOnNotNull()
     }
