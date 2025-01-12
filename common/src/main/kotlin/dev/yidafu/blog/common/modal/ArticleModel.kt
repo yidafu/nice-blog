@@ -14,12 +14,12 @@ class ArticleModel(
   var id: Long? = null,
 
   @CreationTimestamp
-@Column(name = "created_at")
-var createdAt: LocalTime? = null,
+  @Column(name = "created_at")
+  var createdAt: LocalTime? = null,
 
-@UpdateTimestamp
-@Column(name = "updated_at")
-var updatedAt: LocalTime? = null,
+  @UpdateTimestamp
+  @Column(name = "updated_at")
+  var updatedAt: LocalTime? = null,
   @Column
   var title: String = "",
   @Column

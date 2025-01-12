@@ -1,23 +1,25 @@
 package dev.yidafu.blog.common.services
 
+import dev.yidafu.blog.common.converter.UserConvertor
+import dev.yidafu.blog.common.dao.tables.records.BUserRecord
+import dev.yidafu.blog.common.dao.tables.references.B_USER
 import dev.yidafu.blog.common.modal.UserModal
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.future.await
+import kotlinx.coroutines.withContext
 import org.hibernate.reactive.stage.Stage.SessionFactory
+import org.jooq.DSLContext
 import org.koin.core.annotation.Single
+import org.mapstruct.factory.Mappers
 
 @Single
 class UserService(
-  private val sessionFactory: SessionFactory,
+  private val context: DSLContext,
 ) {
-  internal suspend fun getUserByUsername(username: String): UserModal? {
-    val criteriaBuilder = sessionFactory.criteriaBuilder
+  private val userConvertor = Mappers.getMapper(UserConvertor::class.java)
+  internal suspend fun getUserByUsername(username: String): UserModal? = withContext(Dispatchers.IO) {
+    val userRecord: BUserRecord? = context.selectFrom(B_USER).where(B_USER.USERNAME.eq(username)).fetchOne()
 
-    return sessionFactory.withSession { session ->
-      val query = criteriaBuilder.createQuery(UserModal::class.java)
-      val from = query.from(UserModal::class.java)
-      query.where(criteriaBuilder.equal(from.get<String>(UserModal::username.name), username))
-      query.select(from)
-      session.createQuery(query).singleResultOrNull
-    }.await()
+    userConvertor.recordToModal(userRecord)
   }
 }

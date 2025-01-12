@@ -1,5 +1,6 @@
 package dev.yidafu.blog.common.modal
 
+import dev.yidafu.blog.common.modal.SyncTaskModel.Companion.APPEND_LOG_TEXT
 import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
@@ -15,7 +16,7 @@ enum class SyncTaskStatus() {
 
 @NamedQueries(
   NamedQuery(
-    name = "APPEND_LOG_TEXT",
+    name = APPEND_LOG_TEXT,
     query = "UPDATE b_sync_task  set logs=CONCAT(logs, :logs) where uuid = :uuid"
   )
 )

@@ -12,37 +12,37 @@ import dev.yidafu.blog.fe.handler.FeHandlerModule
 import dev.yidafu.blog.fe.service.FeServiceModule
 import io.vertx.kotlin.coroutines.CoroutineRouterSupport
 import io.vertx.kotlin.coroutines.CoroutineVerticle
-import io.vertx.kotlin.coroutines.coAwait
 import jakarta.persistence.EntityManagerFactory
-import jakarta.persistence.Persistence
 import org.hibernate.reactive.stage.Stage
+import org.jooq.DSLContext
 import org.jooq.impl.DSL
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
 import org.koin.ksp.generated.module
 import org.slf4j.LoggerFactory
-import java.sql.DriverManager
 
 class MainVerticle : CoroutineVerticle(), CoroutineRouterSupport {
-private val log = LoggerFactory.getLogger(MainVerticle::class.java)
+  private val log = LoggerFactory.getLogger(MainVerticle::class.java)
   private lateinit var emf: EntityManagerFactory
   private val developmentIdList = mutableListOf<String>()
   override suspend fun start() {
 
-    vertx.executeBlocking { promise ->
-      emf = Persistence
-        .createEntityManagerFactory("nice-db", emptyMap<String, String>())
-      promise.complete(true)
-    }.coAwait()
+//    vertx.executeBlocking { promise ->
+//      emf = Persistence
+//        .createEntityManagerFactory("nice-db", emptyMap<String, String>())
+//      promise.complete(true)
+//    }.coAwait()
 
-    DSL.using(
+    val jooqContext = DSL.using(
       "jdbc:sqlite:./nice-blog.db",
       "",
       ""
-    ).use { ctx ->
+    )
+
+    jooqContext.use { ctx ->
       ctx.ddl(DefaultSchema.DEFAULT_SCHEMA).queries().forEach { query ->
-        log.info("jooq query {}",query)
-       }
+        log.info("jooq query {}", query)
+      }
       ctx.selectCount().from(BArticle.B_ARTICLE)
         .fetch().forEach { r ->
           log.info("joop count {}", r.value1())
@@ -59,7 +59,11 @@ private val log = LoggerFactory.getLogger(MainVerticle::class.java)
           emf.unwrap(Stage.SessionFactory::class.java)
         }
       }
+      val JooqModule = module {
+        factory<DSLContext> { jooqContext }
+      }
       modules(
+        JooqModule,
         entityModule,
         CommonHandlerModule().module,
         CommonServiceModule().module,
