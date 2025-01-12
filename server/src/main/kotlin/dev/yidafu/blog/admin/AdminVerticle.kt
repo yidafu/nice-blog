@@ -66,7 +66,7 @@ class AdminVerticle(private val koin: Koin): CoroutineVerticle(), CoroutineRoute
     val bus = vertx.eventBus()
     bus.consumer<String>(ConstantKeys.UPDATE_CRON_EXPR) { msg ->
       val cronExpMsg = msg.body()
-      log.info("update cron expression $cronExpMsg")
+      log.info("update cron expression ($cronExpMsg)")
       val triggerKey = triggerKey(SynchronousJob.TRIGGER, SynchronousJob.GROUP)
       if (scheduler.checkExists(triggerKey)) {
         // stop schedule job

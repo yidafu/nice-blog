@@ -4,18 +4,14 @@ import dev.yidafu.blog.common.converter.ArticleConvertor
 import dev.yidafu.blog.common.dao.tables.records.BArticleRecord
 import dev.yidafu.blog.common.dao.tables.references.B_ARTICLE
 import dev.yidafu.blog.common.modal.ArticleModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.future.await
-import kotlinx.coroutines.withContext
-import org.hibernate.reactive.stage.Stage.SessionFactory
-import org.jooq.DSLContext
+import org.jooq.CloseableDSLContext
 import org.koin.core.annotation.Single
 import org.mapstruct.factory.Mappers
 
 @Single
 class ArticleService(
-  private val context: DSLContext,
-) {
+  private val context: CloseableDSLContext,
+) : BaseService(context) {
   private val articleConvertor = Mappers.getMapper(ArticleConvertor::class.java)
 
   suspend fun saveArticle(article: ArticleModel): Boolean {
@@ -46,7 +42,7 @@ class ArticleService(
     articleConvertor.mapToRecord(article, oldRecord)
     oldRecord?.store()
   }
-  suspend fun findArticleByName(name: String): ArticleModel?  = withContext(Dispatchers.IO) {
+  suspend fun findArticleByName(name: String): ArticleModel?  = runDB {
     val article: BArticleRecord? = context.selectFrom(B_ARTICLE).where(
       B_ARTICLE.IDENTIFIER.eq(name)
     ).fetchOne()
