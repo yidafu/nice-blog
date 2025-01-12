@@ -12,5 +12,4 @@ data class ArticleVO(
   var content: String? = null,
   var html: String? = null,
   val updatedAt: LocalTime? = null,
-) : PageVO() {
-}
+) : PageVO()

@@ -3,9 +3,6 @@ package dev.yidafu.blog.dev.yidafu.blog.engine
 import com.charleskorn.kaml.Yaml
 import dev.yidafu.blog.common.dto.FrontMatterDTO
 import dev.yidafu.blog.common.dto.MarkdownArticleDTO
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import org.intellij.markdown.IElementType
 import org.intellij.markdown.MarkdownElementTypes
@@ -32,7 +29,6 @@ import kotlin.io.path.extension
 import kotlin.io.path.name
 import kotlin.io.path.nameWithoutExtension
 
-
 abstract class GitSynchronousTaskTemplate(protected val ctx: SyncContext) {
   private val log = LoggerFactory.getLogger(this::class.java)
 
@@ -41,20 +37,28 @@ abstract class GitSynchronousTaskTemplate(protected val ctx: SyncContext) {
       linkMap: LinkMap,
       baseURI: org.intellij.markdown.html.URI?,
     ): Map<IElementType, GeneratingProvider> {
-      return super.createHtmlGeneratingProviders(linkMap, baseURI) + hashMapOf(
-        MarkdownElementTypes.CODE_FENCE to CodeFenceGeneratingProvider()
-      )
+      return super.createHtmlGeneratingProviders(linkMap, baseURI) +
+        hashMapOf(
+          MarkdownElementTypes.CODE_FENCE to CodeFenceGeneratingProvider(),
+        )
     }
   }
 
   private val flavour = GFMFlavorExtendDescriptor()
   private val parser = MarkdownParser(flavour)
 
-  private fun resolvePath(file: File, url: String): File {
+  private fun resolvePath(
+    file: File,
+    url: String,
+  ): File {
     return Paths.get(file.parentFile.absolutePath, url).toFile()
   }
 
-  private fun parseFrontMatter(markdownFile: File, text: String, tree: ASTNode): FrontMatterDTO? {
+  private fun parseFrontMatter(
+    markdownFile: File,
+    text: String,
+    tree: ASTNode,
+  ): FrontMatterDTO? {
     val horizontalRules = tree.findChildrenOfType(MarkdownTokenTypes.HORIZONTAL_RULE)
     if (horizontalRules.size > 1) {
       // markdown file start with `---`
@@ -97,28 +101,29 @@ abstract class GitSynchronousTaskTemplate(protected val ctx: SyncContext) {
 //    ctx.log("tree type ${tree.type.name}")
     val frontMatterDTO = parseFrontMatter(markdownFile, text, parser.buildMarkdownTreeFromString(text))
 
-    val textWithoutFrontMatter = frontMatterDTO?.rawContent?.let { rawContent ->
-      text.replace(rawContent, "")
-    } ?: text
+    val textWithoutFrontMatter =
+      frontMatterDTO?.rawContent?.let { rawContent ->
+        text.replace(rawContent, "")
+      } ?: text
 //    ctx.log("textWithoutFrontMatter ==> $textWithoutFrontMatter")
 
     val tree = parser.buildMarkdownTreeFromString(textWithoutFrontMatter)
     MarkdownVisitor(path.toFile(), textWithoutFrontMatter).visitNode(tree)
     val html = HtmlGenerator(textWithoutFrontMatter, tree, flavour).generateHtml()
 
-    val dto = MarkdownArticleDTO(
-      filename,
-      "",
-      frontMatterDTO,
-      textWithoutFrontMatter,
-      html,
-      createDate,
-      updateDate,
-    )
+    val dto =
+      MarkdownArticleDTO(
+        filename,
+        "",
+        frontMatterDTO,
+        textWithoutFrontMatter,
+        html,
+        createDate,
+        updateDate,
+      )
     return dto
 //    ctx.log("markdown article $dto")
   }
-
 
   /**
    * upload local image to server
@@ -131,6 +136,7 @@ abstract class GitSynchronousTaskTemplate(protected val ctx: SyncContext) {
   abstract fun persistentPost(dto: MarkdownArticleDTO)
 
   abstract fun cleanup()
+
   suspend fun sync() {
     // execute sync task in io thread
     ctx.onStart()
@@ -142,10 +148,11 @@ abstract class GitSynchronousTaskTemplate(protected val ctx: SyncContext) {
         repoDirectory.toPath(),
         Int.MAX_VALUE,
         { path, file: BasicFileAttributes ->
-          file.isRegularFile
-            && path.extension == "md"
-            && path.nameWithoutExtension != "README"
-        })
+          file.isRegularFile &&
+            path.extension == "md" &&
+            path.nameWithoutExtension != "README"
+        },
+      )
         .use { paths ->
           paths.forEach { path ->
             ctx.log("reading markdown file $path")
@@ -161,20 +168,17 @@ abstract class GitSynchronousTaskTemplate(protected val ctx: SyncContext) {
     } finally {
       cleanup()
     }
-
   }
 
   inner class MarkdownVisitor(
     private val markdownFile: File,
     private val markdownText: String,
   ) : RecursiveVisitor() {
-
     override fun visitNode(node: ASTNode) {
       if (node is CompositeASTNode) {
         if (node.type == MarkdownElementTypes.IMAGE) {
           extractImageLinks(node)
         }
-
       }
       super.visitNode(node)
     }

@@ -14,32 +14,36 @@ import org.slf4j.LoggerFactory
 class CodeFenceGeneratingProvider : GeneratingProvider {
   private val log = LoggerFactory.getLogger(this::class.java)
 
-  internal fun toSyntaxLanguage(language: String): SyntaxLanguage = when (language.toLowerCase()) {
-    "js", "javascript" -> SyntaxLanguage.JAVASCRIPT
-    "ts", "typescript" -> SyntaxLanguage.TYPESCRIPT
-    "c" -> SyntaxLanguage.C
-    "cpp", "c++" -> SyntaxLanguage.CPP
-    "c#", "csharp" -> SyntaxLanguage.CSHARP
-    "dart" -> SyntaxLanguage.DART
-    "java" -> SyntaxLanguage.JAVA
-    "kt", "kotlin" -> SyntaxLanguage.KOTLIN
-    "rs", "rust" -> SyntaxLanguage.RUST
-    "perl" -> SyntaxLanguage.PERL
-    "py", "python" -> SyntaxLanguage.PYTHON
-    "rb", "ruby" -> SyntaxLanguage.RUBY
-    "sh", "shell", "bash" -> SyntaxLanguage.SHELL
-    "swift" -> SyntaxLanguage.SWIFT
-    "go" -> SyntaxLanguage.GO
-    "php" -> SyntaxLanguage.PHP
-    else -> SyntaxLanguage.DEFAULT
-  }
+  internal fun toSyntaxLanguage(language: String): SyntaxLanguage =
+    when (language.toLowerCase()) {
+      "js", "javascript" -> SyntaxLanguage.JAVASCRIPT
+      "ts", "typescript" -> SyntaxLanguage.TYPESCRIPT
+      "c" -> SyntaxLanguage.C
+      "cpp", "c++" -> SyntaxLanguage.CPP
+      "c#", "csharp" -> SyntaxLanguage.CSHARP
+      "dart" -> SyntaxLanguage.DART
+      "java" -> SyntaxLanguage.JAVA
+      "kt", "kotlin" -> SyntaxLanguage.KOTLIN
+      "rs", "rust" -> SyntaxLanguage.RUST
+      "perl" -> SyntaxLanguage.PERL
+      "py", "python" -> SyntaxLanguage.PYTHON
+      "rb", "ruby" -> SyntaxLanguage.RUBY
+      "sh", "shell", "bash" -> SyntaxLanguage.SHELL
+      "swift" -> SyntaxLanguage.SWIFT
+      "go" -> SyntaxLanguage.GO
+      "php" -> SyntaxLanguage.PHP
+      else -> SyntaxLanguage.DEFAULT
+    }
 
-  internal fun generateCodeHighlight(code: String, language: String): String {
-
-    val highlights = Highlights.Builder().code(code)
-      .theme(SyntaxThemes.atom())
-      .language(toSyntaxLanguage(language))
-      .build()
+  internal fun generateCodeHighlight(
+    code: String,
+    language: String,
+  ): String {
+    val highlights =
+      Highlights.Builder().code(code)
+        .theme(SyntaxThemes.atom())
+        .language(toSyntaxLanguage(language))
+        .build()
 
     val sortedHighlights = highlights.getHighlights().sortedBy { it.location.start }
 
@@ -55,14 +59,14 @@ class CodeFenceGeneratingProvider : GeneratingProvider {
             ColorHighlight(
               PhraseLocation(previous.location.start, current.location.start),
               previous.rgb,
-            )
+            ),
           )
           resolveConflictHighlights.add(current)
           resolveConflictHighlights.add(
             ColorHighlight(
               PhraseLocation(current.location.end, previous.location.end),
-              previous.rgb
-            )
+              previous.rgb,
+            ),
           )
         }
         idx += 2
@@ -73,32 +77,36 @@ class CodeFenceGeneratingProvider : GeneratingProvider {
     }
     resolveConflictHighlights.add(sortedHighlights[sortedHighlights.lastIndex])
 
-    val codeHtml = createHTML().apply {
-
-      resolveConflictHighlights.fold(0) { acc, highlight ->
-        if (acc != highlight.location.start) {
-          span {
-            + code.substring(acc, highlight.location.start)
+    val codeHtml =
+      createHTML().apply {
+        resolveConflictHighlights.fold(0) { acc, highlight ->
+          if (acc != highlight.location.start) {
+            span {
+              +code.substring(acc, highlight.location.start)
+            }
           }
+          if (highlight is ColorHighlight) {
+            span {
+              style = "color: #${Integer.toHexString(highlight.rgb)}"
+              +code.substring(highlight.location.start, highlight.location.end)
+            }
+          } else if (highlight is BoldHighlight) {
+            b {
+              +code.substring(highlight.location.start, highlight.location.end)
+            }
+          }
+          highlight.location.end
         }
-        if (highlight is ColorHighlight) {
-          span {
-            style = "color: #${Integer.toHexString(highlight.rgb)}"
-            + code.substring(highlight.location.start, highlight.location.end)
-          }
-        } else if (highlight is BoldHighlight) {
-          b {
-            + code.substring(highlight.location.start, highlight.location.end)
-          }
-        }
-        highlight.location.end
-      }
-    }.finalize()
+      }.finalize()
 
     return codeHtml
   }
 
-  override fun processNode(visitor: HtmlGenerator.HtmlGeneratingVisitor, text: String, node: ASTNode) {
+  override fun processNode(
+    visitor: HtmlGenerator.HtmlGeneratingVisitor,
+    text: String,
+    node: ASTNode,
+  ) {
     val indentBefore = node.getTextInNode(text).commonPrefixWith(" ".repeat(10)).length
 
     visitor.consumeHtml("<pre>")
@@ -111,7 +119,6 @@ class CodeFenceGeneratingProvider : GeneratingProvider {
     }
 
     var lastChildWasContent = false
-
 
     val attributes = ArrayList<String>()
     var language = ""

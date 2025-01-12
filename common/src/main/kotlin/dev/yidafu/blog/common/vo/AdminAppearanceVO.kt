@@ -1,5 +1,3 @@
 package dev.yidafu.blog.common.vo
 
-
-class AdminAppearanceVO(
-) : PageVO()
+class AdminAppearanceVO() : PageVO()

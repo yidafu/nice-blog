@@ -3,10 +3,7 @@ package dev.yidafu.blog.common.modal
 import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
-import java.sql.Date
-import java.time.LocalDate
 import java.time.LocalTime
-
 
 @MappedSuperclass
 open class BaseModel {
@@ -22,4 +19,3 @@ open class BaseModel {
   @Column(name = "updated_at")
   var updatedAt: LocalTime? = null
 }
-

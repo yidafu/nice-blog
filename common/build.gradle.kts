@@ -1,7 +1,7 @@
 plugins {
   kotlin("jvm") version "2.0.21"
   kotlin("plugin.serialization") version "2.0.21"
-
+  id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
 }
 
 group = "dev.yidafu.blog"
@@ -20,7 +20,6 @@ dependencies {
   implementation("org.hibernate:hibernate-core:5.6.15.Final")
   // https://mvnrepository.com/artifact/jakarta.persistence/jakarta.persistence-api
   implementation("jakarta.persistence:jakarta.persistence-api:3.2.0")
-
 }
 
 tasks.test {
