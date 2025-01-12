@@ -9,17 +9,7 @@ import java.util.*
 @Entity
 @Table(name = "b_user")
 class UserModal(
-  @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  var id: Long? = null,
 
-  @CreationTimestamp
-  @Column(name = "created_at")
-  var createdAt: LocalTime? = null,
-
-  @UpdateTimestamp
-  @Column(name = "updated_at")
-  var updatedAt: LocalTime? = null,
   @Column(unique = true)
   val username: String = "",
   @Column
@@ -30,4 +20,4 @@ class UserModal(
   val status: Int? = null,
   @Column
   val loginCount: String? = null,
-) // : BaseModel()
+)  : BaseModel()

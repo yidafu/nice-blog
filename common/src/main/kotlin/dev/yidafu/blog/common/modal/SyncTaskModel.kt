@@ -22,17 +22,7 @@ enum class SyncTaskStatus() {
 )
 @Entity(name = "b_sync_task")
 class SyncTaskModel(
-  @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  var id: Long? = null,
 
-  @CreationTimestamp
-  @Column(name = "created_at")
-  var createdAt: LocalTime? = null,
-
-  @UpdateTimestamp
-  @Column(name = "updated_at")
-  var updatedAt: LocalTime? = null,
   @Column
   var callbackUrl: String? = null,
 
@@ -45,7 +35,7 @@ class SyncTaskModel(
 
   @Column(columnDefinition = "MEDIUMTEXT")
   var logs: String? = null,
-) /*: BaseModel() */
+) : BaseModel()
 {
   companion object {
     const val APPEND_LOG_TEXT = "APPEND_LOG_TEXT"

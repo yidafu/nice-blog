@@ -8,22 +8,12 @@ import java.time.LocalTime
 
 @Entity
 @Table(name = "b_configuration", uniqueConstraints = [
-  UniqueConstraint(columnNames = ["configKey"])
+  UniqueConstraint(columnNames = ["config_key"])
 ])
 data class ConfigurationModal(
-  @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  var id: Long? = null,
+  @Column(name = "config_key")
+  var configKey: String = "",
 
-  @CreationTimestamp
-  @Column(name = "created_at")
-  var createdAt: LocalTime? = null,
-
-  @UpdateTimestamp
-  @Column(name = "updated_at")
-  var updatedAt: LocalTime? = null,
-  @Column
-  val configKey: String = "",
-  @Column
-  val configValue: String = "",
-) // : BaseModel()
+  @Column(name = "config_value")
+  var configValue: String = "",
+)  : BaseModel()
