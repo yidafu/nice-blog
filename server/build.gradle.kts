@@ -1,6 +1,7 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jooq.meta.jaxb.Logging
 
 plugins {
   kotlin("jvm") version "2.0.21"
@@ -9,6 +10,8 @@ plugins {
   id("com.github.johnrengelman.shadow") version "7.1.2"
   id("com.google.devtools.ksp") version "2.0.21-1.0.27"
   kotlin("plugin.serialization") version "2.0.21"
+  id("org.jooq.jooq-codegen-gradle") version "3.19.16"
+  id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
 
   id("de.comahe.i18n4k") version "0.9.0"
 }
@@ -25,7 +28,7 @@ val mainVerticleName = "dev.yidafu.blog.MainVerticle"
 val launcherClassName = "io.vertx.core.Launcher"
 
 val watchForChange = "src/**/*"
-val doOnChange = "${projectDir}/gradlew classes"
+val doOnChange = "$projectDir/gradlew classes"
 
 application {
   mainClass.set(launcherClassName)
@@ -47,10 +50,10 @@ dependencies {
   implementation("io.vertx:vertx-lang-kotlin")
   implementation("io.vertx:vertx-config")
   implementation("org.hibernate.reactive:hibernate-reactive-core:2.4.2.Final")
+  implementation("org.hibernate.orm:hibernate-core:6.6.4.Final")
 
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
   implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
-
 
   implementation(kotlin("stdlib-jdk8"))
   implementation(kotlin("reflect"))
@@ -81,10 +84,20 @@ dependencies {
 
   implementation("org.jetbrains:markdown:0.7.3")
 
-
   implementation("dev.whyoleg.cryptography:cryptography-core:0.4.0")
   implementation("dev.whyoleg.cryptography:cryptography-provider-jdk:0.4.0")
 
+  implementation("org.jooq:jooq:3.19.16")
+  implementation("org.jooq:jooq-meta-extensions:3.19.17")
+  implementation("org.jooq:jooq-meta-extensions-hibernate:3.19.17")
+
+  jooqCodegen("org.jooq:jooq-meta-extensions:3.19.16")
+  jooqCodegen("mysql:mysql-connector-java:8.0.33")
+  jooqCodegen("org.jooq:jooq-meta-extensions-hibernate:3.19.17")
+  jooqCodegen("org.hibernate:hibernate-core-jakarta:5.6.15.Final")
+
+  jooqCodegen(project(":common"))
+  jooqCodegen("org.xerial:sqlite-jdbc:3.47.1.0")
 }
 
 kapt {
@@ -95,7 +108,6 @@ kapt {
     arg("mapstruct.verbose", true)
   }
 }
-
 
 val compileKotlin: KotlinCompile by tasks
 compileKotlin.kotlinOptions.jvmTarget = "17"
@@ -116,17 +128,59 @@ tasks.withType<Test> {
 }
 
 tasks.withType<JavaExec> {
-  args = listOf(
-    "run",
-    mainVerticleName,
-    "--redeploy=$watchForChange",
-    "--launcher-class=$launcherClassName",
-    "--on-redeploy=$doOnChange"
-  )
+  args =
+    listOf(
+      "run",
+      mainVerticleName,
+      "--redeploy=$watchForChange",
+      "--launcher-class=$launcherClassName",
+      "--on-redeploy=$doOnChange",
+    )
 }
-
 
 i18n4k {
   commentLocale = "zh-CN"
   sourceCodeLocales = listOf("en", "zh-CN")
+}
+
+jooq {
+  configuration {
+    logging = Logging.TRACE
+    jdbc {
+      driver = "org.sqlite.JDBC"
+      url = "jdbc:sqlite:./nice-blog.db"
+//      user = "[your database user]"
+//      password = "[your database password]"
+    }
+
+    generator {
+      name = "org.jooq.codegen.KotlinGenerator"
+      generate {
+        isKotlinSetterJvmNameAnnotationsOnIsPrefix = true
+      }
+      database {
+        name = "org.jooq.meta.extensions.jpa.JPADatabase"
+
+        properties {
+          property {
+            key = "packages"
+            value = "dev.yidafu.blog.common.modal"
+          }
+
+          property {
+            key = "unqualifiedSchema"
+            value = "none"
+          }
+        }
+      }
+
+      target {
+        packageName = "dev.yidafu.blog.common.dao"
+        directory = "src/main/kotlin"
+      }
+    }
+  }
+}
+configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
+  debug.set(true)
 }

@@ -17,7 +17,6 @@ class FrontendVerticle(private val koin: Koin) : CoroutineVerticle(), CoroutineR
     super.start()
 
   try {
-
     val server = vertx.createHttpServer()
     val router = Router.router(vertx)
     router.route().handler(LoggerHandler.create())

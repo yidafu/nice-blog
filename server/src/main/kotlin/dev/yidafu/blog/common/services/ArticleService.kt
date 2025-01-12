@@ -1,14 +1,19 @@
 package dev.yidafu.blog.common.services
 
+import dev.yidafu.blog.common.converter.ArticleConvertor
+import dev.yidafu.blog.common.dao.tables.records.BArticleRecord
+import dev.yidafu.blog.common.dao.tables.references.B_ARTICLE
 import dev.yidafu.blog.common.modal.ArticleModel
-import kotlinx.coroutines.future.await
-import org.hibernate.reactive.stage.Stage.SessionFactory
+import org.jooq.CloseableDSLContext
 import org.koin.core.annotation.Single
+import org.mapstruct.factory.Mappers
 
 @Single
 class ArticleService(
-  private val sessionFactory: SessionFactory,
-) {
+  private val context: CloseableDSLContext,
+) : BaseService(context) {
+  private val articleConvertor = Mappers.getMapper(ArticleConvertor::class.java)
+
   suspend fun saveArticle(article: ArticleModel): Boolean {
     if (article.identifier == null) {
       return false
@@ -25,28 +30,22 @@ class ArticleService(
 
     return true
   }
+
   private suspend fun createArticle(article: ArticleModel) {
-    sessionFactory.withSession { session ->
-      session.persist(article)
-      session.flush()
-    }.await()
+    val newArticleRecord: BArticleRecord = context.newRecord(B_ARTICLE)
+    articleConvertor.mapToRecord(article, newArticleRecord)
+    newArticleRecord.store()
   }
 
   private suspend fun updateArticle(article: ArticleModel) {
-    sessionFactory.withSession { session ->
-      session.merge(article)
-      session.flush()
-    }.await()
+    val oldRecord: BArticleRecord? = context.selectFrom(B_ARTICLE).where(B_ARTICLE.ID.eq(article.id)).fetchOne()
+    articleConvertor.mapToRecord(article, oldRecord)
+    oldRecord?.store()
   }
-  suspend fun findArticleByName(name: String): ArticleModel? {
-    val criteriaBuilder = sessionFactory.criteriaBuilder
-
-    return sessionFactory.withSession { session ->
-      val query = criteriaBuilder.createQuery(ArticleModel::class.java)
-      val from = query.from(ArticleModel::class.java)
-      query.where(criteriaBuilder.equal(from.get<String>(ArticleModel::identifier.name), name))
-      query.select(from)
-      session.createQuery(query).singleResultOrNull
-    }.await()
+  suspend fun findArticleByName(name: String): ArticleModel?  = runDB {
+    val article: BArticleRecord? = context.selectFrom(B_ARTICLE).where(
+      B_ARTICLE.IDENTIFIER.eq(name)
+    ).fetchOne()
+     articleConvertor.recordToModal(article)
   }
 }
