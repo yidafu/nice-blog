@@ -15,6 +15,7 @@ import kotlin.collections.Collection
 import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.ForeignKey
+import org.jooq.Identity
 import org.jooq.InverseForeignKey
 import org.jooq.Name
 import org.jooq.PlainSQL
@@ -73,7 +74,7 @@ open class BArticle(
     /**
      * The column <code>B_ARTICLE.ID</code>.
      */
-    val ID: TableField<BArticleRecord, Long?> = createField(DSL.name("ID"), SQLDataType.BIGINT.nullable(false), this, "")
+    val ID: TableField<BArticleRecord, Long?> = createField(DSL.name("ID"), SQLDataType.BIGINT.nullable(false).identity(true), this, "")
 
     /**
      * The column <code>B_ARTICLE.CREATED_AT</code>.
@@ -144,6 +145,7 @@ open class BArticle(
      */
     constructor(): this(DSL.name("B_ARTICLE"), null)
     override fun getSchema(): Schema? = if (aliased()) null else DefaultSchema.DEFAULT_SCHEMA
+    override fun getIdentity(): Identity<BArticleRecord, Long?> = super.getIdentity() as Identity<BArticleRecord, Long?>
     override fun getPrimaryKey(): UniqueKey<BArticleRecord> = CONSTRAINT_C
     override fun `as`(alias: String): BArticle = BArticle(DSL.name(alias), this)
     override fun `as`(alias: Name): BArticle = BArticle(alias, this)

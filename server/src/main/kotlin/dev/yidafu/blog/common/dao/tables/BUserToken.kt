@@ -18,6 +18,7 @@ import kotlin.collections.List
 import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.ForeignKey
+import org.jooq.Identity
 import org.jooq.InverseForeignKey
 import org.jooq.Name
 import org.jooq.PlainSQL
@@ -76,7 +77,7 @@ open class BUserToken(
     /**
      * The column <code>B_USER_TOKEN.ID</code>.
      */
-    val ID: TableField<BUserTokenRecord, Long?> = createField(DSL.name("ID"), SQLDataType.BIGINT.nullable(false), this, "")
+    val ID: TableField<BUserTokenRecord, Long?> = createField(DSL.name("ID"), SQLDataType.BIGINT.nullable(false).identity(true), this, "")
 
     /**
      * The column <code>B_USER_TOKEN.CREATED_AT</code>.
@@ -132,6 +133,7 @@ open class BUserToken(
      */
     constructor(): this(DSL.name("B_USER_TOKEN"), null)
     override fun getSchema(): Schema? = if (aliased()) null else DefaultSchema.DEFAULT_SCHEMA
+    override fun getIdentity(): Identity<BUserTokenRecord, Long?> = super.getIdentity() as Identity<BUserTokenRecord, Long?>
     override fun getPrimaryKey(): UniqueKey<BUserTokenRecord> = CONSTRAINT_3
     override fun getUniqueKeys(): List<UniqueKey<BUserTokenRecord>> = listOf(UK_1D63EUQ1SRIUU4GWDPQHR6559)
     override fun `as`(alias: String): BUserToken = BUserToken(DSL.name(alias), this)

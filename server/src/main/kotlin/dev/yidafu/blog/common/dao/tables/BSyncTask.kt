@@ -15,6 +15,7 @@ import kotlin.collections.Collection
 import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.ForeignKey
+import org.jooq.Identity
 import org.jooq.InverseForeignKey
 import org.jooq.Name
 import org.jooq.PlainSQL
@@ -73,7 +74,7 @@ open class BSyncTask(
     /**
      * The column <code>B_SYNC_TASK.ID</code>.
      */
-    val ID: TableField<BSyncTaskRecord, Long?> = createField(DSL.name("ID"), SQLDataType.BIGINT.nullable(false), this, "")
+    val ID: TableField<BSyncTaskRecord, Long?> = createField(DSL.name("ID"), SQLDataType.BIGINT.nullable(false).identity(true), this, "")
 
     /**
      * The column <code>B_SYNC_TASK.CREATED_AT</code>.
@@ -124,6 +125,7 @@ open class BSyncTask(
      */
     constructor(): this(DSL.name("B_SYNC_TASK"), null)
     override fun getSchema(): Schema? = if (aliased()) null else DefaultSchema.DEFAULT_SCHEMA
+    override fun getIdentity(): Identity<BSyncTaskRecord, Long?> = super.getIdentity() as Identity<BSyncTaskRecord, Long?>
     override fun getPrimaryKey(): UniqueKey<BSyncTaskRecord> = CONSTRAINT_CF
     override fun `as`(alias: String): BSyncTask = BSyncTask(DSL.name(alias), this)
     override fun `as`(alias: Name): BSyncTask = BSyncTask(alias, this)

@@ -15,6 +15,7 @@ import io.vertx.kotlin.coroutines.CoroutineVerticle
 import org.jooq.CloseableDSLContext
 import org.jooq.DDLExportConfiguration
 import org.jooq.DDLFlag
+import org.jooq.DSLContext
 import org.jooq.impl.DSL
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
@@ -24,11 +25,12 @@ import org.slf4j.LoggerFactory
 class MainVerticle : CoroutineVerticle(), CoroutineRouterSupport {
   private val log = LoggerFactory.getLogger(MainVerticle::class.java)
   private val developmentIdList = mutableListOf<String>()
+  private lateinit var dslContext: CloseableDSLContext
 
-  private fun readResource(filename: String): String {
+  private fun readResource(filename: String): List<String> {
     return MainVerticle::class.java.classLoader
       .getResourceAsStream(filename)
-        ?.bufferedReader()?.readText() ?: ""
+      ?.bufferedReader()?.lines()?.toList() ?: emptyList()
   }
 
   override suspend fun start() {
@@ -38,23 +40,24 @@ class MainVerticle : CoroutineVerticle(), CoroutineRouterSupport {
       "",
       ""
     )
+    dslContext = jooqContext
 
-      val dbConfig =  DDLExportConfiguration()
-        .flags(DDLFlag.TABLE)
-        .createTableIfNotExists(true)
-        .createSchemaIfNotExists(true)
-        .createSequenceIfNotExists(true)
+    val dbConfig = DDLExportConfiguration()
+      .flags(DDLFlag.TABLE, DDLFlag.PRIMARY_KEY, DDLFlag.UNIQUE, DDLFlag.INDEX, DDLFlag.COMMENT)
+      .createTableIfNotExists(true)
+      .createSchemaIfNotExists(true)
+      .createSequenceIfNotExists(true)
 
 
-    jooqContext.ddl(DefaultSchema.DEFAULT_SCHEMA, dbConfig).queries().forEach { query ->
-      query.execute()
-    }
-    jooqContext.selectCount().from(BArticle.B_ARTICLE)
-      .fetch().forEach { r ->
-          log.info("joop count {}", r.value1())
-        }
+    jooqContext.ddl(DefaultSchema.DEFAULT_SCHEMA, dbConfig)
+      .queries()
+      .forEach { query -> query.execute() }
+
     log.info("execute setup sql")
-    jooqContext.query(readResource("META-INF/sql/setup.sql")).execute()
+    readResource("META-INF/sql/setup.sql")
+      .filterNot { it.isBlank() }
+      .filterNot { it.startsWith("--") }
+      .forEach { jooqContext.execute(it) }
 
     val koin = startKoin {
       printLogger()
@@ -91,6 +94,7 @@ class MainVerticle : CoroutineVerticle(), CoroutineRouterSupport {
 
   override suspend fun stop() {
     super.stop()
+    dslContext.close()
     developmentIdList.forEach { id ->
       vertx.undeploy(id)
     }

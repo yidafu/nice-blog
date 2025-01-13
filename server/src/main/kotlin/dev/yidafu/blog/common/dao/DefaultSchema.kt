@@ -4,7 +4,6 @@
 package dev.yidafu.blog.common.dao
 
 
-import dev.yidafu.blog.common.dao.sequences.HIBERNATE_SEQUENCE
 import dev.yidafu.blog.common.dao.tables.BArticle
 import dev.yidafu.blog.common.dao.tables.BConfiguration
 import dev.yidafu.blog.common.dao.tables.BSyncTask
@@ -14,7 +13,6 @@ import dev.yidafu.blog.common.dao.tables.BUserToken
 import kotlin.collections.List
 
 import org.jooq.Catalog
-import org.jooq.Sequence
 import org.jooq.Table
 import org.jooq.impl.SchemaImpl
 
@@ -58,10 +56,6 @@ open class DefaultSchema : SchemaImpl("", DefaultCatalog.DEFAULT_CATALOG) {
     val B_USER_TOKEN: BUserToken get() = BUserToken.B_USER_TOKEN
 
     override fun getCatalog(): Catalog = DefaultCatalog.DEFAULT_CATALOG
-
-    override fun getSequences(): List<Sequence<*>> = listOf(
-        HIBERNATE_SEQUENCE
-    )
 
     override fun getTables(): List<Table<*>> = listOf(
         BArticle.B_ARTICLE,

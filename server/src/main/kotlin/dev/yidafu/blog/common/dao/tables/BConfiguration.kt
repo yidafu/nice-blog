@@ -17,6 +17,7 @@ import kotlin.collections.List
 import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.ForeignKey
+import org.jooq.Identity
 import org.jooq.InverseForeignKey
 import org.jooq.Name
 import org.jooq.PlainSQL
@@ -75,7 +76,7 @@ open class BConfiguration(
     /**
      * The column <code>B_CONFIGURATION.ID</code>.
      */
-    val ID: TableField<BConfigurationRecord, Long?> = createField(DSL.name("ID"), SQLDataType.BIGINT.nullable(false), this, "")
+    val ID: TableField<BConfigurationRecord, Long?> = createField(DSL.name("ID"), SQLDataType.BIGINT.nullable(false).identity(true), this, "")
 
     /**
      * The column <code>B_CONFIGURATION.CREATED_AT</code>.
@@ -116,6 +117,7 @@ open class BConfiguration(
      */
     constructor(): this(DSL.name("B_CONFIGURATION"), null)
     override fun getSchema(): Schema? = if (aliased()) null else DefaultSchema.DEFAULT_SCHEMA
+    override fun getIdentity(): Identity<BConfigurationRecord, Long?> = super.getIdentity() as Identity<BConfigurationRecord, Long?>
     override fun getPrimaryKey(): UniqueKey<BConfigurationRecord> = CONSTRAINT_2
     override fun getUniqueKeys(): List<UniqueKey<BConfigurationRecord>> = listOf(UKR9EYOBGIOQOJSDRAYEEYMUNJH)
     override fun `as`(alias: String): BConfiguration = BConfiguration(DSL.name(alias), this)
