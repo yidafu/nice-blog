@@ -7,13 +7,11 @@ import dev.whyoleg.cryptography.algorithms.MD5
 import dev.whyoleg.cryptography.algorithms.RSA
 import dev.whyoleg.cryptography.algorithms.SHA256
 import dev.yidafu.blog.admin.views.pages.AdminLoginPage
+import dev.yidafu.blog.common.*
 import dev.yidafu.blog.common.ConstantKeys
 import dev.yidafu.blog.common.ConstantKeys.AUTH_CURRENT_USERNAME
 import dev.yidafu.blog.common.ConstantKeys.AUTH_RSA_PRIVATE_KEY
 import dev.yidafu.blog.common.ConstantKeys.AUTH_RSA_PUBLIC_KEY
-import dev.yidafu.blog.common.FormKeys
-import dev.yidafu.blog.common.Routes
-import dev.yidafu.blog.common.TimedCache
 import dev.yidafu.blog.common.ext.html
 import dev.yidafu.blog.common.services.ConfigurationService
 import dev.yidafu.blog.common.services.UserService
@@ -38,6 +36,17 @@ class AuthHandler(
 
   private val provider = CryptographyProvider.Default
 
+  private val keyPair = SuspendingLazy {
+    log.info("generate new RSA key pair")
+
+    val oaep = provider.get(RSA.OAEP)
+    val keyPair = oaep.keyPairGenerator().generateKey()
+    val publicKey = keyPair.publicKey.encodeToByteArray(RSA.PublicKey.Format.PEM).toString(Charsets.UTF_8)
+    val privateKey = keyPair.privateKey.encodeToByteArray(RSA.PrivateKey.Format.PEM).toString(Charsets.UTF_8)
+
+    publicKey to privateKey
+  }
+
   @OptIn(DelicateCryptographyApi::class)
   private val md5 = provider.get(MD5)
 
@@ -61,13 +70,8 @@ class AuthHandler(
   )
 
   suspend fun genRsaKeyPair(ctx: RoutingContext) {
-    log.info("generate new RSA key pair")
-
-    val oaep = provider.get(RSA.OAEP)
-    val keyPair = oaep.keyPairGenerator().generateKey()
     val session = ctx.session()
-    val publicKey = keyPair.publicKey.encodeToByteArray(RSA.PublicKey.Format.PEM).toString(Charsets.UTF_8)
-    val privateKey = keyPair.privateKey.encodeToByteArray(RSA.PrivateKey.Format.PEM).toString(Charsets.UTF_8)
+    val (publicKey, privateKey) = keyPair.value()
     session.put(AUTH_RSA_PUBLIC_KEY, publicKey)
     session.put(AUTH_RSA_PRIVATE_KEY, privateKey)
     ctx.next()
