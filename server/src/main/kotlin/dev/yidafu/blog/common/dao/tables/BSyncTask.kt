@@ -94,7 +94,7 @@ open class BSyncTask(
     /**
      * The column <code>B_SYNC_TASK.LOGS</code>.
      */
-    val LOGS: TableField<BSyncTaskRecord, String?> = createField(DSL.name("LOGS"), SQLDataType.VARCHAR(1000000000), this, "")
+    val LOGS: TableField<BSyncTaskRecord, String?> = createField(DSL.name("LOGS"), SQLDataType.VARCHAR(1000000000).defaultValue(DSL.field(DSL.raw("''"), SQLDataType.VARCHAR)), this, "")
 
     /**
      * The column <code>B_SYNC_TASK.STATUS</code>.

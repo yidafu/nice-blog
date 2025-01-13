@@ -30,7 +30,7 @@ class SyncTaskService(
   suspend fun appendLog(uuid: String, log: String): Boolean = runDB {
     context.update(B_SYNC_TASK).set(
       B_SYNC_TASK.LOGS,
-      concat(B_SYNC_TASK.LOGS.name, log),
+      concat(B_SYNC_TASK.LOGS, log),
     ).where(B_SYNC_TASK.UUID.eq(uuid)).execute()
 
     true

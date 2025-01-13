@@ -20,13 +20,12 @@ enum class SyncTaskStatus() {
 class SyncTaskModel(
   @Column
   var callbackUrl: String? = null,
-  @Column
   var uuid: String? = null,
   @Enumerated
   @Column
   var status: SyncTaskStatus? = null,
-  @Column(columnDefinition = "MEDIUMTEXT")
-  var logs: String? = null,
+  @Column(columnDefinition = "MEDIUMTEXT DEFAULT ''")
+  var logs: String? = "",
 ) : BaseModel() {
   companion object {
     const val APPEND_LOG_TEXT = "APPEND_LOG_TEXT"
