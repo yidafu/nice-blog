@@ -7,13 +7,13 @@ import java.util.*
 @Table(name = "b_user")
 class UserModal(
   @Column(unique = true)
-  val username: String = "",
+  var username: String = "",
   @Column
-  val password: String = "",
+  var password: String = "",
   @Column
-  val email: String? = null,
+  var email: String? = null,
   @Column
-  val status: Int? = null,
+  var status: Int? = null,
   @Column
-  val loginCount: String? = null,
+  var loginCount: String? = null,
 ) : BaseModel()

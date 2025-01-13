@@ -8,7 +8,7 @@ import java.time.LocalTime
 @MappedSuperclass
 open class BaseModel {
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   var id: Long? = null
 
   @CreationTimestamp
