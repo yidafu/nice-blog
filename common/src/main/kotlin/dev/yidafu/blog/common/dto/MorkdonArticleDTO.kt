@@ -1,6 +1,6 @@
 package dev.yidafu.blog.common.dto
 
-import java.time.LocalTime
+import java.time.LocalDateTime
 
 data class MarkdownArticleDTO(
   val filename: String,
@@ -8,6 +8,6 @@ data class MarkdownArticleDTO(
   val frontMatter: FrontMatterDTO?,
   val rawContext: String,
   val html: String,
-  val createTime: LocalTime,
-  val updateTime: LocalTime,
+  val createTime: LocalDateTime,
+  val updateTime: LocalDateTime,
 )

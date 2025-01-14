@@ -6,13 +6,17 @@ import dev.yidafu.blog.admin.views.pages.sync.AdminSyncLogPage
 import dev.yidafu.blog.admin.views.pages.sync.AdminSyncOperatePage
 import dev.yidafu.blog.common.BlogConfig
 import dev.yidafu.blog.common.Routes
+import dev.yidafu.blog.common.converter.SyncTaskConvertor
 import dev.yidafu.blog.common.dto.MarkdownArticleDTO
 import dev.yidafu.blog.common.ext.html
 import dev.yidafu.blog.common.modal.ArticleModel
 import dev.yidafu.blog.common.modal.ArticleStatus
 import dev.yidafu.blog.common.modal.SyncTaskStatus
+import dev.yidafu.blog.common.query.PageQuery
 import dev.yidafu.blog.common.services.ArticleService
+import dev.yidafu.blog.common.vo.AdminSyncTaskListVO
 import dev.yidafu.blog.common.vo.AdminSynchronousVO
+import dev.yidafu.blog.common.vo.PageVO
 import dev.yidafu.blog.dev.yidafu.blog.engine.SyncContext
 import io.github.allangomes.kotlinwind.css.I300
 import io.github.allangomes.kotlinwind.css.I50
@@ -27,6 +31,7 @@ import kotlinx.html.pre
 import kotlinx.html.stream.appendHTML
 import kotlinx.html.style
 import org.koin.core.annotation.Single
+import org.mapstruct.factory.Mappers
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -41,15 +46,24 @@ class SynchronousHandler(
 ) {
   private val LOG_APPEND_EVENT = "logAppend"
   private val LOG_END_EVENT = "logEnd"
+
+  private val syncTaskConvertor = Mappers.getMapper(SyncTaskConvertor::class.java)
   suspend fun syncPage(ctx: RoutingContext) {
     ctx.redirect(Routes.SYNC_OPERATE_URL)
   }
 
   suspend fun syncLogPage(ctx: RoutingContext) {
-    ctx.html(AdminSyncLogPage::class, AdminSynchronousVO(""))
+    val pageNum = ctx.queryParam("page").ifEmpty { listOf("1") }[0].toInt()
+    val pageSize = ctx.queryParam("size").ifEmpty { listOf("10") }[0].toInt()
+
+    val (total, list) = syncTaskService.getSyncLogs(PageQuery(pageNum, pageSize))
+
+    val vo = AdminSyncTaskListVO(pageNum, pageSize, total, syncTaskConvertor.toVOList(list))
+    ctx.html(AdminSyncLogPage::class, vo)
   }
 
   suspend fun syncOperatePage(ctx: RoutingContext) {
+
     ctx.html(AdminSyncOperatePage::class, AdminSynchronousVO(""))
   }
 

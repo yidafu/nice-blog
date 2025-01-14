@@ -23,6 +23,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.attribute.BasicFileAttributes
+import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
 import kotlin.io.path.extension
@@ -95,8 +96,8 @@ abstract class GitSynchronousTaskTemplate(protected val ctx: SyncContext) {
     val filename = path.name
     val attrs = Files.readAttributes(path, BasicFileAttributes::class.java)
 
-    val createDate = LocalTime.ofInstant(attrs.creationTime().toInstant(), ZoneId.systemDefault())
-    val updateDate = LocalTime.ofInstant(attrs.lastModifiedTime().toInstant(), ZoneId.systemDefault())
+    val createDate = LocalDateTime.ofInstant(attrs.creationTime().toInstant(), ZoneId.systemDefault())
+    val updateDate = LocalDateTime.ofInstant(attrs.lastModifiedTime().toInstant(), ZoneId.systemDefault())
 
 //    ctx.log("tree type ${tree.type.name}")
     val frontMatterDTO = parseFrontMatter(markdownFile, text, parser.buildMarkdownTreeFromString(text))
