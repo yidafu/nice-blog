@@ -6,7 +6,7 @@ package dev.yidafu.blog.common.dao.tables.records
 
 import dev.yidafu.blog.common.dao.tables.BUser
 
-import java.time.LocalTime
+import java.time.LocalDateTime
 
 import org.jooq.Record1
 import org.jooq.impl.UpdatableRecordImpl
@@ -22,19 +22,19 @@ open class BUserRecord() : UpdatableRecordImpl<BUserRecord>(BUser.B_USER) {
         set(value): Unit = set(0, value)
         get(): Long? = get(0) as Long?
 
-    open var createdAt: LocalTime?
+    open var createdAt: LocalDateTime?
         set(value): Unit = set(1, value)
-        get(): LocalTime? = get(1) as LocalTime?
+        get(): LocalDateTime? = get(1) as LocalDateTime?
 
-    open var updatedAt: LocalTime?
+    open var updatedAt: LocalDateTime?
         set(value): Unit = set(2, value)
-        get(): LocalTime? = get(2) as LocalTime?
+        get(): LocalDateTime? = get(2) as LocalDateTime?
 
     open var email: String?
         set(value): Unit = set(3, value)
         get(): String? = get(3) as String?
 
-    open var logincount: String?
+    open var loginCount: String?
         set(value): Unit = set(4, value)
         get(): String? = get(4) as String?
 
@@ -59,12 +59,12 @@ open class BUserRecord() : UpdatableRecordImpl<BUserRecord>(BUser.B_USER) {
     /**
      * Create a detached, initialised BUserRecord
      */
-    constructor(id: Long? = null, createdAt: LocalTime? = null, updatedAt: LocalTime? = null, email: String? = null, logincount: String? = null, password: String? = null, status: Int? = null, username: String? = null): this() {
+    constructor(id: Long? = null, createdAt: LocalDateTime? = null, updatedAt: LocalDateTime? = null, email: String? = null, loginCount: String? = null, password: String? = null, status: Int? = null, username: String? = null): this() {
         this.id = id
         this.createdAt = createdAt
         this.updatedAt = updatedAt
         this.email = email
-        this.logincount = logincount
+        this.loginCount = loginCount
         this.password = password
         this.status = status
         this.username = username

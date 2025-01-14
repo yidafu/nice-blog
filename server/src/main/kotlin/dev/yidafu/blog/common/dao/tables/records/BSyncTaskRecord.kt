@@ -6,7 +6,7 @@ package dev.yidafu.blog.common.dao.tables.records
 
 import dev.yidafu.blog.common.dao.tables.BSyncTask
 
-import java.time.LocalTime
+import java.time.LocalDateTime
 
 import org.jooq.Record1
 import org.jooq.impl.UpdatableRecordImpl
@@ -22,15 +22,15 @@ open class BSyncTaskRecord() : UpdatableRecordImpl<BSyncTaskRecord>(BSyncTask.B_
         set(value): Unit = set(0, value)
         get(): Long? = get(0) as Long?
 
-    open var createdAt: LocalTime?
+    open var createdAt: LocalDateTime?
         set(value): Unit = set(1, value)
-        get(): LocalTime? = get(1) as LocalTime?
+        get(): LocalDateTime? = get(1) as LocalDateTime?
 
-    open var updatedAt: LocalTime?
+    open var updatedAt: LocalDateTime?
         set(value): Unit = set(2, value)
-        get(): LocalTime? = get(2) as LocalTime?
+        get(): LocalDateTime? = get(2) as LocalDateTime?
 
-    open var callbackurl: String?
+    open var callbackUrl: String?
         set(value): Unit = set(3, value)
         get(): String? = get(3) as String?
 
@@ -55,11 +55,11 @@ open class BSyncTaskRecord() : UpdatableRecordImpl<BSyncTaskRecord>(BSyncTask.B_
     /**
      * Create a detached, initialised BSyncTaskRecord
      */
-    constructor(id: Long? = null, createdAt: LocalTime? = null, updatedAt: LocalTime? = null, callbackurl: String? = null, logs: String? = null, status: Int? = null, uuid: String? = null): this() {
+    constructor(id: Long? = null, createdAt: LocalDateTime? = null, updatedAt: LocalDateTime? = null, callbackUrl: String? = null, logs: String? = null, status: Int? = null, uuid: String? = null): this() {
         this.id = id
         this.createdAt = createdAt
         this.updatedAt = updatedAt
-        this.callbackurl = callbackurl
+        this.callbackUrl = callbackUrl
         this.logs = logs
         this.status = status
         this.uuid = uuid

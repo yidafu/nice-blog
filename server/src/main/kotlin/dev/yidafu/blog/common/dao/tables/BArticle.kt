@@ -8,7 +8,7 @@ import dev.yidafu.blog.common.dao.DefaultSchema
 import dev.yidafu.blog.common.dao.keys.CONSTRAINT_C
 import dev.yidafu.blog.common.dao.tables.records.BArticleRecord
 
-import java.time.LocalTime
+import java.time.LocalDateTime
 
 import kotlin.collections.Collection
 
@@ -79,12 +79,12 @@ open class BArticle(
     /**
      * The column <code>B_ARTICLE.CREATED_AT</code>.
      */
-    val CREATED_AT: TableField<BArticleRecord, LocalTime?> = createField(DSL.name("CREATED_AT"), SQLDataType.LOCALTIME, this, "")
+    val CREATED_AT: TableField<BArticleRecord, LocalDateTime?> = createField(DSL.name("CREATED_AT"), SQLDataType.LOCALDATETIME(6).defaultValue(DSL.field(DSL.raw("CURRENT_TIMESTAMP"), SQLDataType.LOCALDATETIME)), this, "")
 
     /**
      * The column <code>B_ARTICLE.UPDATED_AT</code>.
      */
-    val UPDATED_AT: TableField<BArticleRecord, LocalTime?> = createField(DSL.name("UPDATED_AT"), SQLDataType.LOCALTIME, this, "")
+    val UPDATED_AT: TableField<BArticleRecord, LocalDateTime?> = createField(DSL.name("UPDATED_AT"), SQLDataType.LOCALDATETIME(6).defaultValue(DSL.field(DSL.raw("CURRENT_TIMESTAMP"), SQLDataType.LOCALDATETIME)), this, "")
 
     /**
      * The column <code>B_ARTICLE.CONTENT</code>.

@@ -9,7 +9,7 @@ import dev.yidafu.blog.common.dao.keys.CONSTRAINT_7
 import dev.yidafu.blog.common.dao.keys.UK_9X6TW7BOCI1EVWR46R5OMOUKA
 import dev.yidafu.blog.common.dao.tables.records.BUserRecord
 
-import java.time.LocalTime
+import java.time.LocalDateTime
 
 import kotlin.collections.Collection
 import kotlin.collections.List
@@ -81,12 +81,12 @@ open class BUser(
     /**
      * The column <code>B_USER.CREATED_AT</code>.
      */
-    val CREATED_AT: TableField<BUserRecord, LocalTime?> = createField(DSL.name("CREATED_AT"), SQLDataType.LOCALTIME, this, "")
+    val CREATED_AT: TableField<BUserRecord, LocalDateTime?> = createField(DSL.name("CREATED_AT"), SQLDataType.LOCALDATETIME(6).defaultValue(DSL.field(DSL.raw("CURRENT_TIMESTAMP"), SQLDataType.LOCALDATETIME)), this, "")
 
     /**
      * The column <code>B_USER.UPDATED_AT</code>.
      */
-    val UPDATED_AT: TableField<BUserRecord, LocalTime?> = createField(DSL.name("UPDATED_AT"), SQLDataType.LOCALTIME, this, "")
+    val UPDATED_AT: TableField<BUserRecord, LocalDateTime?> = createField(DSL.name("UPDATED_AT"), SQLDataType.LOCALDATETIME(6).defaultValue(DSL.field(DSL.raw("CURRENT_TIMESTAMP"), SQLDataType.LOCALDATETIME)), this, "")
 
     /**
      * The column <code>B_USER.EMAIL</code>.
@@ -94,9 +94,9 @@ open class BUser(
     val EMAIL: TableField<BUserRecord, String?> = createField(DSL.name("EMAIL"), SQLDataType.VARCHAR(255), this, "")
 
     /**
-     * The column <code>B_USER.LOGINCOUNT</code>.
+     * The column <code>B_USER.LOGIN_COUNT</code>.
      */
-    val LOGINCOUNT: TableField<BUserRecord, String?> = createField(DSL.name("LOGINCOUNT"), SQLDataType.VARCHAR(255), this, "")
+    val LOGIN_COUNT: TableField<BUserRecord, String?> = createField(DSL.name("LOGIN_COUNT"), SQLDataType.VARCHAR(255), this, "")
 
     /**
      * The column <code>B_USER.PASSWORD</code>.

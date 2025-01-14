@@ -9,7 +9,7 @@ import dev.yidafu.blog.common.dao.keys.CONSTRAINT_2
 import dev.yidafu.blog.common.dao.keys.UKR9EYOBGIOQOJSDRAYEEYMUNJH
 import dev.yidafu.blog.common.dao.tables.records.BConfigurationRecord
 
-import java.time.LocalTime
+import java.time.LocalDateTime
 
 import kotlin.collections.Collection
 import kotlin.collections.List
@@ -81,12 +81,12 @@ open class BConfiguration(
     /**
      * The column <code>B_CONFIGURATION.CREATED_AT</code>.
      */
-    val CREATED_AT: TableField<BConfigurationRecord, LocalTime?> = createField(DSL.name("CREATED_AT"), SQLDataType.LOCALTIME, this, "")
+    val CREATED_AT: TableField<BConfigurationRecord, LocalDateTime?> = createField(DSL.name("CREATED_AT"), SQLDataType.LOCALDATETIME(6).defaultValue(DSL.field(DSL.raw("CURRENT_TIMESTAMP"), SQLDataType.LOCALDATETIME)), this, "")
 
     /**
      * The column <code>B_CONFIGURATION.UPDATED_AT</code>.
      */
-    val UPDATED_AT: TableField<BConfigurationRecord, LocalTime?> = createField(DSL.name("UPDATED_AT"), SQLDataType.LOCALTIME, this, "")
+    val UPDATED_AT: TableField<BConfigurationRecord, LocalDateTime?> = createField(DSL.name("UPDATED_AT"), SQLDataType.LOCALDATETIME(6).defaultValue(DSL.field(DSL.raw("CURRENT_TIMESTAMP"), SQLDataType.LOCALDATETIME)), this, "")
 
     /**
      * The column <code>B_CONFIGURATION.CONFIG_KEY</code>.

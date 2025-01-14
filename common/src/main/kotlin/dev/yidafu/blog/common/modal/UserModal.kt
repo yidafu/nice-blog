@@ -14,6 +14,6 @@ class UserModal(
   var email: String? = null,
   @Column
   var status: Int? = null,
-  @Column
+  @Column(name = "login_count")
   var loginCount: String? = null,
 ) : BaseModel()

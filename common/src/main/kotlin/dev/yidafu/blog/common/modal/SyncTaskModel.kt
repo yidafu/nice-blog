@@ -18,7 +18,7 @@ enum class SyncTaskStatus() {
 )
 @Entity(name = "b_sync_task")
 class SyncTaskModel(
-  @Column
+  @Column(name = "callback_url")
   var callbackUrl: String? = null,
   @Column
   var uuid: String? = null,

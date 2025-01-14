@@ -8,7 +8,7 @@ import dev.yidafu.blog.common.dao.DefaultSchema
 import dev.yidafu.blog.common.dao.keys.CONSTRAINT_CF
 import dev.yidafu.blog.common.dao.tables.records.BSyncTaskRecord
 
-import java.time.LocalTime
+import java.time.LocalDateTime
 
 import kotlin.collections.Collection
 
@@ -79,17 +79,17 @@ open class BSyncTask(
     /**
      * The column <code>B_SYNC_TASK.CREATED_AT</code>.
      */
-    val CREATED_AT: TableField<BSyncTaskRecord, LocalTime?> = createField(DSL.name("CREATED_AT"), SQLDataType.LOCALTIME, this, "")
+    val CREATED_AT: TableField<BSyncTaskRecord, LocalDateTime?> = createField(DSL.name("CREATED_AT"), SQLDataType.LOCALDATETIME(6).defaultValue(DSL.field(DSL.raw("CURRENT_TIMESTAMP"), SQLDataType.LOCALDATETIME)), this, "")
 
     /**
      * The column <code>B_SYNC_TASK.UPDATED_AT</code>.
      */
-    val UPDATED_AT: TableField<BSyncTaskRecord, LocalTime?> = createField(DSL.name("UPDATED_AT"), SQLDataType.LOCALTIME, this, "")
+    val UPDATED_AT: TableField<BSyncTaskRecord, LocalDateTime?> = createField(DSL.name("UPDATED_AT"), SQLDataType.LOCALDATETIME(6).defaultValue(DSL.field(DSL.raw("CURRENT_TIMESTAMP"), SQLDataType.LOCALDATETIME)), this, "")
 
     /**
-     * The column <code>B_SYNC_TASK.CALLBACKURL</code>.
+     * The column <code>B_SYNC_TASK.CALLBACK_URL</code>.
      */
-    val CALLBACKURL: TableField<BSyncTaskRecord, String?> = createField(DSL.name("CALLBACKURL"), SQLDataType.VARCHAR(255), this, "")
+    val CALLBACK_URL: TableField<BSyncTaskRecord, String?> = createField(DSL.name("CALLBACK_URL"), SQLDataType.VARCHAR(255), this, "")
 
     /**
      * The column <code>B_SYNC_TASK.LOGS</code>.

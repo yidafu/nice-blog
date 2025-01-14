@@ -10,7 +10,7 @@ import dev.yidafu.blog.common.dao.keys.UK_1D63EUQ1SRIUU4GWDPQHR6559
 import dev.yidafu.blog.common.dao.tables.records.BUserTokenRecord
 
 import java.time.LocalDate
-import java.time.LocalTime
+import java.time.LocalDateTime
 
 import kotlin.collections.Collection
 import kotlin.collections.List
@@ -82,12 +82,12 @@ open class BUserToken(
     /**
      * The column <code>B_USER_TOKEN.CREATED_AT</code>.
      */
-    val CREATED_AT: TableField<BUserTokenRecord, LocalTime?> = createField(DSL.name("CREATED_AT"), SQLDataType.LOCALTIME, this, "")
+    val CREATED_AT: TableField<BUserTokenRecord, LocalDateTime?> = createField(DSL.name("CREATED_AT"), SQLDataType.LOCALDATETIME(6).defaultValue(DSL.field(DSL.raw("CURRENT_TIMESTAMP"), SQLDataType.LOCALDATETIME)), this, "")
 
     /**
      * The column <code>B_USER_TOKEN.UPDATED_AT</code>.
      */
-    val UPDATED_AT: TableField<BUserTokenRecord, LocalTime?> = createField(DSL.name("UPDATED_AT"), SQLDataType.LOCALTIME, this, "")
+    val UPDATED_AT: TableField<BUserTokenRecord, LocalDateTime?> = createField(DSL.name("UPDATED_AT"), SQLDataType.LOCALDATETIME(6).defaultValue(DSL.field(DSL.raw("CURRENT_TIMESTAMP"), SQLDataType.LOCALDATETIME)), this, "")
 
     /**
      * The column <code>B_USER_TOKEN.CREATED_BY</code>.

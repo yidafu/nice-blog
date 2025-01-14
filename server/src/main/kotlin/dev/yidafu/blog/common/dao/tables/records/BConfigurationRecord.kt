@@ -6,7 +6,7 @@ package dev.yidafu.blog.common.dao.tables.records
 
 import dev.yidafu.blog.common.dao.tables.BConfiguration
 
-import java.time.LocalTime
+import java.time.LocalDateTime
 
 import org.jooq.Record1
 import org.jooq.impl.UpdatableRecordImpl
@@ -22,13 +22,13 @@ open class BConfigurationRecord() : UpdatableRecordImpl<BConfigurationRecord>(BC
         set(value): Unit = set(0, value)
         get(): Long? = get(0) as Long?
 
-    open var createdAt: LocalTime?
+    open var createdAt: LocalDateTime?
         set(value): Unit = set(1, value)
-        get(): LocalTime? = get(1) as LocalTime?
+        get(): LocalDateTime? = get(1) as LocalDateTime?
 
-    open var updatedAt: LocalTime?
+    open var updatedAt: LocalDateTime?
         set(value): Unit = set(2, value)
-        get(): LocalTime? = get(2) as LocalTime?
+        get(): LocalDateTime? = get(2) as LocalDateTime?
 
     open var configKey: String?
         set(value): Unit = set(3, value)
@@ -47,7 +47,7 @@ open class BConfigurationRecord() : UpdatableRecordImpl<BConfigurationRecord>(BC
     /**
      * Create a detached, initialised BConfigurationRecord
      */
-    constructor(id: Long? = null, createdAt: LocalTime? = null, updatedAt: LocalTime? = null, configKey: String? = null, configValue: String? = null): this() {
+    constructor(id: Long? = null, createdAt: LocalDateTime? = null, updatedAt: LocalDateTime? = null, configKey: String? = null, configValue: String? = null): this() {
         this.id = id
         this.createdAt = createdAt
         this.updatedAt = updatedAt
