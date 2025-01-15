@@ -6,7 +6,6 @@ package dev.yidafu.blog.common.dao.tables.records
 
 import dev.yidafu.blog.common.dao.tables.BUserToken
 
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 import org.jooq.Record1
@@ -31,17 +30,17 @@ open class BUserTokenRecord() : UpdatableRecordImpl<BUserTokenRecord>(BUserToken
         set(value): Unit = set(2, value)
         get(): LocalDateTime? = get(2) as LocalDateTime?
 
-    open var createdBy: LocalDate?
+    open var createdBy: String?
         set(value): Unit = set(3, value)
-        get(): LocalDate? = get(3) as LocalDate?
+        get(): String? = get(3) as String?
 
     open var description: String?
         set(value): Unit = set(4, value)
         get(): String? = get(4) as String?
 
-    open var expiresAt: LocalDate?
+    open var expiresAt: LocalDateTime?
         set(value): Unit = set(5, value)
-        get(): LocalDate? = get(5) as LocalDate?
+        get(): LocalDateTime? = get(5) as LocalDateTime?
 
     open var name: String?
         set(value): Unit = set(6, value)
@@ -60,7 +59,7 @@ open class BUserTokenRecord() : UpdatableRecordImpl<BUserTokenRecord>(BUserToken
     /**
      * Create a detached, initialised BUserTokenRecord
      */
-    constructor(id: Long? = null, createdAt: LocalDateTime? = null, updatedAt: LocalDateTime? = null, createdBy: LocalDate? = null, description: String? = null, expiresAt: LocalDate? = null, name: String? = null, token: String? = null): this() {
+    constructor(id: Long? = null, createdAt: LocalDateTime? = null, updatedAt: LocalDateTime? = null, createdBy: String? = null, description: String? = null, expiresAt: LocalDateTime? = null, name: String? = null, token: String? = null): this() {
         this.id = id
         this.createdAt = createdAt
         this.updatedAt = updatedAt

@@ -9,7 +9,6 @@ import dev.yidafu.blog.common.dao.keys.CONSTRAINT_3
 import dev.yidafu.blog.common.dao.keys.UK_1D63EUQ1SRIUU4GWDPQHR6559
 import dev.yidafu.blog.common.dao.tables.records.BUserTokenRecord
 
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 import kotlin.collections.Collection
@@ -92,7 +91,7 @@ open class BUserToken(
     /**
      * The column <code>B_USER_TOKEN.CREATED_BY</code>.
      */
-    val CREATED_BY: TableField<BUserTokenRecord, LocalDate?> = createField(DSL.name("CREATED_BY"), SQLDataType.LOCALDATE.nullable(false), this, "")
+    val CREATED_BY: TableField<BUserTokenRecord, String?> = createField(DSL.name("CREATED_BY"), SQLDataType.VARCHAR(255).nullable(false), this, "")
 
     /**
      * The column <code>B_USER_TOKEN.DESCRIPTION</code>.
@@ -102,7 +101,7 @@ open class BUserToken(
     /**
      * The column <code>B_USER_TOKEN.EXPIRES_AT</code>.
      */
-    val EXPIRES_AT: TableField<BUserTokenRecord, LocalDate?> = createField(DSL.name("EXPIRES_AT"), SQLDataType.LOCALDATE.nullable(false), this, "")
+    val EXPIRES_AT: TableField<BUserTokenRecord, LocalDateTime?> = createField(DSL.name("EXPIRES_AT"), SQLDataType.LOCALDATETIME(6).nullable(false), this, "")
 
     /**
      * The column <code>B_USER_TOKEN.NAME</code>.

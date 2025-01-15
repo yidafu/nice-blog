@@ -24,7 +24,7 @@ class SyncTaskModel(
   @Enumerated
   @Column
   var status: SyncTaskStatus? = null,
-  @Column(columnDefinition = "MEDIUMTEXT DEFAULT ''")
+  @Column(columnDefinition = "TEXT DEFAULT ''")
   var logs: String? = "",
 ) : BaseModel() {
   companion object {
