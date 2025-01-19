@@ -16,6 +16,7 @@ class CommonHandler(
   private val configurationService: ConfigurationService,
 ) {
   private val log = LoggerFactory.getLogger(CommonHandler::class.java)
+
   suspend fun initConfiguration(ctx: RoutingContext) {
     val configs = configurationService.getAll()
     val siteTitle = configs.find { it.configKey == ConfigurationKeys.SITE_TITLE }?.configValue ?: ""
@@ -34,16 +35,17 @@ class CommonHandler(
       ctx.response().addCookie(Cookie.cookie(ConstantKeys.LANGUAGE_COOKIE_KEY, language).setHttpOnly(true))
       val uri = ctx.request().uri().replace("lang=$language", "").removeSuffix("?")
       ctx.redirect(uri)
-      return;
+      return
     }
 
     val cookieLang = ctx.request().cookies(ConstantKeys.LANGUAGE_COOKIE_KEY)
 
-    val cLang = if (cookieLang.isEmpty()) {
-      ctx.request().getHeader(HttpHeaders.ACCEPT_LANGUAGE)
-    } else {
-      cookieLang.first().value
-    }
+    val cLang =
+      if (cookieLang.isEmpty()) {
+        ctx.request().getHeader(HttpHeaders.ACCEPT_LANGUAGE)
+      } else {
+        cookieLang.first().value
+      }
     val finalLanguage = cLang ?: ConstantKeys.DEFAULT_LANGUAGE
     log.info("current language $finalLanguage")
     ctx.put(ConstantKeys.LANGUAGE_CONTEXT, Locale.forLanguageTag(finalLanguage))
@@ -51,7 +53,6 @@ class CommonHandler(
   }
 
   fun uploadStaticFiles(ctx: RoutingContext) {
-
   }
 
   companion object {

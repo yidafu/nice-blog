@@ -1,7 +1,7 @@
 package dev.yidafu.blog.admin.handler
 
 import dev.yidafu.blog.admin.services.SyncTaskService
-import dev.yidafu.blog.admin.views.pages.sync.AdminSyncLogPage
+import dev.yidafu.blog.admin.views.pages.sync.AdminSyncLogListPage
 import dev.yidafu.blog.admin.views.pages.sync.AdminSyncOperatePage
 import dev.yidafu.blog.common.Routes
 import dev.yidafu.blog.common.converter.SyncTaskConvertor
@@ -52,7 +52,7 @@ class SynchronousHandler(
     val (total, list) = syncTaskService.getSyncLogs(PageQuery(pageNum, pageSize))
 
     val vo = AdminSyncTaskListVO(pageNum, pageSize, total, syncTaskConvertor.toVOList(list))
-    ctx.html(AdminSyncLogPage::class, vo)
+    ctx.html(AdminSyncLogListPage::class, vo)
   }
 
   suspend fun syncOperatePage(ctx: RoutingContext) {

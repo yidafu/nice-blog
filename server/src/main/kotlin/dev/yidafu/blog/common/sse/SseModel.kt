@@ -1,13 +1,11 @@
 package dev.yidafu.blog.common.sse
 
-
 data class SseModel(
   val event: String? = null,
   val data: String = "",
   val id: String? = null,
   val retry: Number? = null,
 ) {
-
   override fun toString(): String {
     val sseStrings = arrayListOf<String>()
 

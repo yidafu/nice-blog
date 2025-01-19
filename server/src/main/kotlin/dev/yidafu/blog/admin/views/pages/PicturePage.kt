@@ -7,7 +7,7 @@ import kotlinx.html.h1
 
 class PicturePage(override val vo: PageVO) : Page<PageVO>() {
   override fun render(): String {
-    return  AdminLayout(vo).layout {
+    return AdminLayout(vo).layout {
       h1 {
         +"Pictures Page"
       }

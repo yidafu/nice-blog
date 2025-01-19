@@ -68,18 +68,19 @@ class MainVerticle : CoroutineVerticle(), CoroutineRouterSupport {
           module {
             factory<CloseableDSLContext> { jooqContext }
           }
-        val engineModule = module {
-          single<Logger> { DBLogger("xx") }
-          single<GitSynchronousTaskTemplate> {
-            GitSynchronousTask(
-              GitConfig("https://github.com/yidafu/example-blog.git", branch = "master"),
-              DefaultSynchronousListener()
-            )
+        val engineModule =
+          module {
+            single<Logger> { DBLogger("xx") }
+            single<GitSynchronousTaskTemplate> {
+              GitSynchronousTask(
+                GitConfig("https://github.com/yidafu/example-blog.git", branch = "master"),
+                DefaultSynchronousListener(),
+              )
+            }
+            single<ArticleManager> {
+              DBArticleManager()
+            }
           }
-          single<ArticleManager> {
-            DBArticleManager()
-          }
-        }
 
         modules(
           JooqModule,

@@ -17,38 +17,44 @@ class ConfigurationService(
   private val log = LoggerFactory.getLogger(ConfigurationService::class.java)
   private val configConvertor = Mappers.getMapper(ConfigurationConvertor::class.java)
 
-  suspend fun getAll(): List<ConfigurationModal> = runDB {
-    val configList: Array<BConfigurationRecord> =
-      context.selectFrom(B_CONFIGURATION).fetchArray()
+  suspend fun getAll(): List<ConfigurationModal> =
+    runDB {
+      val configList: Array<BConfigurationRecord> =
+        context.selectFrom(B_CONFIGURATION).fetchArray()
 
-    configConvertor.recordToModal(configList.toList())
-  }
+      configConvertor.recordToModal(configList.toList())
+    }
 
-  suspend fun getByKey(key: String): ConfigurationModal = runDB {
-    val record: BConfigurationRecord? = context.selectFrom(B_CONFIGURATION).where(
-      B_CONFIGURATION.CONFIG_KEY.eq(key)
-    ).fetchOne()
+  suspend fun getByKey(key: String): ConfigurationModal =
+    runDB {
+      val record: BConfigurationRecord? =
+        context.selectFrom(B_CONFIGURATION).where(
+          B_CONFIGURATION.CONFIG_KEY.eq(key),
+        ).fetchOne()
 
-    configConvertor.recordToModal(record)
-  }
+      configConvertor.recordToModal(record)
+    }
 
-  suspend fun getByKeys(keys: List<String>): List<ConfigurationModal> = runDB {
-    val list: Array<BConfigurationRecord> = context.selectFrom(B_CONFIGURATION).where(
-      B_CONFIGURATION.CONFIG_KEY.`in`(keys)
-    ).fetchArray()
+  suspend fun getByKeys(keys: List<String>): List<ConfigurationModal> =
+    runDB {
+      val list: Array<BConfigurationRecord> =
+        context.selectFrom(B_CONFIGURATION).where(
+          B_CONFIGURATION.CONFIG_KEY.`in`(keys),
+        ).fetchArray()
 
-    configConvertor.recordToModal(list.toList())
-  }
+      configConvertor.recordToModal(list.toList())
+    }
 
-  suspend fun updateConfig(configs: List<ConfigurationDTO>): Boolean  = runDB{
-    context.batch(
-      configs.map { config ->
-        context.update(B_CONFIGURATION)
-          .set(B_CONFIGURATION.CONFIG_VALUE, config.configValue)
-          .where(B_CONFIGURATION.CONFIG_KEY.eq(config.configKey))
-      }
-    ).execute()
+  suspend fun updateConfig(configs: List<ConfigurationDTO>): Boolean =
+    runDB {
+      context.batch(
+        configs.map { config ->
+          context.update(B_CONFIGURATION)
+            .set(B_CONFIGURATION.CONFIG_VALUE, config.configValue)
+            .where(B_CONFIGURATION.CONFIG_KEY.eq(config.configKey))
+        },
+      ).execute()
 
-    true
-  }
+      true
+    }
 }
