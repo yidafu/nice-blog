@@ -191,3 +191,5 @@ local.*
 sample-blog/
 server/upload/
 server/nice-blog.db
+
+*.html
