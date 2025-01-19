@@ -3,19 +3,22 @@
  */
 package dev.yidafu.blog.common.dao.tables.references
 
-
 import dev.yidafu.blog.common.dao.tables.BArticle
+import dev.yidafu.blog.common.dao.tables.BArticleHistory
 import dev.yidafu.blog.common.dao.tables.BConfiguration
 import dev.yidafu.blog.common.dao.tables.BSyncTask
 import dev.yidafu.blog.common.dao.tables.BUser
 import dev.yidafu.blog.common.dao.tables.BUserToken
 
-
-
 /**
  * The table <code>B_ARTICLE</code>.
  */
 val B_ARTICLE: BArticle = BArticle.B_ARTICLE
+
+/**
+ * The table <code>B_ARTICLE_HISTORY</code>.
+ */
+val B_ARTICLE_HISTORY: BArticleHistory = BArticleHistory.B_ARTICLE_HISTORY
 
 /**
  * The table <code>B_CONFIGURATION</code>.
