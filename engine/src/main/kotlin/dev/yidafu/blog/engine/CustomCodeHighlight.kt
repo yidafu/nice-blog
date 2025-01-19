@@ -50,16 +50,18 @@ object CustomCodeHighlight {
     if (highlights.isEmpty()) return emptyList()
     // 需要过滤的元素列表
     val children = mutableListOf<CodeHighlight>()
-    val newList = highlights.map { h ->
-      // 找到每个code highlight区间的元素
-      val list = highlights.filter { h2 ->
-        h2 != h && h.inRange(h2)
-      }
-      children.addAll(list)
+    val newList =
+      highlights.map { h ->
+        // 找到每个code highlight区间的元素
+        val list =
+          highlights.filter { h2 ->
+            h2 != h && h.inRange(h2)
+          }
+        children.addAll(list)
 
-      val subChildren = buildTree(list)
-      TreeNode(h, subChildren)
-    }
+        val subChildren = buildTree(list)
+        TreeNode(h, subChildren)
+      }
     // 过滤子节点
     return newList.filterNot { h ->
       children.contains(h.data)
@@ -76,7 +78,6 @@ object CustomCodeHighlight {
         .language(toSyntaxLanguage(language))
         .build()
 
-
     /**
      * 将 code highlight 构建成一个树
      *            1~10
@@ -88,13 +89,13 @@ object CustomCodeHighlight {
      */
     val list = buildTree(highlights.getHighlights())
 
-
     val sortedHighlights = list.sortedBy { it.data.location.start }
     val codeHtml =
       createHTML().apply {
         if (sortedHighlights.isEmpty()) return@apply
 
         var lastHighlight = sortedHighlights.first().data
+
         fun buildNode(nodes: List<TreeNode>) {
           nodes.forEach { node ->
             val highlight = node.data
@@ -146,7 +147,6 @@ object CustomCodeHighlight {
     return codeHtml
   }
 }
-
 
 inline fun CodeHighlight.inRange(other: CodeHighlight): Boolean {
   return location.start <= other.location.start && other.location.end <= location.end

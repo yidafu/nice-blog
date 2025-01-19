@@ -1,8 +1,8 @@
 package dev.yidafu.blog.dev.yidafu.blog.engine.processor
 
 import com.charleskorn.kaml.Yaml
-import dev.yidafu.blog.common.dto.FrontMatterDTO
 import dev.yidafu.blog.common.dto.CommonArticleDTO
+import dev.yidafu.blog.common.dto.FrontMatterDTO
 import dev.yidafu.blog.common.modal.ArticleSourceType
 import dev.yidafu.blog.dev.yidafu.blog.engine.CodeFenceGeneratingProvider
 import dev.yidafu.blog.dev.yidafu.blog.engine.findChildrenOfType
@@ -47,7 +47,6 @@ class GFMFlavorExtendDescriptor : GFMFlavourDescriptor() {
 }
 
 class MarkdownProcessor : IProcessor {
-
   private val flavour = GFMFlavorExtendDescriptor()
   private val parser = MarkdownParser(flavour)
 
@@ -85,7 +84,7 @@ class MarkdownProcessor : IProcessor {
         html,
         createDate,
         updateDate,
-        ArticleSourceType.Markdown
+        ArticleSourceType.Markdown,
       )
     return dto
   }

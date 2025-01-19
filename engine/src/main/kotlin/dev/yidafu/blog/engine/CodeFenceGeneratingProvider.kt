@@ -1,9 +1,7 @@
 package dev.yidafu.blog.dev.yidafu.blog.engine
 
-import dev.snipme.highlights.Highlights
 import dev.snipme.highlights.model.*
 import kotlinx.html.*
-import kotlinx.html.stream.createHTML
 import org.intellij.markdown.MarkdownTokenTypes
 import org.intellij.markdown.ast.ASTNode
 import org.intellij.markdown.ast.getTextInNode
@@ -13,7 +11,6 @@ import org.slf4j.LoggerFactory
 
 class CodeFenceGeneratingProvider : GeneratingProvider {
   private val log = LoggerFactory.getLogger(this::class.java)
-
 
   override fun processNode(
     visitor: HtmlGenerator.HtmlGeneratingVisitor,

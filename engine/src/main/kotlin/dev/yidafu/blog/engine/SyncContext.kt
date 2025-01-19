@@ -1,6 +1,5 @@
 package dev.yidafu.blog.dev.yidafu.blog.engine
 
-import org.slf4j.LoggerFactory
 import java.io.File
 import java.net.URL
 
@@ -14,16 +13,14 @@ abstract class SyncContext {
   abstract fun onFailed()
 
   open val gitConfig: GitConfig = GitConfig()
-
 }
-
 
 data class GitConfig(
   var url: String = "",
   var branch: String = "",
   var localPath: String = DEFAULT_REPO_LOCATION,
 ) {
-  fun getLocalRepoFile(): File  {
+  fun getLocalRepoFile(): File {
     if (localPath == DEFAULT_REPO_LOCATION) {
       val repoName = URL(url).path.replace(".git", "").substringAfterLast('/')
       return File(repoName)
@@ -37,16 +34,15 @@ data class GitConfig(
 }
 
 interface SynchronousListener {
+  fun onStart()
 
-   fun onStart()
-   fun onFinish()
+  fun onFinish()
 
-   fun onFailed()
+  fun onFailed()
 }
 
 class DefaultSynchronousListener : SynchronousListener {
   override fun onStart() {
-
   }
 
   override fun onFinish() {
@@ -54,5 +50,4 @@ class DefaultSynchronousListener : SynchronousListener {
 
   override fun onFailed() {
   }
-
 }

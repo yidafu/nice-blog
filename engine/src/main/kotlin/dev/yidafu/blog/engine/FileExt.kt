@@ -16,7 +16,6 @@ fun Path.getGitModifyTime(): LocalDateTime {
   return LocalDateTime.parse(timeStr)
 }
 
-
 fun Path.getGitCreateTime(): LocalDateTime {
   val workingDirectory = parent.toFile()
   val cmd = "git log --pretty=format:'%ad' --date iso -- ${absolutePathString().replace(" ", "\\ ")} | tail -1"
@@ -27,4 +26,3 @@ fun Path.getGitCreateTime(): LocalDateTime {
 
   return LocalDateTime.parse(timeStr)
 }
-

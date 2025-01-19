@@ -36,10 +36,9 @@ class LogWriter() : Writer() {
 open class GitSynchronousTask(
   config: GitConfig,
   listener: SynchronousListener,
-
-  ) : GitSynchronousTaskTemplate(config, listener) {
-
+) : GitSynchronousTaskTemplate(config, listener) {
   private val articleService: ArticleManager by inject(ArticleManager::class.java)
+
   override suspend fun updateImage(img: File): URI {
     logger.log("upload image: ${img.path}")
     val url = articleService.processImage(img)
@@ -49,6 +48,7 @@ open class GitSynchronousTask(
   override suspend fun persistentPost(dto: CommonArticleDTO) {
     articleService.saveArticle(dto)
   }
+
   override suspend fun fetchRepository(): File {
     val monitor = TextProgressMonitor(LogWriter())
     val directory = gitConfig.getLocalRepoFile()

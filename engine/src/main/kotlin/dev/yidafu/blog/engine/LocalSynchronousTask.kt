@@ -7,9 +7,10 @@ import java.net.URI
 
 class LocalSynchronousTask(
   config: GitConfig,
-  listener: SynchronousListener = DefaultSynchronousListener()
+  listener: SynchronousListener = DefaultSynchronousListener(),
 ) : GitSynchronousTaskTemplate(config, listener) {
   private val articleService: ArticleManager by inject(ArticleManager::class.java)
+
   override suspend fun fetchRepository(): File {
     return File("/Users/yidafu/github/yidafu.dev")
   }

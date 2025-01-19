@@ -4,8 +4,7 @@ interface Logger {
   suspend fun log(str: String)
 }
 
-
-class StdLogger() : Logger{
+class StdLogger() : Logger {
   override suspend fun log(str: String) {
     println("[Std Output]: $str")
   }

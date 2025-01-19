@@ -15,14 +15,13 @@ abstract class GitSynchronousTaskTemplate(
   protected val gitConfig: GitConfig,
   protected val listener: SynchronousListener,
 ) {
-
   protected val logger: Logger by inject(Logger::class.java)
 
-
-  private val processors: List<IProcessor> = listOf(
-    NotebookProcessor(),
-    MarkdownProcessor(),
-  )
+  private val processors: List<IProcessor> =
+    listOf(
+      NotebookProcessor(),
+      MarkdownProcessor(),
+    )
 
   private fun resolvePath(
     file: File,
@@ -55,13 +54,14 @@ abstract class GitSynchronousTaskTemplate(
       logger.log("start sync task...")
       val repoDirectory = fetchRepository()
       logger.log("scan markdown/notebook in ${repoDirectory.toPath()}")
-      val regularFiles = Files.find(repoDirectory.toPath(), Int.MAX_VALUE, { path, file: BasicFileAttributes ->
-        file.isRegularFile &&
-          !path.contains(Path.of(".git")) &&
-          !path.contains(Path.of(".venv")) &&
-          !path.contains(Path.of(".ipynb_checkpoints"))
-      })
-      for ( path in regularFiles) {
+      val regularFiles =
+        Files.find(repoDirectory.toPath(), Int.MAX_VALUE, { path, file: BasicFileAttributes ->
+          file.isRegularFile &&
+            !path.contains(Path.of(".git")) &&
+            !path.contains(Path.of(".venv")) &&
+            !path.contains(Path.of(".ipynb_checkpoints"))
+        })
+      for (path in regularFiles) {
         for (processor in processors) {
           if (processor.filter(path)) {
             val dto = processor.transform(path)
