@@ -4,7 +4,6 @@ import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import java.time.LocalDateTime
-import java.time.LocalTime
 
 @MappedSuperclass
 open class BaseModel {
@@ -13,7 +12,7 @@ open class BaseModel {
   var id: Long? = null
 
   @CreationTimestamp
-  @Column(name = "created_at", columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+  @Column(name = "created_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
   var createdAt: LocalDateTime? = null
 
   @UpdateTimestamp

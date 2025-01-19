@@ -15,7 +15,6 @@ import jakarta.persistence.UniqueConstraint
 data class ConfigurationModal(
   @Column(name = "config_key")
   var configKey: String = "",
-
   @Column(name = "config_value")
   var configValue: String = "",
-)  : BaseModel()
+) : BaseModel()
