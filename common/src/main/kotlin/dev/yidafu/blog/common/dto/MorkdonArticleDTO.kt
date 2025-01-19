@@ -1,8 +1,9 @@
 package dev.yidafu.blog.common.dto
 
+import dev.yidafu.blog.common.modal.ArticleSourceType
 import java.time.LocalDateTime
 
-data class MarkdownArticleDTO(
+data class CommonArticleDTO(
   val filename: String,
   val series: String,
   val frontMatter: FrontMatterDTO?,
@@ -10,4 +11,5 @@ data class MarkdownArticleDTO(
   val html: String,
   val createTime: LocalDateTime,
   val updateTime: LocalDateTime,
+  val sourceType: ArticleSourceType,
 )
