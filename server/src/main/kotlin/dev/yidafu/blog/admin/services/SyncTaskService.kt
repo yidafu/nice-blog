@@ -22,9 +22,7 @@ class SyncTaskService(
     val taskRecord = context.newRecord(B_SYNC_TASK)
     taskRecord.uuid = uuid
     taskRecord.status = SyncTaskStatus.Created.ordinal
-    taskRecord.callbackUrl =  Routes.SYNC_LOG_URL.replace(":uuid", uuid)
-
-
+    taskRecord.callbackUrl =  Routes.SYNC_API_LOG_URL.replace(":uuid", uuid)
 
     return taskRecord.store() > 0
   }
@@ -46,7 +44,7 @@ class SyncTaskService(
     true
   }
 
-  suspend fun getSyncLog(uuid: String): SyncTaskModel? = runDB{
+  suspend fun getSyncLog(uuid: String): SyncTaskModel = runDB{
     val taskRecord = context.selectFrom(B_SYNC_TASK).where(B_SYNC_TASK.UUID.eq(uuid)).fetchOne()
     syncTaskConvertor.recordToModal(taskRecord)
   }

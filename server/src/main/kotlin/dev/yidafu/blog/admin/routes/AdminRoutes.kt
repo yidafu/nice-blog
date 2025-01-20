@@ -53,12 +53,13 @@ fun CoroutineRouterSupport.mountAdminRoutes(router: Router, koin: Koin, vertx: V
   router.get(Routes.CONFIG_DATA_SOURCE_URL).coHandler(requestHandler = configHandler::dataSourcePage)
 
   router.get(Routes.SYNC_URL).coHandler(requestHandler = syncHandler::syncPage)
-  router.get(Routes.SYNC_LOG_URL).coHandler(requestHandler = syncHandler::syncLogPage)
+  router.get(Routes.SYNC_LOG_URL).coHandler(requestHandler = syncHandler::syncLogListPage)
   router.get(Routes.SYNC_OPERATE_URL).coHandler(requestHandler =  syncHandler::syncOperatePage)
   router.get(Routes.SYNC_API_START_URL)
     .coHandler(requestHandler =  syncHandler::startSync)
   router.get(Routes.SYNC_API_LOG_URL)
     .coHandler(requestHandler = syncHandler::getSyncLog)
+  router.get(Routes.SYNC_LOG_DETAIL_URL).coHandler(requestHandler = syncHandler::syncLogDetailPage)
 
   router.get(Routes.PICTURES_URL).coHandler(requestHandler = adminHandler::picturesPage)
 }

@@ -10,6 +10,7 @@ import dev.yidafu.blog.common.FormKeys
 import dev.yidafu.blog.common.Routes
 import dev.yidafu.blog.common.bean.bo.ConfigurationBO
 import dev.yidafu.blog.common.dto.ConfigurationDTO
+import dev.yidafu.blog.common.ext.getByKey
 import dev.yidafu.blog.common.ext.html
 import dev.yidafu.blog.common.handler.CommonHandler
 import dev.yidafu.blog.common.modal.ConfigurationModal
@@ -51,6 +52,7 @@ class ConfigurationHandler(
       FormKeys.SOURCE_TYPE to ConfigurationKeys.SOURCE_TYPE,
       FormKeys.SOURCE_URL to ConfigurationKeys.SOURCE_URL,
       FormKeys.SOURCE_TOKEN to ConfigurationKeys.SOURCE_TOKEN,
+      FormKeys.SOURCE_BRANCH to ConfigurationKeys.SOURCE_BRANCH,
     ).mapNotNull { keyPair ->
       body.get(keyPair.first)?.let { value ->
         ConfigurationDTO(keyPair.second, value)
@@ -79,18 +81,17 @@ class ConfigurationHandler(
       ConfigurationKeys.SOURCE_TYPE,
       ConfigurationKeys.SOURCE_URL,
       ConfigurationKeys.SOURCE_TOKEN,
+      ConfigurationKeys.SOURCE_BRANCH,
     ))
 
     val vo = AdminDataSourceVO(
       configs.getByKey(ConfigurationKeys.SOURCE_TYPE) ?: "",
       configs.getByKey(ConfigurationKeys.SOURCE_URL) ?: "",
       configs.getByKey(ConfigurationKeys.SOURCE_TOKEN) ?: "",
+      configs.getByKey(ConfigurationKeys.SOURCE_BRANCH) ?: "",
     )
 
     ctx.html(AdminConfigDataSourcePage::class, vo)
   }
 
-  private fun List<ConfigurationModal>.getByKey(key: String): String? {
-    return find { it.configKey == key }?.configValue
-  }
 }

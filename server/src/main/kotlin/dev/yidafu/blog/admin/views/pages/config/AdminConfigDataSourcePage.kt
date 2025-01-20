@@ -36,6 +36,11 @@ class AdminConfigDataSourcePage(vo: AdminDataSourceVO) : AdminConfigBasePage<Adm
       formItem(
         FormItem(FormKeys.SOURCE_URL, AdminTxt.source_url.toString(vo.locale), vo.sourceUrl, InputType.url)
       )
+
+      formItem(
+        FormItem(FormKeys.SOURCE_BRANCH, AdminTxt.source_branch.toString(vo.locale), vo.sourceBranch, InputType.text)
+      )
+
       formItem(
         FormItem(FormKeys.SOURCE_TOKEN, AdminTxt.source_token.toString(vo.locale), vo.sourceToken, InputType.text)
       )

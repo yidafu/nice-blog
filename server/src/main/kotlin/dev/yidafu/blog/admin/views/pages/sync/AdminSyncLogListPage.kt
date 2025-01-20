@@ -1,13 +1,12 @@
 package dev.yidafu.blog.admin.views.pages.sync
 
+import dev.yidafu.blog.common.Routes
 import dev.yidafu.blog.common.vo.AdminSyncTaskListVO
-import dev.yidafu.blog.common.vo.AdminSynchronousVO
-import dev.yidafu.blog.common.vo.PageVO
 import dev.yidafu.blog.i18n.AdminTxt
 import io.github.allangomes.kotlinwind.css.*
 import kotlinx.html.*
 
-class AdminSyncLogPage(override val vo: AdminSyncTaskListVO) : AdminSyncBasePage<AdminSyncTaskListVO>() {
+class AdminSyncLogListPage(override val vo: AdminSyncTaskListVO) : AdminSyncBasePage<AdminSyncTaskListVO>() {
 
   override fun getContent(): DIV.() -> Unit = {
     val cellStyle = kw.inline { padding.x[4].y[6] }
@@ -51,11 +50,21 @@ class AdminSyncLogPage(override val vo: AdminSyncTaskListVO) : AdminSyncBasePage
               }
               td {
                 style = cellStyle
-                +i.callbackUrl
+                a {
+                  href = i.callbackUrl
+                  +i.callbackUrl
+                }
               }
               td {
                 style = cellStyle
                 +i.createdAt.toString()
+              }
+              td {
+                style = cellStyle
+                a {
+                  href = Routes.SYNC_LOG_DETAIL_URL + "?uuid=" + i.uuid
+                  +AdminTxt.detail.toString(vo.locale)
+                }
               }
             }
           }
