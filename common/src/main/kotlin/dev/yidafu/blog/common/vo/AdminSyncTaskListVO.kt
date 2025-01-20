@@ -15,8 +15,8 @@ class AdminSyncTaskListVO(
   total: Int = 0,
   list: List<SimpleSyncTaskDTO> = emptyList(),
 ) : PaginationVO<SimpleSyncTaskDTO>(
-  page,
-  size,
-  total,
-  list,
-)
+    page,
+    size,
+    total,
+    list,
+  )

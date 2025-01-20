@@ -9,13 +9,19 @@ import kotlinx.html.pre
 import kotlinx.html.style
 
 class AdminSyncLogPage(override val vo: AdminSyncTaskVO) : AdminSyncBasePage<AdminSyncTaskVO>() {
-  override fun getContent(): DIV.() -> Unit = {
-    div {
-      style = kw.inline { padding[2]; border.rounded[8]; background.gray[I50] }
-      pre {
-        style = "text-wrap: auto;"
-        +vo.syncTask.logs
+  override fun getContent(): DIV.() -> Unit =
+    {
+      div {
+        style =
+          kw.inline {
+            padding[2]
+            border.rounded[8]
+            background.gray[I50]
+          }
+        pre {
+          style = "text-wrap: auto;"
+          +vo.syncTask.logs
+        }
       }
     }
-  }
 }

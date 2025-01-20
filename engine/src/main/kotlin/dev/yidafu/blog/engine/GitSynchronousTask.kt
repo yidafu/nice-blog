@@ -1,11 +1,17 @@
 package dev.yidafu.blog.dev.yidafu.blog.engine
 
 import com.github.syari.kgit.KGit
+import dev.yidafu.blog.common.dto.CommonArticleDTO
+import kotlinx.coroutines.*
 import org.eclipse.jgit.lib.TextProgressMonitor
+import org.koin.java.KoinJavaComponent.inject
 import java.io.File
 import java.io.Writer
+import java.net.URI
 
-class LogWriter(val ctx: SyncContext) : Writer() {
+class LogWriter() : Writer() {
+  private val logger: Logger by inject(Logger::class.java)
+
   override fun close() {
   }
 
@@ -19,37 +25,55 @@ class LogWriter(val ctx: SyncContext) : Writer() {
   ) {
   }
 
+  @OptIn(DelicateCoroutinesApi::class)
   override fun write(str: String) {
-    ctx.log(str)
+    GlobalScope.launch {
+      logger.log(str)
+    }
   }
 }
 
-abstract class GitSynchronousTask(ctx: SyncContext) : GitSynchronousTaskTemplate(ctx) {
-  override fun fetchRepository(): File {
-    val monitor = TextProgressMonitor(LogWriter(ctx))
-    val directory = ctx.gitConfig.getLocalRepoFile()
+open class GitSynchronousTask(
+  config: GitConfig,
+  listener: SynchronousListener,
+) : GitSynchronousTaskTemplate(config, listener) {
+  private val articleService: ArticleManager by inject(ArticleManager::class.java)
+
+  override suspend fun updateImage(img: File): URI {
+    logger.log("upload image: ${img.path}")
+    val url = articleService.processImage(img)
+    return url
+  }
+
+  override suspend fun persistentPost(dto: CommonArticleDTO) {
+    articleService.saveArticle(dto)
+  }
+
+  override suspend fun fetchRepository(): File {
+    val monitor = TextProgressMonitor(LogWriter())
+    val directory = gitConfig.getLocalRepoFile()
     val git =
       if (!directory.exists()) {
-        ctx.log("repository is not exist, clone repository into ${directory.toPath()}")
+        logger.log("repository is not exist, clone repository into ${directory.toPath()}")
         KGit.cloneRepository {
-          setURI(ctx.gitConfig.url)
+          setURI(gitConfig.url)
           setTimeout(60)
           setDirectory(directory)
           setProgressMonitor(monitor)
         }
       } else {
-        ctx.log("open local repository in ${directory.absolutePath}")
+        logger.log("open local repository in ${directory.absolutePath}")
         KGit.open(directory)
       }
 
-    val branch = ctx.gitConfig.branch.ifEmpty { "main" }
-    ctx.log("pull origin $branch")
+    val branch = gitConfig.branch.ifEmpty { "main" }
+    logger.log("pull origin $branch")
     val res =
       git.pull {
-        remoteBranchName = ctx.gitConfig.branch
+        remoteBranchName = gitConfig.branch
         setProgressMonitor(monitor)
       }
-    ctx.log("pull result $res")
+    logger.log("pull result $res")
     // close Git resource
     git.close()
     return directory

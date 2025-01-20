@@ -1,14 +1,15 @@
 package dev.yidafu.blog.common
 
-import jdk.jfr.Timespan.MILLISECONDS
 import org.slf4j.Logger
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.TimeUnit.MILLISECONDS
 
 interface Cache {
   fun get(key: String): String?
-  fun put(key: String, value: String)
+
+  fun put(
+    key: String,
+    value: String,
+  )
 }
 
 class TimedCache(var log: Logger) : Cache {
@@ -32,12 +33,13 @@ class TimedCache(var log: Logger) : Cache {
     return timedEntry.value
   }
 
-  override fun put(key: String, value: String) {
+  override fun put(
+    key: String,
+    value: String,
+  ) {
     log.debug("caching $key with value $value")
     hashMap[key] = TimedEntry(value, cacheTimeValidityInMillis)
   }
-
-
 
   data class TimedEntry(val value: String, val maxDurationInMillis: Long) {
     private val creationTime: Long = now()

@@ -1,7 +1,7 @@
 package dev.yidafu.blog.common
 
 object FormKeys {
-  const val SITE_TITLE ="siteTitle"
+  const val SITE_TITLE = "siteTitle"
   const val GITHUB_URL = "githubUrl"
   const val CRON_EXPR = "cronExpr"
   const val SOURCE_TYPE = "sourceType"

@@ -5,7 +5,9 @@ import org.jooq.CloseableDSLContext
 
 open class BaseService(private val closeableDSLContext: CloseableDSLContext) {
   private val scope = CoroutineScope(Dispatchers.IO)
-  suspend fun<T> runDB(block: (context: CloseableDSLContext) -> T): T = scope.async {
-    block(closeableDSLContext)
-  }.await()
+
+  suspend fun <T> runDB(block: (context: CloseableDSLContext) -> T): T =
+    scope.async {
+      block(closeableDSLContext)
+    }.await()
 }

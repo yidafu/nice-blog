@@ -12,18 +12,20 @@ import org.slf4j.LoggerFactory
 
 @Single
 class ArticleService(
-  private val context:CloseableDSLContext,
+  private val context: CloseableDSLContext,
 ) : BaseService(context) {
   private val log = LoggerFactory.getLogger(ArticleService::class.java)
   private val articleConvertor = Mappers.getMapper(ArticleConvertor::class.java)
 
-  suspend fun getAll(): List<ArticleModel> = runDB{
-    val articles: Array<BArticleRecord> = context.selectFrom(B_ARTICLE).fetchArray()
-    articleConvertor.recordToModal(articles.toList())
-  }
+  suspend fun getAll(): List<ArticleModel> =
+    runDB {
+      val articles: Array<BArticleRecord> = context.selectFrom(B_ARTICLE).fetchArray()
+      articleConvertor.recordToModal(articles.toList())
+    }
 
-  suspend fun getOneByIdentifier(identifier: String): ArticleModel? = runDB {
-    val article = context.selectFrom(B_ARTICLE).where(B_ARTICLE.IDENTIFIER.eq(identifier)).fetchOne()
-    articleConvertor.recordToModal(article)
-  }
+  suspend fun getOneByIdentifier(identifier: String): ArticleModel? =
+    runDB {
+      val article = context.selectFrom(B_ARTICLE).where(B_ARTICLE.IDENTIFIER.eq(identifier)).fetchOne()
+      articleConvertor.recordToModal(article)
+    }
 }

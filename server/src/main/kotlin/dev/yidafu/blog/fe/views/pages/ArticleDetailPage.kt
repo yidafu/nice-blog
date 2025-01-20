@@ -9,38 +9,42 @@ import io.github.allangomes.kotlinwind.css.LG
 import io.github.allangomes.kotlinwind.css.kw
 import kotlinx.html.*
 
-
 fun FlowContent.fullArticle(vo: ArticleVO) {
   article {
-    style = kw.inline {
-      margin.top[5].bottom[16]
-      padding[4]
-      border.rounded[LG]
-    }
+    style =
+      kw.inline {
+        margin.top[5].bottom[16]
+        padding[4]
+        border.rounded[LG]
+      }
 
     vo.cover?.let { cover ->
       div("shadow") {
-        style = kw.inline {
-          flex.row.justify_center.items_center
-          padding.x[16].y[3]; margin.y[8]
-          background.image[cover].cover.center.no_repeat
-          height[80]
-        }
+        style =
+          kw.inline {
+            flex.row.justify_center.items_center
+            padding.x[16].y[3]
+            margin.y[8]
+            background.image[cover].cover.center.no_repeat
+            height[80]
+          }
       }
     }
 
     div {
-      style = kw.inline {
-        width[200].font.size[12].bold;
-        text.center.color[HEADER_COLOR.toString()]
-      }
+      style =
+        kw.inline {
+          width[200].font.size[12].bold
+          text.center.color[HEADER_COLOR.toString()]
+        }
       +vo.title
     }
     div {
-      style = kw.inline {
-        text.center.color[TEXT_COLOR_SECONDARY.toString()]
-        margin.top[4]
-      }
+      style =
+        kw.inline {
+          text.center.color[TEXT_COLOR_SECONDARY.toString()]
+          margin.top[4]
+        }
       span {
         style = kw.inline { font.size[4] }
         +"Hangzhou Xihu District"
@@ -75,7 +79,11 @@ class ArticleDetailPage(override val vo: ArticleVO) : Page<ArticleVO>() {
   override fun render(): String {
     return FrontendLayout(vo).layout {
       attributes["class"] = "m-auto"
-      style = kw.inline { background.white; width[200] }
+      style =
+        kw.inline {
+          background.white
+          width[200]
+        }
       fullArticle(vo)
     }.finalize()
   }

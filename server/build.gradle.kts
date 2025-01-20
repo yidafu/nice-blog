@@ -1,5 +1,7 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import org.gradle.api.tasks.testing.logging.TestLogEvent.*
+import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
+import org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED
+import org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jooq.meta.jaxb.Logging
 
@@ -21,8 +23,8 @@ version = "1.0.0-SNAPSHOT"
 
 val vertxVersion = "4.5.10"
 val junitJupiterVersion = "5.9.1"
-val koin_version = "4.0.0"
-val koin_annotations_version = "2.0.0-Beta1"
+val koinVersion = "4.0.0"
+val koinAnnotationsVersion = "2.0.0-Beta1"
 
 val mainVerticleName = "dev.yidafu.blog.MainVerticle"
 val launcherClassName = "io.vertx.core.Launcher"
@@ -63,10 +65,10 @@ dependencies {
 
   implementation("com.github.sya-ri:kgit:1.1.0")
 
-  implementation("io.insert-koin:koin-annotations:$koin_annotations_version")
-  ksp("io.insert-koin:koin-ksp-compiler:$koin_annotations_version")
+  implementation("io.insert-koin:koin-annotations:$koinAnnotationsVersion")
+  ksp("io.insert-koin:koin-ksp-compiler:$koinAnnotationsVersion")
 
-  implementation(platform("io.insert-koin:koin-bom:$koin_version"))
+  implementation(platform("io.insert-koin:koin-bom:$koinVersion"))
   implementation("io.insert-koin:koin-core")
 
   implementation("ch.qos.logback:logback-classic:1.5.6")

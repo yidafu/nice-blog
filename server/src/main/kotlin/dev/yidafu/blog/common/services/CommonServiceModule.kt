@@ -5,5 +5,4 @@ import org.koin.core.annotation.Module
 
 @Module
 @ComponentScan
-class CommonServiceModule {
-}
+class CommonServiceModule

@@ -12,14 +12,9 @@ interface ArticleConvertor {
 
   fun toVO(modalList: List<ArticleModel>): List<ArticleVO>
 
-  fun recordToModal(
-    record: BArticleRecord?,
-  ): ArticleModel?;
+  fun recordToModal(record: BArticleRecord?): ArticleModel?
 
-  fun recordToModal(
-    records: List<BArticleRecord>,
-  ): List<ArticleModel>;
-
+  fun recordToModal(records: List<BArticleRecord>): List<ArticleModel>
 
   fun mapToRecord(
     articleModel: ArticleModel?,

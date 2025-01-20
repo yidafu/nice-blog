@@ -2,10 +2,13 @@ plugins {
   kotlin("jvm") version "2.0.21"
   kotlin("plugin.serialization") version "2.0.21"
   id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
+//  id("com.google.devtools.ksp") version "2.0.21-1.0.27"
 }
 
 group = "dev.yidafu.blog"
 version = "0.1.0"
+val koinVersion = "4.0.0"
+val koinAnnotationsVersion = "2.0.0-Beta1"
 
 dependencies {
   implementation(project(":common"))
@@ -23,6 +26,12 @@ dependencies {
 
   implementation("org.jetbrains.kotlinx:kotlinx-html:0.8.0")
   implementation("org.jetbrains.kotlin-wrappers:kotlin-css:1.0.0-pre.832")
+  implementation("org.jetbrains.kotlinx:jupyter-notebooks-parser:0.2.0-dev-10")
+
+  implementation(platform("io.insert-koin:koin-bom:$koinVersion"))
+  implementation("io.insert-koin:koin-core")
+//  implementation("io.insert-koin:koin-annotations:$koinAnnotationsVersion")
+//  ksp("io.insert-koin:koin-ksp-compiler:$koinAnnotationsVersion")
 
   implementation("dev.snipme:highlights:1.0.0")
 }

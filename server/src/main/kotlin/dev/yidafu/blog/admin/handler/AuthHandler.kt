@@ -24,28 +24,27 @@ import java.util.*
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
-
 @Single
 class AuthHandler(
   private val configService: ConfigurationService,
   private val userService: UserService,
 ) {
-
   private val MAX_RETRY_COUNT = "5"
   private val log = LoggerFactory.getLogger(AuthHandler::class.java)
 
   private val provider = CryptographyProvider.Default
 
-  private val keyPair = SuspendingLazy {
-    log.info("generate new RSA key pair")
+  private val keyPair =
+    SuspendingLazy {
+      log.info("generate new RSA key pair")
 
-    val oaep = provider.get(RSA.OAEP)
-    val keyPair = oaep.keyPairGenerator().generateKey()
-    val publicKey = keyPair.publicKey.encodeToByteArray(RSA.PublicKey.Format.PEM).toString(Charsets.UTF_8)
-    val privateKey = keyPair.privateKey.encodeToByteArray(RSA.PrivateKey.Format.PEM).toString(Charsets.UTF_8)
+      val oaep = provider.get(RSA.OAEP)
+      val keyPair = oaep.keyPairGenerator().generateKey()
+      val publicKey = keyPair.publicKey.encodeToByteArray(RSA.PublicKey.Format.PEM).toString(Charsets.UTF_8)
+      val privateKey = keyPair.privateKey.encodeToByteArray(RSA.PrivateKey.Format.PEM).toString(Charsets.UTF_8)
 
-    publicKey to privateKey
-  }
+      publicKey to privateKey
+    }
 
   @OptIn(DelicateCryptographyApi::class)
   private val md5 = provider.get(MD5)
@@ -54,20 +53,20 @@ class AuthHandler(
 
   class LoginError(
     val code: Int,
-    val message:
-    MessageBundleLocalizedString,
+    val message: MessageBundleLocalizedString,
   )
 
-  private val errorList = listOf(
-    /**
-     * 1. username is incorrect
-     * 2. password is incorrect
-     * 3. user not exist in user table
-     */
-    LoginError(1, AdminTxt.username_or_password_error),
-    LoginError(2, AdminTxt.required_username_or_password),
-    LoginError(3, AdminTxt.account_locked),
-  )
+  private val errorList =
+    listOf(
+      /**
+       * 1. username is incorrect
+       * 2. password is incorrect
+       * 3. user not exist in user table
+       */
+      LoginError(1, AdminTxt.username_or_password_error),
+      LoginError(2, AdminTxt.required_username_or_password),
+      LoginError(3, AdminTxt.account_locked),
+    )
 
   suspend fun genRsaKeyPair(ctx: RoutingContext) {
     val session = ctx.session()
@@ -83,14 +82,16 @@ class AuthHandler(
     val local = ctx.get<Locale>(ConstantKeys.LANGUAGE_CONTEXT)
     val publicKEy = ctx.session().get<String>(AUTH_RSA_PUBLIC_KEY)
     val errorCode = ctx.queryParam("errorCode").firstOrNull()
-    val errorMessage = errorCode?.toInt().let { code ->
-      errorList.find { e -> e.code == code }
-    }?.message?.toString(local)
+    val errorMessage =
+      errorCode?.toInt().let { code ->
+        errorList.find { e -> e.code == code }
+      }?.message?.toString(local)
 
-    val vo = AdminLoginVO(
-      publicKEy.toString(),
-      errorMessage,
-    )
+    val vo =
+      AdminLoginVO(
+        publicKEy.toString(),
+        errorMessage,
+      )
     log.info("render login page")
     ctx.html(AdminLoginPage::class, vo)
   }
@@ -125,16 +126,17 @@ class AuthHandler(
 
     // verify password
     val password = body.get(FormKeys.PASSWORD)
-    val passwordText = CryptographyProvider.Default.get(RSA.OAEP)
-      .privateKeyDecoder(SHA256)
-      .decodeFromByteArray(
-        RSA.PrivateKey.Format.PEM,
-        privateKey.toByteArray()
-      )
-      .decryptor()
-      .decrypt(Base64.decode(password))
+    val passwordText =
+      CryptographyProvider.Default.get(RSA.OAEP)
+        .privateKeyDecoder(SHA256)
+        .decodeFromByteArray(
+          RSA.PrivateKey.Format.PEM,
+          privateKey.toByteArray(),
+        )
+        .decryptor()
+        .decrypt(Base64.decode(password))
     val encodePasswordText = Base64.encode(md5.hasher().hash(passwordText))
-    log.info("encodePasswordText ${encodePasswordText}, password = ${userModal.password}")
+    log.info("encodePasswordText $encodePasswordText, password = ${userModal.password}")
     if (userModal.password != encodePasswordText) {
       log.info("user {} login fail", userName)
       return redirectLoginErrorPage(ctx, errorList[1])
@@ -145,13 +147,15 @@ class AuthHandler(
     ctx.redirect(Routes.ADMIN_URL)
   }
 
-
-   fun logoutAction(ctx: RoutingContext) {
+  fun logoutAction(ctx: RoutingContext) {
     ctx.session().destroy()
     ctx.redirect(Routes.LOGIN_URL)
   }
 
-  private fun redirectLoginErrorPage(ctx: RoutingContext, err: LoginError) {
+  private fun redirectLoginErrorPage(
+    ctx: RoutingContext,
+    err: LoginError,
+  ) {
     ctx.redirect(Routes.LOGIN_URL + "?errorCode=${err.code}")
   }
 

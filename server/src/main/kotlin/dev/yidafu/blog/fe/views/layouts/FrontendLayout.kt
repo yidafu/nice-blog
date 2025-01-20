@@ -29,28 +29,31 @@ val HEADER_COLOR = COLOR_PRIMARY
 
 val CODE_BACKGROUND_COLOR = hex(0xfafafa)
 
-
- class FrontendLayout(val vo: PageVO) : BaseLayout(
+class FrontendLayout(val vo: PageVO) : BaseLayout(
   headScript = {
-    link { rel = "stylesheet";href = "/public/github-markdown-light.css" }
-  }
+    link {
+      rel = "stylesheet"
+      href = "/public/github-markdown-light.css"
+    }
+  },
 ) {
   override val backgroundColor = "#fff"
-
 
   override fun layout(block: DIV.() -> Unit): TagConsumer<String> {
     return super.layout {
       nav("m-auto") {
-        style = kw.inline {
-          padding.y[4].x[6]
-          height[12].width[300]
-          flex.row.justify_between
-          background.white
-        }
-        div {
-          style = kw.inline {
-            flex.row.items_center
+        style =
+          kw.inline {
+            padding.y[4].x[6]
+            height[12].width[300]
+            flex.row.justify_between
+            background.white
           }
+        div {
+          style =
+            kw.inline {
+              flex.row.items_center
+            }
           a("https://www.yidafu.dev") {
             img(classes = "logo") {
               style = kw.inline { height[12] }
@@ -58,31 +61,61 @@ val CODE_BACKGROUND_COLOR = hex(0xfafafa)
             }
           }
           span {
-            style = kw.inline { margin.x[3]; width[0.5].height[5].background.color["#E7E7E7"] }
+            style =
+              kw.inline {
+                margin.x[3]
+                width[0.5].height[5].background.color["#E7E7E7"]
+              }
           }
 
           div {
-            style = kw.inline { flex.row.items_center; height[8].width[60] }
+            style =
+              kw.inline {
+                flex.row.items_center
+                height[8].width[60]
+              }
             a(vo.githubUrl) {
-              style = kw.inline { inline_block.margin.right[6];size[8] }
+              style =
+                kw.inline {
+                  inline_block.margin.right[6]
+                  size[8]
+                }
               Github()
             }
 
             a("mailto:me@yidafu.dev") {
-              style = kw.inline { inline_block;size[8];text.color["#333"] }
+              style =
+                kw.inline {
+                  inline_block
+                  size[8]
+                  text.color["#333"]
+                }
               Email()
             }
           }
         }
 
         div {
-          style = kw.inline { text.center; flex.row.items_center }
+          style =
+            kw.inline {
+              text.center
+              flex.row.items_center
+            }
           a(Routes.ARTICLE_LIST) {
-            style = kw.inline { font.size[4]; text.color["#363636"]; margin.right[20] }
+            style =
+              kw.inline {
+                font.size[4]
+                text.color["#363636"]
+                margin.right[20]
+              }
             span { +"ARTICLES" }
           }
           a("/about") {
-            style = kw.inline { font.size[4]; text.color["#363636"]; }
+            style =
+              kw.inline {
+                font.size[4]
+                text.color["#363636"]
+              }
             span { +"ABOUT" }
           }
         }
@@ -95,6 +128,5 @@ val CODE_BACKGROUND_COLOR = hex(0xfafafa)
 
       footerBlock()
     }
-
   }
 }
