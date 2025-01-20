@@ -123,9 +123,9 @@ open class BArticle(
   val SERIES: TableField<BArticleRecord, String?> = createField(DSL.name("SERIES"), SQLDataType.VARCHAR(255), this, "")
 
   /**
-   * The column <code>B_ARTICLE.SOURCETYPE</code>.
+   * The column <code>B_ARTICLE.SOURCE_TYPE</code>.
    */
-  val SOURCETYPE: TableField<BArticleRecord, String?> = createField(DSL.name("SOURCETYPE"), SQLDataType.VARCHAR(255), this, "")
+  val SOURCE_TYPE: TableField<BArticleRecord, String?> = createField(DSL.name("SOURCE_TYPE"), SQLDataType.VARCHAR(255), this, "")
 
   /**
    * The column <code>B_ARTICLE.STATUS</code>.

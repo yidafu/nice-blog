@@ -49,7 +49,7 @@ open class BArticleRecord() : UpdatableRecordImpl<BArticleRecord>(BArticle.B_ART
     set(value): Unit = set(8, value)
     get(): String? = get(8) as String?
 
-  open var sourcetype: String?
+  open var sourceType: String?
     set(value): Unit = set(9, value)
     get(): String? = get(9) as String?
 
@@ -84,7 +84,7 @@ open class BArticleRecord() : UpdatableRecordImpl<BArticleRecord>(BArticle.B_ART
     html: String? = null,
     identifier: String? = null,
     series: String? = null,
-    sourcetype: String? = null,
+    sourceType: String? = null,
     status: Int? = null,
     summary: String? = null,
     title: String? = null,
@@ -98,7 +98,7 @@ open class BArticleRecord() : UpdatableRecordImpl<BArticleRecord>(BArticle.B_ART
     this.html = html
     this.identifier = identifier
     this.series = series
-    this.sourcetype = sourcetype
+    this.sourceType = sourceType
     this.status = status
     this.summary = summary
     this.title = title

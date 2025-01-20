@@ -21,9 +21,6 @@ class HomePageHandler(
   suspend fun indexPage(ctx: RoutingContext) {
     val list = articleService.getAll()
     val voList = articleConvertor.toVO(list)
-    voList.forEach {
-      log.info("article $it")
-    }
     ctx.html(ArticleListPage::class, ArticleListVO(voList))
   }
 

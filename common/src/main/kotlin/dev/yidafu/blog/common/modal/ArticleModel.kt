@@ -33,7 +33,7 @@ class ArticleModel(
   var content: String? = null,
   @Column(columnDefinition = "text")
   var html: String? = null,
-  @Column
+  @Column(name = "source_type")
   @Enumerated(value = EnumType.STRING)
   var sourceType: ArticleSourceType,
   @Column(comment = "content's md5 hash for checking weather article update or not")

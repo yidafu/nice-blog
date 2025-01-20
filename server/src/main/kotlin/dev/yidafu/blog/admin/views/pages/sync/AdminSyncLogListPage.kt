@@ -69,12 +69,12 @@ class AdminSyncLogListPage(override val vo: AdminSyncTaskListVO) : AdminSyncBase
                   style = cellStyle
                   +i.createdAt.toString()
                 }
-              }
-              td {
-                style = cellStyle
-                a {
-                  href = Routes.SYNC_LOG_DETAIL_URL + "?uuid=" + i.uuid
-                  +AdminTxt.detail.toString(vo.locale)
+                td {
+                  style = cellStyle
+                  a {
+                    href = Routes.SYNC_LOG_DETAIL_URL + "?uuid=" + i.uuid
+                    +AdminTxt.detail.toString(vo.locale)
+                  }
                 }
               }
             }
