@@ -10,7 +10,7 @@ interface ArticleManager {
     rawContent: String,
   ): Boolean
 
-  suspend fun processImage(file: File): URI
+  fun processImage(file: File): URI
 
   suspend fun saveArticle(articleDTO: CommonArticleDTO)
 }
@@ -23,7 +23,7 @@ open class DefaultArticleManager : ArticleManager {
     return true
   }
 
-  override suspend fun processImage(file: File): URI {
+  override fun processImage(file: File): URI {
     return file.toURI()
   }
 

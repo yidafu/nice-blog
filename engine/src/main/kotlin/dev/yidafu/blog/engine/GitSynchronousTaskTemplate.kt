@@ -8,7 +8,6 @@ import org.koin.java.KoinJavaComponent.inject
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
-import java.nio.file.Paths
 import java.nio.file.attribute.BasicFileAttributes
 
 abstract class GitSynchronousTaskTemplate(
@@ -16,19 +15,13 @@ abstract class GitSynchronousTaskTemplate(
   protected val listener: SynchronousListener,
 ) {
   protected val logger: Logger by inject(Logger::class.java)
+  private val articleManager: ArticleManager by inject(ArticleManager::class.java)
 
   private val processors: List<IProcessor> =
     listOf(
-      NotebookProcessor(),
-      MarkdownProcessor(),
+      NotebookProcessor(articleManager),
+      MarkdownProcessor(articleManager),
     )
-
-  private fun resolvePath(
-    file: File,
-    url: String,
-  ): File {
-    return Paths.get(file.parentFile.absolutePath, url).toFile()
-  }
 
   /**
    * clone or update local repository

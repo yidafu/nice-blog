@@ -4,6 +4,7 @@ import com.charleskorn.kaml.Yaml
 import dev.yidafu.blog.common.dto.CommonArticleDTO
 import dev.yidafu.blog.common.dto.FrontMatterDTO
 import dev.yidafu.blog.common.modal.ArticleSourceType
+import dev.yidafu.blog.dev.yidafu.blog.engine.ArticleManager
 import dev.yidafu.blog.dev.yidafu.blog.engine.CustomCodeHighlight
 import dev.yidafu.blog.dev.yidafu.blog.engine.getGitCreateTime
 import dev.yidafu.blog.dev.yidafu.blog.engine.getGitModifyTime
@@ -16,11 +17,11 @@ import java.nio.file.Path
 import kotlin.io.path.extension
 import kotlin.io.path.name
 
-class NotebookProcessor : IProcessor {
+class NotebookProcessor(
+  private val articleManager: ArticleManager,
+) : IProcessor {
   private val jsMagic = listOf("%js", "%javascript", "%ts", "%typescript", "%jsx", "%tsx")
 
-  private val flavour = GFMFlavorExtendDescriptor()
-  private val parser = MarkdownParser(flavour)
 //  private val currentDirectory: File by lazy {
 //    Paths.get(System.getProperty("user.dir")).toFile()
 //  }
@@ -41,6 +42,8 @@ class NotebookProcessor : IProcessor {
     val file = path.toFile()
     val notebook = JupyterParser.parse(file)
 
+    val flavour = GFMFlavorExtendDescriptor(articleManager, file)
+    val parser = MarkdownParser(flavour)
     val list = mutableListOf<String>()
     val cells = notebook.cells
     val frontMatterCell = cells[0]

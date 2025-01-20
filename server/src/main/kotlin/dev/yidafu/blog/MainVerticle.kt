@@ -73,7 +73,7 @@ class MainVerticle : CoroutineVerticle(), CoroutineRouterSupport {
             single<Logger> { DBLogger("xx") }
             single<GitSynchronousTaskTemplate> {
               GitSynchronousTask(
-                GitConfig("https://github.com/yidafu/example-blog.git", branch = "master"),
+                GitConfig("https://github.com/yidafu/yidafu.dev.git", branch = "master"),
                 DefaultSynchronousListener(),
               )
             }
