@@ -5,23 +5,25 @@ import org.koin.java.KoinJavaComponent.inject
 import java.io.File
 import java.net.URI
 
-class LocalSynchronousTask(
+class LocalSynchronousTaskBase(
   config: GitConfig,
-  listener: SynchronousListener = DefaultSynchronousListener(),
-) : GitSynchronousTaskTemplate(config, listener) {
+  listener: SynchronousListener,
+  logger: Logger,
+  articleManager: ArticleManager,
+) : BaseGitSynchronousTask(config, listener, logger, articleManager) {
   private val articleService: ArticleManager by inject(ArticleManager::class.java)
 
   override suspend fun fetchRepository(): File {
-    return File("/Users/yidafu/github/yidafu.dev")
+    return File("/Users/dovyih/github/yidafu.dev")
   }
 
   override suspend fun updateImage(img: File): URI {
-    logger.log("upload image ${img.path}")
+    logger.log(taskId, "upload image ${img.path}")
     return img.toURI()
   }
 
   override suspend fun persistentPost(dto: CommonArticleDTO) {
-    logger.log("persistent post ==> ${dto.filename}")
+    logger.log(taskId, "persistent post ==> ${dto.filename}")
     articleService.saveArticle(dto)
   }
 

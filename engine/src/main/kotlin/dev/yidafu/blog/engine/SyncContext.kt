@@ -19,6 +19,7 @@ data class GitConfig(
   var url: String = "",
   var branch: String = "",
   var localPath: String = DEFAULT_REPO_LOCATION,
+  val uuid: String = "",
 ) {
   fun getLocalRepoFile(): File {
     if (localPath == DEFAULT_REPO_LOCATION) {

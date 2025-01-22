@@ -4,18 +4,22 @@ import dev.yidafu.blog.common.dto.CommonArticleDTO
 import dev.yidafu.blog.dev.yidafu.blog.engine.processor.IProcessor
 import dev.yidafu.blog.dev.yidafu.blog.engine.processor.MarkdownProcessor
 import dev.yidafu.blog.dev.yidafu.blog.engine.processor.NotebookProcessor
-import org.koin.java.KoinJavaComponent.inject
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.attribute.BasicFileAttributes
 
-abstract class GitSynchronousTaskTemplate(
+abstract class BaseGitSynchronousTask(
   protected val gitConfig: GitConfig,
   protected val listener: SynchronousListener,
+  protected val logger: Logger,
+  protected val articleManager: ArticleManager,
 ) {
-  protected val logger: Logger by inject(Logger::class.java)
-  private val articleManager: ArticleManager by inject(ArticleManager::class.java)
+  protected val gitUrl: String
+    get() = gitConfig.url.ifBlank { throw IllegalArgumentException("git url is blank") }
+  protected val gitBranch: String
+    get() = gitConfig.branch.ifEmpty { "main" }
+  protected val taskId: String = gitConfig.uuid
 
   private val processors: List<IProcessor> =
     listOf(
@@ -44,9 +48,9 @@ abstract class GitSynchronousTaskTemplate(
     // execute sync task in io thread
     listener.onStart()
     try {
-      logger.log("start sync task...")
+      logger.log(taskId, "start sync task...")
       val repoDirectory = fetchRepository()
-      logger.log("scan markdown/notebook in ${repoDirectory.toPath()}")
+      logger.log(taskId, "scan markdown/notebook in ${repoDirectory.toPath()}")
       val regularFiles =
         Files.find(repoDirectory.toPath(), Int.MAX_VALUE, { path, file: BasicFileAttributes ->
           file.isRegularFile &&
@@ -65,7 +69,7 @@ abstract class GitSynchronousTaskTemplate(
 
       listener.onFinish()
     } catch (e: Exception) {
-      logger.log("sync task failed: ${e.message}")
+      logger.log(taskId, "sync task failed: ${e.message}")
       listener.onFailed()
     } finally {
       cleanup()

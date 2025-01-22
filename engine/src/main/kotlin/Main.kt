@@ -11,20 +11,32 @@ suspend fun main() {
     startKoin {
       val testModule =
         module {
-          single<Logger> { StdLogger() }
-          single<GitSynchronousTaskTemplate> {
-            LocalSynchronousTask(
-              GitConfig("https://github.com/yidafu/example-blog.git", branch = "master"),
-              DefaultSynchronousListener(),
-            )
-          }
-          single<ArticleManager> {
-            DefaultArticleManager()
+          scope<TaskScope> {
+            scoped<Logger> {
+              StdLogger()
+            }
+            scoped<GitConfig> {
+              GitConfig("", branch = "")
+            }
+            scoped<SynchronousListener> {
+              DefaultSynchronousListener()
+            }
+            scoped<BaseGitSynchronousTask> {
+              // default SynchronousTask
+              GitSynchronousTask(get<GitConfig>(), get(), get(), get())
+            }
+            scoped<ArticleManager> {
+              DefaultArticleManager()
+            }
           }
         }
 
       modules(testModule)
     }
+  val scope = koin.koin.createScope<TaskScope>()
+  scope.declare<Logger>(StdLogger())
 
-  koin.koin.get<GitSynchronousTaskTemplate>().sync()
+  scope.declare(GitConfig("https://github.com/yidafu/yidafu.dev.git", "master", "uuid"))
+  scope.get<BaseGitSynchronousTask>().sync()
+  scope.close()
 }

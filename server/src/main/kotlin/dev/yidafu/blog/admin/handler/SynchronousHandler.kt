@@ -17,7 +17,8 @@ import dev.yidafu.blog.common.sse.SseModel
 import dev.yidafu.blog.common.vo.AdminSyncTaskListVO
 import dev.yidafu.blog.common.vo.AdminSyncTaskVO
 import dev.yidafu.blog.common.vo.AdminSynchronousVO
-import dev.yidafu.blog.dev.yidafu.blog.engine.GitSynchronousTaskTemplate
+import dev.yidafu.blog.dev.yidafu.blog.engine.*
+import dev.yidafu.blog.dev.yidafu.blog.engine.TaskScope
 import io.github.allangomes.kotlinwind.css.I300
 import io.github.allangomes.kotlinwind.css.I50
 import io.github.allangomes.kotlinwind.css.LG
@@ -28,9 +29,8 @@ import kotlinx.html.div
 import kotlinx.html.stream.appendHTML
 import kotlinx.html.style
 import org.koin.core.annotation.Single
-import org.koin.java.KoinJavaComponent.inject
+import org.koin.java.KoinJavaComponent.getKoin
 import org.mapstruct.factory.Mappers
-import java.util.*
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
@@ -44,8 +44,7 @@ class SynchronousHandler(
   private val LOG_END_EVENT = "logEnd"
 
   private val syncTaskConvertor = Mappers.getMapper(SyncTaskConvertor::class.java)
-
-  private val syncTask: GitSynchronousTaskTemplate by inject(GitSynchronousTaskTemplate::class.java)
+  private val koin = getKoin()
 
   suspend fun syncPage(ctx: RoutingContext) {
     ctx.redirect(Routes.SYNC_OPERATE_URL)
@@ -116,7 +115,12 @@ class SynchronousHandler(
     ctx.end(htmlFragment)
     // async execute task
     withContext(Dispatchers.IO) {
+      val taskScope = koin.createScope<TaskScope>(taskUuid)
+      val config = GitConfig(gitUrl, gitBranch, uuid = taskUuid)
+      taskScope.declare(config)
+      val syncTask: BaseGitSynchronousTask = taskScope.get<BaseGitSynchronousTask>()
       syncTask.sync()
+      taskScope.close()
     }
   }
 

@@ -8,7 +8,6 @@ import dev.yidafu.blog.common.modal.SyncTaskStatus
 import dev.yidafu.blog.common.query.PageQuery
 import dev.yidafu.blog.common.services.BaseService
 import org.jooq.CloseableDSLContext
-import org.jooq.impl.DSL.concat
 import org.koin.core.annotation.Single
 import org.mapstruct.factory.Mappers
 
@@ -26,19 +25,6 @@ class SyncTaskService(
 
     return taskRecord.store() > 0
   }
-
-  suspend fun appendLog(
-    uuid: String,
-    log: String,
-  ): Boolean =
-    runDB {
-      context.update(B_SYNC_TASK).set(
-        B_SYNC_TASK.LOGS,
-        concat(B_SYNC_TASK.LOGS, log),
-      ).where(B_SYNC_TASK.UUID.eq(uuid)).execute()
-
-      true
-    }
 
   suspend fun changeStatus(
     uuid: String,
