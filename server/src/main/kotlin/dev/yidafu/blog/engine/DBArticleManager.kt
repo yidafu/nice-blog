@@ -10,9 +10,12 @@ import dev.yidafu.blog.common.modal.ArticleModel
 import dev.yidafu.blog.common.modal.ArticleStatus
 import dev.yidafu.blog.common.services.BaseService
 import dev.yidafu.blog.dev.yidafu.blog.engine.ArticleManager
+import dev.yidafu.blog.dev.yidafu.blog.engine.Logger
+import dev.yidafu.blog.dev.yidafu.blog.engine.toSafePath
 import org.jooq.CloseableDSLContext
 import org.mapstruct.factory.Mappers
 import java.io.File
+import java.io.FileInputStream
 import java.net.URI
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -20,6 +23,7 @@ import java.util.*
 
 class DBArticleManager(
   private val context: CloseableDSLContext,
+  private val logger: Logger,
 ) : ArticleManager, BaseService(context) {
   override suspend fun needUpdate(
     identifier: String,
@@ -29,6 +33,10 @@ class DBArticleManager(
   }
 
   override fun processImage(file: File): URI {
+    // if cover not exist, return default cover.
+    if (!file.exists()) return URI.create("/static/default-cover.png")
+
+    logger.logSync("upload image ${file.toPath()}")
     val directory = File(BlogConfig.DEFAULT_UPLOAD_DIRECTORY)
 
     if (!directory.exists()) {
@@ -37,7 +45,9 @@ class DBArticleManager(
     val newFilename = UUID.randomUUID().toString() + "." + file.extension
     val newFilePath = Paths.get(directory.path, newFilename)
 //    logger.log("copy file ${file.toPath()} to $newFilePath")
-    Files.copy(file.toPath(), newFilePath)
+    FileInputStream(file).use { stream ->
+      Files.copy(stream, newFilePath)
+    }
     return URI.create(Routes.UPLOAD_URL.replace("*", newFilename))
   }
 
@@ -84,12 +94,14 @@ class DBArticleManager(
   }
 
   private suspend fun createArticle(article: ArticleModel) {
+    logger.log("create article ${article.identifier}")
     val newArticleRecord: BArticleRecord = context.newRecord(B_ARTICLE)
     articleConvertor.mapToRecord(article, newArticleRecord)
     newArticleRecord.store()
   }
 
   private suspend fun updateArticle(article: ArticleModel) {
+    logger.log("upload article ${article.identifier}")
     val oldRecord: BArticleRecord? = context.selectFrom(B_ARTICLE).where(B_ARTICLE.ID.eq(article.id)).fetchOne()
     articleConvertor.mapToRecord(article, oldRecord)
     oldRecord?.store()

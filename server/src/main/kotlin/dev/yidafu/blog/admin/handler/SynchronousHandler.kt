@@ -19,6 +19,7 @@ import dev.yidafu.blog.common.vo.AdminSyncTaskVO
 import dev.yidafu.blog.common.vo.AdminSynchronousVO
 import dev.yidafu.blog.dev.yidafu.blog.engine.*
 import dev.yidafu.blog.dev.yidafu.blog.engine.TaskScope
+import dev.yidafu.blog.engine.DBArticleManager
 import dev.yidafu.blog.engine.DBLogger
 import io.github.allangomes.kotlinwind.css.I300
 import io.github.allangomes.kotlinwind.css.I50
@@ -121,6 +122,7 @@ class SynchronousHandler(
       val config = GitConfig(gitUrl, gitBranch, uuid = taskUuid)
       taskScope.declare(config)
       taskScope.declare<Logger>(DBLogger(config, taskScope.get()))
+      taskScope.declare<ArticleManager>(DBArticleManager(taskScope.get(), taskScope.get()))
       val syncTask: BaseGitSynchronousTask = taskScope.get<BaseGitSynchronousTask>()
       syncTask.sync()
       taskScope.close()
