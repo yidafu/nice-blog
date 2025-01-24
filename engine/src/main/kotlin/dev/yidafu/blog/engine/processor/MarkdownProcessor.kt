@@ -58,6 +58,7 @@ class MarkdownProcessor(val articleManager: ArticleManager, private val logger: 
   }
 
   override fun transform(path: Path): CommonArticleDTO {
+    logger.logSync("transform markdown $path")
     val markdownFile = path.toFile()
     val text = markdownFile.readText()
     val filename = path.name
@@ -111,33 +112,16 @@ class MarkdownProcessor(val articleManager: ArticleManager, private val logger: 
             val frontMatterText = node.getTextInNode(text)
 
             val dto = Yaml.default.decodeFromString<FrontMatterDTO>(frontMatterText.toString())
+            val cover = dto.cover.let { cover ->
+              articleManager.processImage(File(markdownFile.parentFile.path, cover)).toString()
+            }
+            val rawContent = text.substring(horizontalRules[0].startOffset, secondHorizontalRule.endOffset)
 
-            dto.rawContent = text.substring(horizontalRules[0].startOffset, secondHorizontalRule.endOffset)
+            return dto.copy(cover = cover, rawContent = rawContent)
           }
         }
       }
     }
     return null
-  }
-
-  private fun resolvePath(
-    file: File,
-    url: String,
-  ): File {
-    return Paths.get(file.parentFile.absolutePath, url).toFile()
-  }
-
-  inner class MarkdownVisitor(
-    private val markdownFile: File,
-    private val markdownText: String,
-  ) : RecursiveVisitor() {
-    override fun visitNode(node: ASTNode) {
-      if (node is CompositeASTNode) {
-        if (node.type == MarkdownElementTypes.IMAGE) {
-//          extractImageLinks(node)
-        }
-      }
-      super.visitNode(node)
-    }
   }
 }

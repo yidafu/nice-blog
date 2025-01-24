@@ -10,7 +10,9 @@ import org.intellij.markdown.html.HtmlGenerator
 import org.intellij.markdown.parser.MarkdownParser
 import org.jetbrains.jupyter.parser.JupyterParser
 import org.jetbrains.jupyter.parser.notebook.*
+import java.io.File
 import java.nio.file.Path
+import java.nio.file.Paths
 import kotlin.io.path.extension
 import kotlin.io.path.name
 
@@ -37,6 +39,8 @@ class NotebookProcessor(
    * cons: can't run cell (notebook must be pre-executed) when transform notebook
    */
   override fun transform(path: Path): CommonArticleDTO {
+    logger.logSync("transform notebook $path")
+
     val file = path.toFile()
     val notebook = JupyterParser.parse(file)
 
@@ -46,8 +50,11 @@ class NotebookProcessor(
     val cells = notebook.cells
     val frontMatterCell = cells[0]
 
-    val frontMatterDTO = Yaml.default.decodeFromString<FrontMatterDTO>(frontMatterCell.source.replace("---", ""))
-    frontMatterDTO.rawContent = frontMatterCell.source
+    val dto = Yaml.default.decodeFromString<FrontMatterDTO>(frontMatterCell.source.replace("---", ""))
+    val cover = dto.cover.let {
+      articleManager.processImage(Paths.get(path.parent.toString(),it).toFile()).toString()
+    }
+    val frontMatterDTO= dto.copy(cover =cover, rawContent = frontMatterCell.source)
 
     cells.slice(1..<cells.size).forEach { cell: Cell ->
       when (cell) {

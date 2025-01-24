@@ -32,7 +32,7 @@ class ImageGeneratingProvider(
           logger.logSync("m link => $link")
           val remoteUrl = articleManager.processImage(resolvePath(linkUrl.toString()))
           logger.logSync("upload image url => $remoteUrl")
-          visitor.consumeHtml("<img src='${remoteUrl.toURL()}' alt='$label' />")
+          visitor.consumeHtml("<img src='$remoteUrl' alt='$label' />")
         }
       }
     }

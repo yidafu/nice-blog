@@ -70,7 +70,7 @@ abstract class BaseGitSynchronousTask(
       listener.onFinish()
     } catch (e: Exception) {
       logger.log("sync task failed: ${e.message}")
-      listener.onFailed()
+      listener.onFailed(e)
     } finally {
       cleanup()
     }
