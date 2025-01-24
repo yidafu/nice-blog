@@ -12,7 +12,6 @@ import org.intellij.markdown.MarkdownTokenTypes
 import org.intellij.markdown.ast.ASTNode
 import org.intellij.markdown.ast.CompositeASTNode
 import org.intellij.markdown.ast.getTextInNode
-import org.intellij.markdown.ast.visitors.RecursiveVisitor
 import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
 import org.intellij.markdown.html.GeneratingProvider
 import org.intellij.markdown.html.HtmlGenerator
@@ -112,9 +111,10 @@ class MarkdownProcessor(val articleManager: ArticleManager, private val logger: 
             val frontMatterText = node.getTextInNode(text)
 
             val dto = Yaml.default.decodeFromString<FrontMatterDTO>(frontMatterText.toString())
-            val cover = dto.cover.let { cover ->
-              articleManager.processImage(File(markdownFile.parentFile.path, cover)).toString()
-            }
+            val cover =
+              dto.cover.let { cover ->
+                articleManager.processImage(File(markdownFile.parentFile.path, cover)).toString()
+              }
             val rawContent = text.substring(horizontalRules[0].startOffset, secondHorizontalRule.endOffset)
 
             return dto.copy(cover = cover, rawContent = rawContent)

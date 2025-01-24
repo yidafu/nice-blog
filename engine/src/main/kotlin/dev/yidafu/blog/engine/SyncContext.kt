@@ -40,6 +40,7 @@ interface SynchronousListener {
 @Scoped
 class DefaultSynchronousListener : SynchronousListener {
   private val log = LoggerFactory.getLogger(SynchronousListener::class.java)
+
   override fun onStart() {
   }
 
