@@ -1,17 +1,20 @@
 package dev.yidafu.blog.engine
 
+import dev.whyoleg.cryptography.CryptographyProvider
+import dev.whyoleg.cryptography.DelicateCryptographyApi
+import dev.whyoleg.cryptography.algorithms.MD5
 import dev.yidafu.blog.common.BlogConfig
 import dev.yidafu.blog.common.Routes
 import dev.yidafu.blog.common.converter.ArticleConvertor
 import dev.yidafu.blog.common.dao.tables.records.BArticleRecord
 import dev.yidafu.blog.common.dao.tables.references.B_ARTICLE
+import dev.yidafu.blog.common.dao.tables.references.B_ARTICLE_HISTORY
 import dev.yidafu.blog.common.dto.CommonArticleDTO
 import dev.yidafu.blog.common.modal.ArticleModel
 import dev.yidafu.blog.common.modal.ArticleStatus
 import dev.yidafu.blog.common.services.BaseService
 import dev.yidafu.blog.dev.yidafu.blog.engine.ArticleManager
 import dev.yidafu.blog.dev.yidafu.blog.engine.Logger
-import dev.yidafu.blog.dev.yidafu.blog.engine.toSafePath
 import org.jooq.CloseableDSLContext
 import org.mapstruct.factory.Mappers
 import java.io.File
@@ -51,11 +54,18 @@ class DBArticleManager(
     return URI.create(Routes.UPLOAD_URL.replace("*", newFilename))
   }
 
+  @OptIn(DelicateCryptographyApi::class, ExperimentalStdlibApi::class)
+  private suspend fun hash(str: String): String {
+    val md5 = CryptographyProvider.Default.get(MD5)
+    return md5.hasher().hash(str.toByteArray()).toHexString()
+  }
+
   override suspend fun saveArticle(dto: CommonArticleDTO) {
     val identifier =
       dto.filename
         .replace(".md", ".html")
         .replace(".ipynb", ".html")
+
     val modal =
       ArticleModel(
         title = dto.frontMatter?.title ?: "",
@@ -81,6 +91,13 @@ class DBArticleManager(
       return false
     }
     val oldArticle = findArticleByName(article.identifier!!)
+
+    val md5Hash = hash(article.content ?: "")
+    if (oldArticle?.hash == md5Hash) {
+      return true
+    }
+    article.hash = md5Hash
+
     if (oldArticle == null) {
       // insert new article
       createArticle(article)
@@ -90,7 +107,16 @@ class DBArticleManager(
       updateArticle(article)
     }
 
+    createLog(article)
     return true
+  }
+
+  private suspend fun createLog(article: ArticleModel) {
+    val history = context.newRecord(B_ARTICLE_HISTORY)
+    history.rawContent = article.content
+    history.articleId = article.id
+    history.renderedContent = article.html
+    history.store()
   }
 
   private suspend fun createArticle(article: ArticleModel) {
@@ -105,6 +131,7 @@ class DBArticleManager(
     val oldRecord: BArticleRecord? = context.selectFrom(B_ARTICLE).where(B_ARTICLE.ID.eq(article.id)).fetchOne()
     articleConvertor.mapToRecord(article, oldRecord)
     oldRecord?.store()
+    oldRecord?.refresh()
   }
 
   private suspend fun findArticleByName(name: String): ArticleModel? =

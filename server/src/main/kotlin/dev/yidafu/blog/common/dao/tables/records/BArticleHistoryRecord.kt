@@ -25,7 +25,7 @@ open class BArticleHistoryRecord() : UpdatableRecordImpl<BArticleHistoryRecord>(
     set(value): Unit = set(2, value)
     get(): LocalDateTime? = get(2) as LocalDateTime?
 
-  open var articleid: Long?
+  open var articleId: Long?
     set(value): Unit = set(3, value)
     get(): Long? = get(3) as Long?
 
@@ -50,14 +50,14 @@ open class BArticleHistoryRecord() : UpdatableRecordImpl<BArticleHistoryRecord>(
     id: Long? = null,
     createdAt: LocalDateTime? = null,
     updatedAt: LocalDateTime? = null,
-    articleid: Long? = null,
+    articleId: Long? = null,
     rawContent: String? = null,
     renderedContent: String? = null,
   ) : this() {
     this.id = id
     this.createdAt = createdAt
     this.updatedAt = updatedAt
-    this.articleid = articleid
+    this.articleId = articleId
     this.rawContent = rawContent
     this.renderedContent = renderedContent
     resetChangedOnNotNull()
