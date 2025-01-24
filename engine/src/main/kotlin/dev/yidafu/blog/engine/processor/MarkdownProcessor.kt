@@ -33,6 +33,7 @@ data class MLink(val url: String, val alt: String)
 
 class GFMFlavorExtendDescriptor(
   private val articleManager: ArticleManager,
+  private val logger: Logger,
   private val mdFile: File,
 ) : GFMFlavourDescriptor() {
   override fun createHtmlGeneratingProviders(
@@ -43,14 +44,14 @@ class GFMFlavorExtendDescriptor(
       hashMapOf(
         MarkdownElementTypes.CODE_FENCE to CodeFenceGeneratingProvider(),
         MarkdownElementTypes.IMAGE to
-          ImageGeneratingProvider(articleManager) { path: String ->
+          ImageGeneratingProvider(articleManager, logger) { path: String ->
             Paths.get(mdFile.parentFile.absolutePath, path).toFile()
           },
       )
   }
 }
 
-class MarkdownProcessor(val articleManager: ArticleManager) : IProcessor {
+class MarkdownProcessor(val articleManager: ArticleManager, private val logger: Logger) : IProcessor {
   override fun filter(path: Path): Boolean {
     return path.extension == "md" &&
       path.nameWithoutExtension != "README"
@@ -62,7 +63,7 @@ class MarkdownProcessor(val articleManager: ArticleManager) : IProcessor {
     val filename = path.name
     val attrs = Files.readAttributes(path, BasicFileAttributes::class.java)
 
-    val flavour = GFMFlavorExtendDescriptor(articleManager, markdownFile)
+    val flavour = GFMFlavorExtendDescriptor(articleManager, logger, markdownFile)
     val parser = MarkdownParser(flavour)
 
     val createDate = LocalDateTime.ofInstant(attrs.creationTime().toInstant(), ZoneId.systemDefault())

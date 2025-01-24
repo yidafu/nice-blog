@@ -1,4 +1,4 @@
-package dev.yidafu.blog.admin.jobs
+package dev.yidafu.blog.engine
 
 import dev.yidafu.blog.common.BlogConfig
 import dev.yidafu.blog.common.Routes

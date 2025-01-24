@@ -13,6 +13,7 @@ import java.io.File
 
 class ImageGeneratingProvider(
   private val articleManager: ArticleManager,
+  private val logger: Logger,
   val resolvePath: (path: String) -> File,
 ) : GeneratingProvider {
   private val log = LoggerFactory.getLogger(ImageGeneratingProvider::class.java)
@@ -28,9 +29,9 @@ class ImageGeneratingProvider(
           val linkUrl = linKNode.findChildOfType(MarkdownElementTypes.LINK_DESTINATION)?.getTextInNode(text)
           val label = linKNode.findChildOfType(MarkdownElementTypes.LINK_TEXT)?.getTextInNode(text)
           val link = MLink(linkUrl.toString(), label.toString())
-          log.info("m link => {}", link)
+          logger.logSync("m link => $link")
           val remoteUrl = articleManager.processImage(resolvePath(linkUrl.toString()))
-          log.info("upload image url => $remoteUrl")
+          logger.logSync("upload image url => $remoteUrl")
           visitor.consumeHtml("<img src='${remoteUrl.toURL()}' alt='$label' />")
         }
       }

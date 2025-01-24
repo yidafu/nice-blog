@@ -1,20 +1,13 @@
 package dev.yidafu.blog.dev.yidafu.blog.engine
 
+import dev.yidafu.blog.dev.yidafu.blog.engine.TaskScope.Companion.NAME
+import org.koin.core.annotation.Scope
+import org.koin.core.annotation.Scoped
 import java.io.File
 import java.net.URL
 
-abstract class SyncContext {
-//  abstract fun log(str: String)
-
-  abstract fun onStart()
-
-  abstract fun onFinish()
-
-  abstract fun onFailed()
-
-  open val gitConfig: GitConfig = GitConfig()
-}
-
+@Scope(name = NAME)
+@Scoped
 data class GitConfig(
   var url: String = "",
   var branch: String = "",
@@ -42,6 +35,8 @@ interface SynchronousListener {
   fun onFailed()
 }
 
+@Scope(name = NAME)
+@Scoped
 class DefaultSynchronousListener : SynchronousListener {
   override fun onStart() {
   }

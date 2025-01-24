@@ -2,14 +2,11 @@ package dev.yidafu.blog
 
 import dev.yidafu.blog.admin.AdminVerticle
 import dev.yidafu.blog.admin.handler.AdminHandlerModule
-import dev.yidafu.blog.admin.jobs.DBArticleManager
-import dev.yidafu.blog.admin.jobs.DBLogger
 import dev.yidafu.blog.admin.services.AdminServiceModule
 import dev.yidafu.blog.common.dao.DefaultSchema
 import dev.yidafu.blog.common.handler.CommonHandlerModule
 import dev.yidafu.blog.common.services.CommonServiceModule
 import dev.yidafu.blog.dev.yidafu.blog.engine.*
-import dev.yidafu.blog.dev.yidafu.blog.engine.TaskScope
 import dev.yidafu.blog.fe.FrontendVerticle
 import dev.yidafu.blog.fe.handler.FeHandlerModule
 import dev.yidafu.blog.fe.service.FeServiceModule
@@ -69,27 +66,27 @@ class MainVerticle : CoroutineVerticle(), CoroutineRouterSupport {
           module {
             factory<CloseableDSLContext> { jooqContext }
           }
-        val engineModule =
-          module {
-            scope<TaskScope> {
-              scoped<GitConfig> {
-                GitConfig("", branch = "")
-              }
-              scoped<SynchronousListener> {
-                DefaultSynchronousListener()
-              }
-              scoped<BaseGitSynchronousTask> {
-                // default SynchronousTask
-                GitSynchronousTask(get<GitConfig>(), get(), get(), get())
-              }
-              scoped<ArticleManager> {
-                DBArticleManager(jooqContext)
-              }
-              scoped<Logger> {
-                DBLogger(jooqContext)
-              }
-            }
-          }
+//        val engineModule =
+//          module {
+//            scope<TaskScope> {
+//              scoped<GitConfig> {
+//                GitConfig("", branch = "")
+//              }
+//              scoped<SynchronousListener> {
+//                DefaultSynchronousListener()
+//              }
+//              scoped<BaseGitSynchronousTask> {
+//                // default SynchronousTask
+//                GitSynchronousTask(get<GitConfig>(), get(), get(), get())
+//              }
+//              scoped<ArticleManager> {
+//                DBArticleManager(jooqContext)
+//              }
+//              scoped<Logger> {
+//                DBLogger(jooqContext)
+//              }
+//            }
+//          }
 
         modules(
           JooqModule,
@@ -99,7 +96,7 @@ class MainVerticle : CoroutineVerticle(), CoroutineRouterSupport {
           FeHandlerModule().module,
           AdminHandlerModule().module,
           AdminServiceModule().module,
-          engineModule,
+          EngineModule().module,
         )
       }
 

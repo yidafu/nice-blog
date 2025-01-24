@@ -23,8 +23,8 @@ abstract class BaseGitSynchronousTask(
 
   private val processors: List<IProcessor> =
     listOf(
-      NotebookProcessor(articleManager),
-      MarkdownProcessor(articleManager),
+      NotebookProcessor(articleManager, logger),
+      MarkdownProcessor(articleManager, logger),
     )
 
   /**
@@ -48,9 +48,9 @@ abstract class BaseGitSynchronousTask(
     // execute sync task in io thread
     listener.onStart()
     try {
-      logger.log(taskId, "start sync task...")
+      logger.log("start sync task...")
       val repoDirectory = fetchRepository()
-      logger.log(taskId, "scan markdown/notebook in ${repoDirectory.toPath()}")
+      logger.log("scan markdown/notebook in ${repoDirectory.toPath()}")
       val regularFiles =
         Files.find(repoDirectory.toPath(), Int.MAX_VALUE, { path, file: BasicFileAttributes ->
           file.isRegularFile &&
@@ -69,7 +69,7 @@ abstract class BaseGitSynchronousTask(
 
       listener.onFinish()
     } catch (e: Exception) {
-      logger.log(taskId, "sync task failed: ${e.message}")
+      logger.log("sync task failed: ${e.message}")
       listener.onFailed()
     } finally {
       cleanup()
