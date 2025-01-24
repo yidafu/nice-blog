@@ -3,6 +3,7 @@ package dev.yidafu.blog.dev.yidafu.blog.engine
 import dev.yidafu.blog.dev.yidafu.blog.engine.TaskScope.Companion.NAME
 import org.koin.core.annotation.Scope
 import org.koin.core.annotation.Scoped
+import org.slf4j.LoggerFactory
 import java.io.File
 import java.net.URL
 
@@ -32,18 +33,20 @@ interface SynchronousListener {
 
   fun onFinish()
 
-  fun onFailed()
+  fun onFailed(e: Exception)
 }
 
 @Scope(name = NAME)
 @Scoped
 class DefaultSynchronousListener : SynchronousListener {
+  private val log = LoggerFactory.getLogger(SynchronousListener::class.java)
   override fun onStart() {
   }
 
   override fun onFinish() {
   }
 
-  override fun onFailed() {
+  override fun onFailed(e: Exception) {
+    log.error("sync failed", e)
   }
 }
