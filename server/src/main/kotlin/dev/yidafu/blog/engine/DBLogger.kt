@@ -1,14 +1,13 @@
 package dev.yidafu.blog.engine
 
 import dev.yidafu.blog.common.dao.tables.references.B_SYNC_TASK
-import dev.yidafu.blog.dev.yidafu.blog.engine.GitConfig
-import dev.yidafu.blog.dev.yidafu.blog.engine.Logger
-import dev.yidafu.blog.dev.yidafu.blog.engine.TaskScope
+import dev.yidafu.blog.engine.Logger
+import dev.yidafu.blog.engine.TaskScope
+import dev.yidafu.blog.engine.config.GitConfig
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.jooq.CloseableDSLContext
 import org.jooq.impl.DSL.concat
@@ -23,7 +22,7 @@ class DBLogger(
   private val context: CloseableDSLContext,
 ) : Logger(config) {
   private val log = LoggerFactory.getLogger(DBLogger::class.java)
-  private val flow = MutableSharedFlow<String>(3, 100, BufferOverflow.SUSPEND)
+  private val flow = MutableSharedFlow<String>(5, 100, BufferOverflow.SUSPEND)
 
   init {
     CoroutineScope(Dispatchers.IO).launch {

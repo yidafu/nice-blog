@@ -5,7 +5,7 @@ import dev.yidafu.blog.common.Routes
 import dev.yidafu.blog.common.view.components.EAlertType
 import dev.yidafu.blog.common.view.components.alert
 import dev.yidafu.blog.common.view.layouts.BaseLayout
-import dev.yidafu.blog.common.view.tpl.Page
+import dev.yidafu.blog.common.view.tpl.PageTemplate
 import dev.yidafu.blog.common.views.components.FormItem
 import dev.yidafu.blog.common.views.components.formItem
 import dev.yidafu.blog.common.vo.AdminLoginVO
@@ -16,7 +16,7 @@ import io.github.allangomes.kotlinwind.css.I700
 import io.github.allangomes.kotlinwind.css.kw
 import kotlinx.html.*
 
-class AdminLoginPage(override val vo: AdminLoginVO) : Page<AdminLoginVO>() {
+class AdminLoginPage(override val vo: AdminLoginVO) : PageTemplate<AdminLoginVO>() {
   private val LOGON_FROM = "login_from"
   private val layout =
     BaseLayout(

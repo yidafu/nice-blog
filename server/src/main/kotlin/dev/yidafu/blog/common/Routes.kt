@@ -23,4 +23,7 @@ object Routes {
 
   internal const val ARTICLE_LIST = "/articles"
   internal const val ARTICLE_DETAIL = "/articles/:identifier"
+  internal const val ARTICLE_ADMIN_DETAIL = "/articles/:id"
+  internal const val ARTICLE_ADMIN_HISTORY = "/articles/:id/history"
+  internal const val ARTICLE_ADMIN_STATISTIC = "/articles/:id/statistic"
 }

@@ -25,7 +25,9 @@ inline fun FlowContent.tabs(
     ul {
       style =
         kw.inline {
-          flex.col
+          flex.auto.grow_0.shrink_0
+            .col
+          width[50]
         }
       options.forEach { option ->
         tabItem(option)
@@ -36,7 +38,7 @@ inline fun FlowContent.tabs(
         kw.inline {
           margin.left[6]
           padding.y[4].x[8]
-          flex.grow
+          flex.auto
         }
       block()
     }

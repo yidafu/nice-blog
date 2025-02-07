@@ -2,8 +2,8 @@ package dev.yidafu.blog.fe.handler
 
 import dev.yidafu.blog.common.converter.ArticleConvertor
 import dev.yidafu.blog.common.ext.html
+import dev.yidafu.blog.common.services.ArticleService
 import dev.yidafu.blog.common.vo.ArticleListVO
-import dev.yidafu.blog.fe.service.ArticleService
 import dev.yidafu.blog.fe.views.pages.ArticleDetailPage
 import dev.yidafu.blog.fe.views.pages.ArticleListPage
 import io.vertx.ext.web.RoutingContext

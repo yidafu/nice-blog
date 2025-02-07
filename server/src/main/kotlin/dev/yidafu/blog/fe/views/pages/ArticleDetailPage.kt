@@ -1,6 +1,6 @@
 package dev.yidafu.blog.fe.views.pages
 
-import dev.yidafu.blog.common.view.tpl.Page
+import dev.yidafu.blog.common.view.tpl.PageTemplate
 import dev.yidafu.blog.common.vo.ArticleVO
 import dev.yidafu.blog.fe.views.layouts.FrontendLayout
 import dev.yidafu.blog.fe.views.layouts.HEADER_COLOR
@@ -75,7 +75,7 @@ fun FlowContent.fullArticle(vo: ArticleVO) {
   }
 }
 
-class ArticleDetailPage(override val vo: ArticleVO) : Page<ArticleVO>() {
+class ArticleDetailPage(override val vo: ArticleVO) : PageTemplate<ArticleVO>() {
   override fun render(): String {
     return FrontendLayout(vo).layout {
       attributes["class"] = "m-auto"
