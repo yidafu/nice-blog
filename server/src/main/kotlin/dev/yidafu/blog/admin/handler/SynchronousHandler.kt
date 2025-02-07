@@ -1,13 +1,12 @@
 package dev.yidafu.blog.admin.handler
 
+import dev.yidafu.blog.admin.manager.SynchronousManager
 import dev.yidafu.blog.admin.services.SyncTaskService
 import dev.yidafu.blog.admin.views.pages.sync.AdminSyncLogListPage
 import dev.yidafu.blog.admin.views.pages.sync.AdminSyncLogPage
 import dev.yidafu.blog.admin.views.pages.sync.AdminSyncOperatePage
-import dev.yidafu.blog.common.ConfigurationKeys
 import dev.yidafu.blog.common.Routes
 import dev.yidafu.blog.common.converter.SyncTaskConvertor
-import dev.yidafu.blog.common.ext.getByKey
 import dev.yidafu.blog.common.ext.html
 import dev.yidafu.blog.common.modal.SyncTaskStatus
 import dev.yidafu.blog.common.query.PageQuery
@@ -17,32 +16,28 @@ import dev.yidafu.blog.common.sse.SseModel
 import dev.yidafu.blog.common.vo.AdminSyncTaskListVO
 import dev.yidafu.blog.common.vo.AdminSyncTaskVO
 import dev.yidafu.blog.common.vo.AdminSynchronousVO
-import dev.yidafu.blog.dev.yidafu.blog.engine.*
-import dev.yidafu.blog.dev.yidafu.blog.engine.TaskScope
-import dev.yidafu.blog.engine.DBArticleManager
-import dev.yidafu.blog.engine.DBLogger
 import io.github.allangomes.kotlinwind.css.I300
 import io.github.allangomes.kotlinwind.css.I50
 import io.github.allangomes.kotlinwind.css.LG
 import io.github.allangomes.kotlinwind.css.kw
 import io.vertx.ext.web.RoutingContext
-import kotlinx.coroutines.*
+import kotlinx.coroutines.delay
 import kotlinx.html.div
 import kotlinx.html.stream.appendHTML
 import kotlinx.html.style
 import org.koin.core.annotation.Single
-import org.koin.core.qualifier.StringQualifier
 import org.koin.java.KoinJavaComponent.getKoin
 import org.mapstruct.factory.Mappers
-import kotlin.uuid.ExperimentalUuidApi
-import kotlin.uuid.Uuid
+import org.slf4j.LoggerFactory
 
 @Single
 class SynchronousHandler(
   private val syncTaskService: SyncTaskService,
   private val articleService: ArticleService,
   private val configService: ConfigurationService,
+  private val synchronousManager: SynchronousManager,
 ) {
+  private val log = LoggerFactory.getLogger(SynchronousHandler::class.java)
   private val LOG_APPEND_EVENT = "logAppend"
   private val LOG_END_EVENT = "logEnd"
 
@@ -75,22 +70,10 @@ class SynchronousHandler(
     ctx.html(AdminSyncOperatePage::class, AdminSynchronousVO(""))
   }
 
-  @OptIn(ExperimentalUuidApi::class)
   suspend fun startSync(ctx: RoutingContext) {
-    val taskUuid = Uuid.random().toHexString()
+    val taskUuid = synchronousManager.startSync()
 
-    val configs =
-      configService.getByKeys(
-        listOf(
-          ConfigurationKeys.SOURCE_BRANCH,
-          ConfigurationKeys.SOURCE_URL,
-        ),
-      )
-
-    syncTaskService.createSyncTask(taskUuid)
-    val gitUrl = configs.getByKey(ConfigurationKeys.SOURCE_URL) ?: throw IllegalStateException("Git url can't be null")
-    val gitBranch = configs.getByKey(ConfigurationKeys.SOURCE_BRANCH) ?: throw IllegalStateException("Git url can't be null")
-
+    log.info("start synchronous task {}", taskUuid)
     val htmlFragment =
       buildString {
         appendHTML().div {
@@ -116,17 +99,6 @@ class SynchronousHandler(
         }
       }
     ctx.end(htmlFragment)
-    // async execute task
-    withContext(Dispatchers.IO) {
-      val taskScope = koin.createScope(taskUuid, StringQualifier(TaskScope.NAME), TaskScope::class)
-      val config = GitConfig(gitUrl, gitBranch, uuid = taskUuid)
-      taskScope.declare(config)
-      taskScope.declare<Logger>(DBLogger(config, taskScope.get()))
-      taskScope.declare<ArticleManager>(DBArticleManager(taskScope.get(), taskScope.get()))
-      val syncTask: BaseGitSynchronousTask = taskScope.get<BaseGitSynchronousTask>()
-      syncTask.sync()
-      taskScope.close()
-    }
   }
 
   /**
@@ -149,7 +121,7 @@ class SynchronousHandler(
       val log = syncTaskService.getSyncLog(uuid)
 
       if (log.id != null && !response.ended()) {
-        if (log.status != SyncTaskStatus.Running) {
+        if (log.status == SyncTaskStatus.Finished || log.status == SyncTaskStatus.Failed) {
           (log.logs ?: "").split('\n').forEach { str ->
             response.write(
               SseModel(
