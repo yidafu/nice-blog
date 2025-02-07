@@ -4,6 +4,7 @@ import dev.yidafu.blog.common.converter.ArticleConvertor
 import dev.yidafu.blog.common.dao.tables.records.BArticleRecord
 import dev.yidafu.blog.common.dao.tables.references.B_ARTICLE
 import dev.yidafu.blog.common.modal.ArticleModel
+import dev.yidafu.blog.common.query.PageQuery
 import org.jooq.CloseableDSLContext
 import org.koin.core.annotation.Single
 import org.mapstruct.factory.Mappers
@@ -14,41 +15,31 @@ class ArticleService(
 ) : BaseService(context) {
   private val articleConvertor = Mappers.getMapper(ArticleConvertor::class.java)
 
-  suspend fun saveArticle(article: ArticleModel): Boolean {
-    if (article.identifier == null) {
-      return false
-    }
-    val oldArticle = findArticleByName(article.identifier!!)
-    if (oldArticle == null) {
-      // insert new article
-      createArticle(article)
-    } else {
-      // update article
-      article.id = oldArticle.id
-      updateArticle(article)
-    }
-
-    return true
+  fun getListByPage(query: PageQuery): Pair<Int, List<ArticleModel>> {
+    val count = context.fetchCount(B_ARTICLE)
+    val articleRecords =
+      context.selectFrom(B_ARTICLE)
+        .limit(query.size)
+        .offset(query.offset)
+        .fetchArray()
+    return count to articleConvertor.recordToModal(articleRecords.toList())
   }
 
-  private suspend fun createArticle(article: ArticleModel) {
-    val newArticleRecord: BArticleRecord = context.newRecord(B_ARTICLE)
-    articleConvertor.mapToRecord(article, newArticleRecord)
-    newArticleRecord.store()
-  }
-
-  private suspend fun updateArticle(article: ArticleModel) {
-    val oldRecord: BArticleRecord? = context.selectFrom(B_ARTICLE).where(B_ARTICLE.ID.eq(article.id)).fetchOne()
-    articleConvertor.mapToRecord(article, oldRecord)
-    oldRecord?.store()
-  }
-
-  suspend fun findArticleByName(name: String): ArticleModel? =
+  suspend fun getAll(): List<ArticleModel> =
     runDB {
-      val article: BArticleRecord? =
-        context.selectFrom(B_ARTICLE).where(
-          B_ARTICLE.IDENTIFIER.eq(name),
-        ).fetchOne()
+      val articles: Array<BArticleRecord> = context.selectFrom(B_ARTICLE).fetchArray()
+      articleConvertor.recordToModal(articles.toList())
+    }
+
+  suspend fun getOneByIdentifier(identifier: String): ArticleModel? =
+    runDB {
+      val article = context.selectFrom(B_ARTICLE).where(B_ARTICLE.IDENTIFIER.eq(identifier)).fetchOne()
       articleConvertor.recordToModal(article)
+    }
+
+  suspend fun getById(id: Int): ArticleModel? =
+    runDB {
+      val record = context.selectFrom(B_ARTICLE).where(B_ARTICLE.ID.eq(id.toLong())).fetchOne()
+      articleConvertor.recordToModal(record)
     }
 }
