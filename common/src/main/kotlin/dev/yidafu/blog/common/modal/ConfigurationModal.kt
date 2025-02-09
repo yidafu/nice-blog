@@ -1,6 +1,9 @@
 package dev.yidafu.blog.common.modal
 
-import jakarta.persistence.*
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.Table
+import jakarta.persistence.UniqueConstraint
 
 @Entity
 @Table(

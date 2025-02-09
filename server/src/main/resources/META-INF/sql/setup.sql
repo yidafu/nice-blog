@@ -9,6 +9,7 @@ INSERT OR IGNORE INTO B_CONFIGURATION (id, config_key, config_value) VALUES(3, '
 INSERT OR IGNORE INTO B_CONFIGURATION (id, config_key, config_value) VALUES(4, 'data_source.type', 'git');
 INSERT OR IGNORE INTO B_CONFIGURATION (id, config_key, config_value) VALUES(5, 'data_source.url', 'https://github.com/yidafu/example-blog.git');
 INSERT OR IGNORE INTO B_CONFIGURATION (id, config_key, config_value) VALUES(6, 'data_source.token', '');
+INSERT OR IGNORE INTO B_CONFIGURATION (id, config_key, config_value) VALUES(7, 'data_source.branch', '');
 
 -- admin user  admin, password: admin123
 INSERT OR IGNORE INTO B_USER (id, username, password, email, status) VALUES (1, "admin", "AZICOnu9cyUFFvBp3xi1AA==","", 1);

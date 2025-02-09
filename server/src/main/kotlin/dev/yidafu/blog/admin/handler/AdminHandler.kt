@@ -1,16 +1,13 @@
 package dev.yidafu.blog.admin.handler
 
 import de.comahe.i18n4k.Locale
+import dev.yidafu.blog.admin.views.pages.PicturePage
 import dev.yidafu.blog.common.ConstantKeys
 import dev.yidafu.blog.common.Routes
-import dev.yidafu.blog.common.vo.AdminBaseVO
 import dev.yidafu.blog.common.ext.html
 import dev.yidafu.blog.common.services.ConfigurationService
-import dev.yidafu.blog.admin.views.layouts.AdminLayout
-import dev.yidafu.blog.admin.views.pages.PicturePage
 import dev.yidafu.blog.common.vo.PageVO
 import io.vertx.ext.web.RoutingContext
-import kotlinx.html.h1
 import org.koin.core.annotation.Single
 import org.slf4j.LoggerFactory
 
@@ -25,7 +22,6 @@ class AdminHandler(
 
     ctx.redirect(Routes.CONFIG_APPEARANCE_URL)
   }
-
 
   fun configPage(ctx: RoutingContext) {
     ctx.redirect(Routes.CONFIG_APPEARANCE_URL)

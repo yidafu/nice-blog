@@ -21,7 +21,7 @@ class ArticleService(
     val oldArticle = findArticleByName(article.identifier!!)
     if (oldArticle == null) {
       // insert new article
-        createArticle(article)
+      createArticle(article)
     } else {
       // update article
       article.id = oldArticle.id
@@ -42,10 +42,13 @@ class ArticleService(
     articleConvertor.mapToRecord(article, oldRecord)
     oldRecord?.store()
   }
-  suspend fun findArticleByName(name: String): ArticleModel?  = runDB {
-    val article: BArticleRecord? = context.selectFrom(B_ARTICLE).where(
-      B_ARTICLE.IDENTIFIER.eq(name)
-    ).fetchOne()
-     articleConvertor.recordToModal(article)
-  }
+
+  suspend fun findArticleByName(name: String): ArticleModel? =
+    runDB {
+      val article: BArticleRecord? =
+        context.selectFrom(B_ARTICLE).where(
+          B_ARTICLE.IDENTIFIER.eq(name),
+        ).fetchOne()
+      articleConvertor.recordToModal(article)
+    }
 }

@@ -1,19 +1,21 @@
 package dev.yidafu.blog.common.modal
 
-import jakarta.persistence.*
-import java.sql.Date
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.Table
+import java.time.LocalDateTime
 
 @Entity
 @Table(name = "b_user_token")
 class UserTokenModal(
   @Column
-  val name: String = "(hidden)",
+  var name: String = "(hidden)",
   @Column(unique = true, nullable = false, length = 32)
-  val token: String,
+  var token: String,
   @Column
-  val description: String? = null,
+  var description: String? = null,
   @Column(nullable = false, name = "created_by")
-  val createdBy: Date,
+  var createdBy: String,
   @Column(nullable = false, name = "expires_at")
-  val expiresAt: Date,
+  var expiresAt: LocalDateTime,
 ) : BaseModel()

@@ -18,15 +18,14 @@ enum class SyncTaskStatus() {
 )
 @Entity(name = "b_sync_task")
 class SyncTaskModel(
-  @Column
+  @Column(name = "callback_url")
   var callbackUrl: String? = null,
-  @Column
   var uuid: String? = null,
   @Enumerated
   @Column
   var status: SyncTaskStatus? = null,
-  @Column(columnDefinition = "MEDIUMTEXT")
-  var logs: String? = null,
+  @Column(columnDefinition = "TEXT DEFAULT ''")
+  var logs: String? = "",
 ) : BaseModel() {
   companion object {
     const val APPEND_LOG_TEXT = "APPEND_LOG_TEXT"

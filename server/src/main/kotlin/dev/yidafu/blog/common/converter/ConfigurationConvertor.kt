@@ -14,5 +14,4 @@ interface ConfigurationConvertor {
   fun recordToModal(recordList: List<BConfigurationRecord>): List<ConfigurationModal>
 
   fun recordToModal(record: BConfigurationRecord?): ConfigurationModal
-
 }

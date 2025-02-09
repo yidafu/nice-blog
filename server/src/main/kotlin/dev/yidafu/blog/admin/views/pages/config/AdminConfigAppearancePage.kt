@@ -1,18 +1,19 @@
 package dev.yidafu.blog.admin.views.pages.config
 
-import dev.yidafu.blog.common.vo.AdminAppearanceVO
 import dev.yidafu.blog.common.FormKeys
 import dev.yidafu.blog.common.Routes
-import dev.yidafu.blog.i18n.AdminTxt
 import dev.yidafu.blog.common.views.components.FormItem
 import dev.yidafu.blog.common.views.components.formItem
+import dev.yidafu.blog.common.vo.AdminAppearanceVO
+import dev.yidafu.blog.i18n.AdminTxt
 import io.github.allangomes.kotlinwind.css.I700
 import io.github.allangomes.kotlinwind.css.LG
 import io.github.allangomes.kotlinwind.css.kw
 import kotlinx.html.*
 
 class AdminConfigAppearancePage(vo: AdminAppearanceVO) : AdminConfigBasePage<AdminAppearanceVO>(vo) {
-  override fun getContent(vo: AdminAppearanceVO): DIV.() -> Unit = {
+  override fun getContent(vo: AdminAppearanceVO): DIV.() -> Unit =
+    {
       h1 {
         +AdminTxt.appearance.toString(vo.locale)
       }
@@ -24,10 +25,15 @@ class AdminConfigAppearancePage(vo: AdminAppearanceVO) : AdminConfigBasePage<Adm
         formItem(FormItem(FormKeys.GITHUB_URL, AdminTxt.github_url.toString(vo.locale), vo.githubUrl, InputType.url))
 
         button {
-          style = kw.inline { text.white.center; background.blue[I700]; border.rounded[LG]; padding.x[5].y[2] }
+          style =
+            kw.inline {
+              text.white.center
+              background.blue[I700]
+              border.rounded[LG]
+              padding.x[5].y[2]
+            }
           +AdminTxt.submit.toString()
         }
       }
     }
-
 }

@@ -8,4 +8,5 @@ object ConfigurationKeys {
   internal const val SOURCE_TYPE = "data_source.type"
   internal const val SOURCE_URL = "data_source.url"
   internal const val SOURCE_TOKEN = "data_source.token"
+  internal const val SOURCE_BRANCH = "data_source.branch"
 }
