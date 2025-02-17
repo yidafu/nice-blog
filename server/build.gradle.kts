@@ -191,3 +191,11 @@ configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
   debug.set(true)
 }
 
+
+tasks.create<proguard.gradle.ProGuardTask>("obfuscate") {
+  configuration(file("proguard-rules.pro"))
+//  configuration = file("proguard-rules.pro")
+//
+  injars(file("build/libs/server-1.0.0-SNAPSHOT-fat.jar"))
+  outjars(file("build/libs/server-1.0.0-SNAPSHOT-optimized.jar"))
+}

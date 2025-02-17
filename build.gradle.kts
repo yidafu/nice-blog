@@ -3,6 +3,15 @@ plugins {
 
 }
 
+buildscript {
+  repositories {
+    mavenCentral()
+  }
+  dependencies {
+    classpath ("com.guardsquare:proguard-gradle:7.6.1")
+  }
+}
+
 allprojects {
   repositories {
     // Required to download KtLint
