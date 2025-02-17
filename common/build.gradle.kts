@@ -16,9 +16,10 @@ dependencies {
 
   implementation("io.github.allangomes:kotlinwind-css:0.0.3")
   implementation("com.github.nwillc:ksvg:2.2.0")
-// https://mvnrepository.com/artifact/org.hibernate/hibernate-core
-  implementation("org.hibernate:hibernate-core:5.6.15.Final")
-  // https://mvnrepository.com/artifact/jakarta.persistence/jakarta.persistence-api
+  implementation("org.hibernate:hibernate-core:5.6.15.Final") {
+    exclude("net.bytebuddy", "byte-buddy")
+    exclude("antlr", "antlr")
+  }
   implementation("jakarta.persistence:jakarta.persistence-api:3.2.0")
 }
 
