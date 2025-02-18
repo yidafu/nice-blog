@@ -93,7 +93,7 @@ class AuthHandler(
         errorMessage,
       )
     log.info("render login page")
-    ctx.html(AdminLoginPage::class, vo)
+    ctx.html(AdminLoginPage::class.java, vo)
   }
 
   @OptIn(ExperimentalEncodingApi::class)

@@ -21,7 +21,7 @@ class HomePageHandler(
   suspend fun indexPage(ctx: RoutingContext) {
     val list = articleService.getAll()
     val voList = articleConvertor.toVO(list)
-    ctx.html(ArticleListPage::class, ArticleListVO(voList))
+    ctx.html(ArticleListPage::class.java, ArticleListVO(voList))
   }
 
   suspend fun articlePage(ctx: RoutingContext) {
@@ -29,7 +29,7 @@ class HomePageHandler(
     val article = articleService.getOneByIdentifier(id)
     article?.let {
       val vo = articleConvertor.toVO(it)
-      ctx.html(ArticleDetailPage::class, vo)
+      ctx.html(ArticleDetailPage::class.java, vo)
     } ?: run {
       ctx.redirect("/404")
     }

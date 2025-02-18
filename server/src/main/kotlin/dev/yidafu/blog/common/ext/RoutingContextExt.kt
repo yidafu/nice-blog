@@ -14,8 +14,6 @@ import io.vertx.core.json.EncodeException
 import io.vertx.ext.web.RoutingContext
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import kotlin.reflect.KClass
-import kotlin.reflect.full.primaryConstructor
 
 internal val jsonCodec =
   Json {
@@ -51,7 +49,7 @@ internal inline fun <reified T> RoutingContext.kJson(obj: T): Future<Void>? {
 }
 
 internal inline fun <V : PageVO, T : Page<V>> RoutingContext.html(
-  pageClass: KClass<T>,
+  pageClass: Class<T>,
   vo: V,
 ) {
   val local = this.get<Locale>(ConstantKeys.LANGUAGE_CONTEXT)
@@ -66,7 +64,8 @@ internal inline fun <V : PageVO, T : Page<V>> RoutingContext.html(
       githubUrl = configBo.githubUrl,
     )
   vo.baseVO = baseVO
-  val page = pageClass.primaryConstructor?.call(vo)
+  val page: T? = pageClass.constructors.find { it.parameters.size == 1 }?.newInstance(vo) as T?
+//  = pageClass.primaryConstructor?.call(vo)
 
   val htmlStr = page?.render()
 

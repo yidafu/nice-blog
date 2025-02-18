@@ -29,6 +29,6 @@ class AdminHandler(
 
   suspend fun picturesPage(ctx: RoutingContext) {
     val vo = PageVO()
-    ctx.html(PicturePage::class, vo)
+    ctx.html(PicturePage::class.java, vo)
   }
 }

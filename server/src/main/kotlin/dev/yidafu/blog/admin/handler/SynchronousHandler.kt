@@ -60,7 +60,7 @@ class SynchronousHandler(
     val (total, list) = syncTaskService.getSyncLogs(PageQuery(pageNum, pageSize))
 
     val vo = AdminSyncTaskListVO(pageNum, pageSize, total, syncTaskConvertor.toVOList(list))
-    ctx.html(AdminSyncLogListPage::class, vo)
+    ctx.html(AdminSyncLogListPage::class.java, vo)
   }
 
   suspend fun syncLogDetailPage(ctx: RoutingContext) {
@@ -68,11 +68,11 @@ class SynchronousHandler(
     val log = syncTaskService.getSyncLog(uuid)
 
     val vo = AdminSyncTaskVO(syncTaskConvertor.toVO(log))
-    ctx.html(AdminSyncLogPage::class, vo)
+    ctx.html(AdminSyncLogPage::class.java, vo)
   }
 
   suspend fun syncOperatePage(ctx: RoutingContext) {
-    ctx.html(AdminSyncOperatePage::class, AdminSynchronousVO(""))
+    ctx.html(AdminSyncOperatePage::class.java, AdminSynchronousVO(""))
   }
 
   @OptIn(ExperimentalUuidApi::class)
