@@ -27,7 +27,7 @@ class ConfigurationHandler(
 
   suspend fun appearancePage(ctx: RoutingContext) {
     val vo = AdminAppearanceVO()
-    ctx.html(AdminConfigAppearancePage::class, vo)
+    ctx.html(AdminConfigAppearancePage::class.java, vo)
   }
 
   /**
@@ -69,7 +69,7 @@ class ConfigurationHandler(
       AdminSynchronousVO(
         config.configValue,
       )
-    ctx.html(AdminConfigSyncPage::class, vo)
+    ctx.html(AdminConfigSyncPage::class.java, vo)
   }
 
   suspend fun dataSourcePage(ctx: RoutingContext) {
@@ -91,6 +91,6 @@ class ConfigurationHandler(
         configs.getByKey(ConfigurationKeys.SOURCE_BRANCH) ?: "",
       )
 
-    ctx.html(AdminConfigDataSourcePage::class, vo)
+    ctx.html(AdminConfigDataSourcePage::class.java, vo)
   }
 }

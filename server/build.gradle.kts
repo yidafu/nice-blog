@@ -38,36 +38,23 @@ application {
 dependencies {
   implementation(project(":common"))
   implementation(project(":engine"))
-  implementation(platform("io.vertx:vertx-stack-depchain:$vertxVersion"))
-//  implementation("io.vertx:vertx-web-validation")
-//  implementation("io.vertx:vertx-health-check")
-  implementation("io.vertx:vertx-web")
-  implementation("io.vertx:vertx-core")
-//  implementation("io.vertx:vertx-web-openapi")
-//  implementation("io.vertx:vertx-mysql-client")
-  implementation("io.vertx:vertx-jdbc-client")
-//  implementation("org.xerial:sqlite-jdbc:3.47.1.0")
-  implementation("io.vertx:vertx-lang-kotlin-coroutines")
-//  implementation("io.vertx:vertx-lang-kotlin")
-//  implementation("io.vertx:vertx-config")
-//  implementation("org.hibernate.reactive:hibernate-reactive-core:2.4.2.Final")
-//  implementation("org.hibernate.orm:hibernate-core:6.6.4.Final")
+  implementation("io.vertx:vertx-web:$vertxVersion")
+  implementation("io.vertx:vertx-core:${vertxVersion}")
+  implementation("io.vertx:vertx-jdbc-client:$vertxVersion")
+  implementation("org.xerial:sqlite-jdbc:3.47.1.0")
+  implementation("io.vertx:vertx-lang-kotlin-coroutines:$vertxVersion")
 
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.8.1")
   implementation("org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:1.7.3")
   implementation("org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.7.3")
 
-  implementation(kotlin("stdlib-jdk8"))
-  implementation(kotlin("reflect"))
-
-  testImplementation("io.vertx:vertx-junit5")
+  testImplementation("io.vertx:vertx-junit5:$vertxVersion")
   testImplementation("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
 
   implementation("com.github.sya-ri:kgit:1.1.0")
 
   implementation("io.insert-koin:koin-annotations-jvm:$koinAnnotationsVersion")
   ksp("io.insert-koin:koin-ksp-compiler:$koinAnnotationsVersion")
-
   implementation(platform("io.insert-koin:koin-bom:$koinVersion"))
   implementation("io.insert-koin:koin-core")
 
@@ -91,16 +78,11 @@ dependencies {
   implementation("dev.whyoleg.cryptography:cryptography-provider-jdk:0.4.0")
 
   implementation("org.jooq:jooq:3.19.16")
-//  implementation("org.jooq:jooq-meta-extensions:3.19.17") {
-//    exclude("com.h2database:h2")
-//  }
-//  implementation("org.jooq:jooq-meta-extensions-hibernate:3.19.17")
 
   jooqCodegen("org.jooq:jooq-meta-extensions:3.19.16")
   jooqCodegen("mysql:mysql-connector-java:8.0.33")
   jooqCodegen("org.jooq:jooq-meta-extensions-hibernate:3.19.17")
   jooqCodegen("org.hibernate:hibernate-core-jakarta:5.6.15.Final")
-
   jooqCodegen(project(":common"))
   jooqCodegen("org.xerial:sqlite-jdbc:3.47.1.0")
 }
@@ -120,6 +102,7 @@ compileKotlin.kotlinOptions.jvmTarget = "17"
 tasks.withType<ShadowJar> {
   archiveClassifier.set("fat")
   exclude("**/*.md", "**/test/**", "*.dll")
+//  minimize()
   manifest {
     attributes(mapOf("Main-Verticle" to mainVerticleName))
   }
@@ -196,6 +179,12 @@ tasks.create<proguard.gradle.ProGuardTask>("obfuscate") {
   configuration(file("proguard-rules.pro"))
 //  configuration = file("proguard-rules.pro")
 //
-  injars(file("build/libs/server-1.0.0-SNAPSHOT-fat.jar"))
-  outjars(file("build/libs/server-1.0.0-SNAPSHOT-optimized.jar"))
+
+//  injars(tasks.named('jar', Jar).flatMap { it.archiveFile })
+  injars(tasks.named<ShadowJar>("shadowJar").flatMap { it.archiveFile })
+
+  outjars(layout.buildDirectory.file("libs/server-1.0.0-SNAPSHOT-optimized.jar"))
+
+  verbose()
+
 }
