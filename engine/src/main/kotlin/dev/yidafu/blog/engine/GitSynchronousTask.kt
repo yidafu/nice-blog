@@ -2,22 +2,30 @@ package dev.yidafu.blog.dev.yidafu.blog.engine
 
 import com.github.syari.kgit.KGit
 import dev.yidafu.blog.common.dto.CommonArticleDTO
-import kotlinx.coroutines.*
+import dev.yidafu.blog.dev.yidafu.blog.engine.TaskScope.Companion.NAME
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
 import org.eclipse.jgit.lib.TextProgressMonitor
+import org.koin.core.annotation.Scope
+import org.koin.core.annotation.Scoped
 import java.io.File
 import java.io.Writer
 import java.net.URI
-import kotlin.math.log
 
-class LogWriter(val logger: Logger, val uuid: String) : Writer() {
-//  private val logger: Logger by inject(Logger::class.java)
-
+@Scope(name = NAME)
+@Scoped
+class LogWriter(val logger: Logger) : Writer() {
   override fun close() {
   }
 
   override fun flush() {
   }
 
+  /**
+   * intercept by `fun write(str: String)`, so this function never execute
+   */
   override fun write(
     cbuf: CharArray,
     off: Int,
@@ -25,22 +33,26 @@ class LogWriter(val logger: Logger, val uuid: String) : Writer() {
   ) {
   }
 
-  @OptIn(DelicateCoroutinesApi::class)
   override fun write(str: String) {
-    GlobalScope.launch {
-      logger.log(uuid, str)
-    }
+    runBlocking {
+      CoroutineScope(Dispatchers.IO).async {
+        logger.log(str)
+      }
+    }.onAwait
   }
 }
 
+@Scope(name = NAME)
+@Scoped
 open class GitSynchronousTask(
   config: GitConfig,
   olistener: SynchronousListener,
-  logger: Logger,
   articleManager: ArticleManager,
+  logger: Logger,
+  private val writer: LogWriter,
 ) : BaseGitSynchronousTask(config, olistener, logger, articleManager) {
   override suspend fun updateImage(img: File): URI {
-    logger.log(taskId, "upload image: ${img.path}")
+    logger.log("upload image: ${img.path}")
     val url = articleManager.processImage(img)
     return url
   }
@@ -50,12 +62,12 @@ open class GitSynchronousTask(
   }
 
   override suspend fun fetchRepository(): File {
-    val monitor = TextProgressMonitor(LogWriter(logger, taskId))
+//    return File("/Users/yidafu/github/nice-blog/server/yidafu.dev")
+    val monitor = TextProgressMonitor(writer)
     val directory = gitConfig.getLocalRepoFile()
-//    return directory
     val git =
       if (!directory.exists()) {
-        logger.log(taskId, "repository is not exist, clone repository into ${directory.toPath()}")
+        logger.log("repository is not exist, clone repository into ${directory.toPath()}")
         KGit.cloneRepository {
           setURI(gitUrl)
           setTimeout(60)
@@ -63,18 +75,18 @@ open class GitSynchronousTask(
           setProgressMonitor(monitor)
         }
       } else {
-        logger.log(taskId, "open local repository in ${directory.absolutePath}")
+        logger.log("open local repository in ${directory.absolutePath}")
         KGit.open(directory)
       }
 
     val branch = gitBranch
-    logger.log(taskId, "pull origin $branch")
+    logger.log("pull origin $branch")
     val res =
       git.pull {
         remoteBranchName = gitConfig.branch
         setProgressMonitor(monitor)
       }
-    logger.log(taskId, "pull result $res")
+    logger.log("pull result $res")
     // close Git resource
     git.close()
     return directory

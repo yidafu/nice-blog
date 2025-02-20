@@ -2,41 +2,18 @@ package dev.yidafu.blog
 
 import dev.yidafu.blog.dev.yidafu.blog.engine.*
 import org.koin.core.context.startKoin
-import org.koin.dsl.module
+import org.koin.core.qualifier.StringQualifier
+import org.koin.ksp.generated.module
 
 suspend fun main() {
-//  LocalSynchronousTask(LocalSyncContext()).sync()
-
   val koin =
     startKoin {
-      val testModule =
-        module {
-          scope<TaskScope> {
-            scoped<Logger> {
-              StdLogger()
-            }
-            scoped<GitConfig> {
-              GitConfig("", branch = "")
-            }
-            scoped<SynchronousListener> {
-              DefaultSynchronousListener()
-            }
-            scoped<BaseGitSynchronousTask> {
-              // default SynchronousTask
-              GitSynchronousTask(get<GitConfig>(), get(), get(), get())
-            }
-            scoped<ArticleManager> {
-              DefaultArticleManager()
-            }
-          }
-        }
-
-      modules(testModule)
+      modules(EngineModule().module)
     }
-  val scope = koin.koin.createScope<TaskScope>()
-  scope.declare<Logger>(StdLogger())
+  val scope = koin.koin.createScope("uuid", StringQualifier(TaskScope.NAME), TaskScope::class)
 
   scope.declare(GitConfig("https://github.com/yidafu/yidafu.dev.git", "master", "uuid"))
+//  scope.declare<Logger>(StdLogger())
   scope.get<BaseGitSynchronousTask>().sync()
   scope.close()
 }

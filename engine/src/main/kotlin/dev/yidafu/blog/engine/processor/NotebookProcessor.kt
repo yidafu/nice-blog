@@ -4,21 +4,20 @@ import com.charleskorn.kaml.Yaml
 import dev.yidafu.blog.common.dto.CommonArticleDTO
 import dev.yidafu.blog.common.dto.FrontMatterDTO
 import dev.yidafu.blog.common.modal.ArticleSourceType
-import dev.yidafu.blog.dev.yidafu.blog.engine.ArticleManager
-import dev.yidafu.blog.dev.yidafu.blog.engine.CustomCodeHighlight
-import dev.yidafu.blog.dev.yidafu.blog.engine.getGitCreateTime
-import dev.yidafu.blog.dev.yidafu.blog.engine.getGitModifyTime
+import dev.yidafu.blog.dev.yidafu.blog.engine.*
 import kotlinx.serialization.decodeFromString
 import org.intellij.markdown.html.HtmlGenerator
 import org.intellij.markdown.parser.MarkdownParser
 import org.jetbrains.jupyter.parser.JupyterParser
 import org.jetbrains.jupyter.parser.notebook.*
 import java.nio.file.Path
+import java.nio.file.Paths
 import kotlin.io.path.extension
 import kotlin.io.path.name
 
 class NotebookProcessor(
   private val articleManager: ArticleManager,
+  private val logger: Logger,
 ) : IProcessor {
   private val jsMagic = listOf("%js", "%javascript", "%ts", "%typescript", "%jsx", "%tsx")
 
@@ -39,17 +38,23 @@ class NotebookProcessor(
    * cons: can't run cell (notebook must be pre-executed) when transform notebook
    */
   override fun transform(path: Path): CommonArticleDTO {
+    logger.logSync("transform notebook $path")
+
     val file = path.toFile()
     val notebook = JupyterParser.parse(file)
 
-    val flavour = GFMFlavorExtendDescriptor(articleManager, file)
+    val flavour = GFMFlavorExtendDescriptor(articleManager, logger, file)
     val parser = MarkdownParser(flavour)
     val list = mutableListOf<String>()
     val cells = notebook.cells
     val frontMatterCell = cells[0]
 
-    val frontMatterDTO = Yaml.default.decodeFromString<FrontMatterDTO>(frontMatterCell.source.replace("---", ""))
-    frontMatterDTO.rawContent = frontMatterCell.source
+    val dto = Yaml.default.decodeFromString<FrontMatterDTO>(frontMatterCell.source.replace("---", ""))
+    val cover =
+      dto.cover.let {
+        articleManager.processImage(Paths.get(path.parent.toString(), it).toFile()).toString()
+      }
+    val frontMatterDTO = dto.copy(cover = cover, rawContent = frontMatterCell.source)
 
     cells.slice(1..<cells.size).forEach { cell: Cell ->
       when (cell) {

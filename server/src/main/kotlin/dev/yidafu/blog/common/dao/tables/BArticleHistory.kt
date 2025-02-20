@@ -94,9 +94,9 @@ open class BArticleHistory(
     )
 
   /**
-   * The column <code>B_ARTICLE_HISTORY.ARTICLEID</code>.
+   * The column <code>B_ARTICLE_HISTORY.ARTICLE_ID</code>.
    */
-  val ARTICLEID: TableField<BArticleHistoryRecord, Long?> = createField(DSL.name("ARTICLEID"), SQLDataType.BIGINT, this, "")
+  val ARTICLE_ID: TableField<BArticleHistoryRecord, Long?> = createField(DSL.name("ARTICLE_ID"), SQLDataType.BIGINT, this, "")
 
   /**
    * The column <code>B_ARTICLE_HISTORY.RAW_CONTENT</code>.

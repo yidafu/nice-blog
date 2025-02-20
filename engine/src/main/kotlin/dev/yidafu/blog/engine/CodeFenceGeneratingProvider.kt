@@ -5,11 +5,8 @@ import org.intellij.markdown.ast.ASTNode
 import org.intellij.markdown.ast.getTextInNode
 import org.intellij.markdown.html.GeneratingProvider
 import org.intellij.markdown.html.HtmlGenerator
-import org.slf4j.LoggerFactory
 
 class CodeFenceGeneratingProvider : GeneratingProvider {
-  private val log = LoggerFactory.getLogger(this::class.java)
-
   override fun processNode(
     visitor: HtmlGenerator.HtmlGeneratingVisitor,
     text: String,

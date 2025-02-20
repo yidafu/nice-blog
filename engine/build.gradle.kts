@@ -2,7 +2,7 @@ plugins {
   kotlin("jvm") version "2.0.21"
   kotlin("plugin.serialization") version "2.0.21"
   id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
-//  id("com.google.devtools.ksp") version "2.0.21-1.0.27"
+  id("com.google.devtools.ksp") version "2.0.21-1.0.27"
 }
 
 group = "dev.yidafu.blog"
@@ -30,8 +30,8 @@ dependencies {
 
   implementation(platform("io.insert-koin:koin-bom:$koinVersion"))
   implementation("io.insert-koin:koin-core")
-//  implementation("io.insert-koin:koin-annotations:$koinAnnotationsVersion")
-//  ksp("io.insert-koin:koin-ksp-compiler:$koinAnnotationsVersion")
+  implementation("io.insert-koin:koin-annotations:$koinAnnotationsVersion")
+  ksp("io.insert-koin:koin-ksp-compiler:$koinAnnotationsVersion")
 
   implementation("dev.snipme:highlights:1.0.0")
 }

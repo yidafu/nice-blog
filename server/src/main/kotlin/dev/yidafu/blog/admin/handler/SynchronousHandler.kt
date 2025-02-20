@@ -19,6 +19,8 @@ import dev.yidafu.blog.common.vo.AdminSyncTaskVO
 import dev.yidafu.blog.common.vo.AdminSynchronousVO
 import dev.yidafu.blog.dev.yidafu.blog.engine.*
 import dev.yidafu.blog.dev.yidafu.blog.engine.TaskScope
+import dev.yidafu.blog.engine.DBArticleManager
+import dev.yidafu.blog.engine.DBLogger
 import io.github.allangomes.kotlinwind.css.I300
 import io.github.allangomes.kotlinwind.css.I50
 import io.github.allangomes.kotlinwind.css.LG
@@ -29,6 +31,7 @@ import kotlinx.html.div
 import kotlinx.html.stream.appendHTML
 import kotlinx.html.style
 import org.koin.core.annotation.Single
+import org.koin.core.qualifier.StringQualifier
 import org.koin.java.KoinJavaComponent.getKoin
 import org.mapstruct.factory.Mappers
 import kotlin.uuid.ExperimentalUuidApi
@@ -115,9 +118,11 @@ class SynchronousHandler(
     ctx.end(htmlFragment)
     // async execute task
     withContext(Dispatchers.IO) {
-      val taskScope = koin.createScope<TaskScope>(taskUuid)
+      val taskScope = koin.createScope(taskUuid, StringQualifier(TaskScope.NAME), TaskScope::class)
       val config = GitConfig(gitUrl, gitBranch, uuid = taskUuid)
       taskScope.declare(config)
+      taskScope.declare<Logger>(DBLogger(config, taskScope.get()))
+      taskScope.declare<ArticleManager>(DBArticleManager(taskScope.get(), taskScope.get()))
       val syncTask: BaseGitSynchronousTask = taskScope.get<BaseGitSynchronousTask>()
       syncTask.sync()
       taskScope.close()

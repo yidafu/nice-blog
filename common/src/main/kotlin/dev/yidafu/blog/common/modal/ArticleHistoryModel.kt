@@ -10,7 +10,7 @@ class ArticleHistoryModel(
   /**
    *
    */
-  @Column(comment = "ArticleModel ID")
+  @Column(name = "article_id", comment = "ArticleModel ID")
   val articleId: Long,
   @Column(name = "raw_content", comment = "raw article content")
   val rawContent: String,

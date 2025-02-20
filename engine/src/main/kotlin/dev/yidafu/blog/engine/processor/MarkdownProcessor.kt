@@ -12,7 +12,6 @@ import org.intellij.markdown.MarkdownTokenTypes
 import org.intellij.markdown.ast.ASTNode
 import org.intellij.markdown.ast.CompositeASTNode
 import org.intellij.markdown.ast.getTextInNode
-import org.intellij.markdown.ast.visitors.RecursiveVisitor
 import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
 import org.intellij.markdown.html.GeneratingProvider
 import org.intellij.markdown.html.HtmlGenerator
@@ -33,6 +32,7 @@ data class MLink(val url: String, val alt: String)
 
 class GFMFlavorExtendDescriptor(
   private val articleManager: ArticleManager,
+  private val logger: Logger,
   private val mdFile: File,
 ) : GFMFlavourDescriptor() {
   override fun createHtmlGeneratingProviders(
@@ -43,26 +43,27 @@ class GFMFlavorExtendDescriptor(
       hashMapOf(
         MarkdownElementTypes.CODE_FENCE to CodeFenceGeneratingProvider(),
         MarkdownElementTypes.IMAGE to
-          ImageGeneratingProvider(articleManager) { path: String ->
+          ImageGeneratingProvider(articleManager, logger) { path: String ->
             Paths.get(mdFile.parentFile.absolutePath, path).toFile()
           },
       )
   }
 }
 
-class MarkdownProcessor(val articleManager: ArticleManager) : IProcessor {
+class MarkdownProcessor(val articleManager: ArticleManager, private val logger: Logger) : IProcessor {
   override fun filter(path: Path): Boolean {
     return path.extension == "md" &&
       path.nameWithoutExtension != "README"
   }
 
   override fun transform(path: Path): CommonArticleDTO {
+    logger.logSync("transform markdown $path")
     val markdownFile = path.toFile()
     val text = markdownFile.readText()
     val filename = path.name
     val attrs = Files.readAttributes(path, BasicFileAttributes::class.java)
 
-    val flavour = GFMFlavorExtendDescriptor(articleManager, markdownFile)
+    val flavour = GFMFlavorExtendDescriptor(articleManager, logger, markdownFile)
     val parser = MarkdownParser(flavour)
 
     val createDate = LocalDateTime.ofInstant(attrs.creationTime().toInstant(), ZoneId.systemDefault())
@@ -110,33 +111,17 @@ class MarkdownProcessor(val articleManager: ArticleManager) : IProcessor {
             val frontMatterText = node.getTextInNode(text)
 
             val dto = Yaml.default.decodeFromString<FrontMatterDTO>(frontMatterText.toString())
+            val cover =
+              dto.cover.let { cover ->
+                articleManager.processImage(File(markdownFile.parentFile.path, cover)).toString()
+              }
+            val rawContent = text.substring(horizontalRules[0].startOffset, secondHorizontalRule.endOffset)
 
-            dto.rawContent = text.substring(horizontalRules[0].startOffset, secondHorizontalRule.endOffset)
+            return dto.copy(cover = cover, rawContent = rawContent)
           }
         }
       }
     }
     return null
-  }
-
-  private fun resolvePath(
-    file: File,
-    url: String,
-  ): File {
-    return Paths.get(file.parentFile.absolutePath, url).toFile()
-  }
-
-  inner class MarkdownVisitor(
-    private val markdownFile: File,
-    private val markdownText: String,
-  ) : RecursiveVisitor() {
-    override fun visitNode(node: ASTNode) {
-      if (node is CompositeASTNode) {
-        if (node.type == MarkdownElementTypes.IMAGE) {
-//          extractImageLinks(node)
-        }
-      }
-      super.visitNode(node)
-    }
   }
 }
