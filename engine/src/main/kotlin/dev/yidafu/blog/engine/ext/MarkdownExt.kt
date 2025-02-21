@@ -1,4 +1,4 @@
-package dev.yidafu.blog.dev.yidafu.blog.engine
+package dev.yidafu.blog.engine.ext
 
 import org.intellij.markdown.IElementType
 import org.intellij.markdown.ast.ASTNode

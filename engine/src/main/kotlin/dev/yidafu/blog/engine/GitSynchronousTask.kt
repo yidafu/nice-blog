@@ -1,8 +1,9 @@
-package dev.yidafu.blog.dev.yidafu.blog.engine
+package dev.yidafu.blog.engine
 
 import com.github.syari.kgit.KGit
 import dev.yidafu.blog.common.dto.CommonArticleDTO
-import dev.yidafu.blog.dev.yidafu.blog.engine.TaskScope.Companion.NAME
+import dev.yidafu.blog.engine.TaskScope.Companion.NAME
+import dev.yidafu.blog.engine.config.GitConfig
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -52,7 +53,7 @@ open class GitSynchronousTask(
   private val writer: LogWriter,
 ) : BaseGitSynchronousTask(config, olistener, logger, articleManager) {
   override suspend fun updateImage(img: File): URI {
-    logger.log("upload image: ${img.path}")
+    logger.log("[Image] upload image: ${img.path}")
     val url = articleManager.processImage(img)
     return url
   }
@@ -62,7 +63,7 @@ open class GitSynchronousTask(
   }
 
   override suspend fun fetchRepository(): File {
-//    return File("/Users/yidafu/github/nice-blog/server/yidafu.dev")
+    return File("/Users/yidafu/github/nice-blog/server/yidafu.dev")
     val monitor = TextProgressMonitor(writer)
     val directory = gitConfig.getLocalRepoFile()
     val git =

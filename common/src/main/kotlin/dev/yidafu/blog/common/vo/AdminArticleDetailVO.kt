@@ -2,7 +2,7 @@ package dev.yidafu.blog.common.vo
 
 import java.time.LocalTime
 
-data class ArticleVO(
+class AdminArticleDetailVO(
   var id: Long = 0,
   var title: String = "",
   var cover: String? = null,

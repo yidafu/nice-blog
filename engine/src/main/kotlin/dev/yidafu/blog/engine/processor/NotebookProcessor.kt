@@ -1,10 +1,13 @@
-package dev.yidafu.blog.dev.yidafu.blog.engine.processor
+package dev.yidafu.blog.engine.processor
 
 import com.charleskorn.kaml.Yaml
 import dev.yidafu.blog.common.dto.CommonArticleDTO
 import dev.yidafu.blog.common.dto.FrontMatterDTO
 import dev.yidafu.blog.common.modal.ArticleSourceType
-import dev.yidafu.blog.dev.yidafu.blog.engine.*
+import dev.yidafu.blog.engine.*
+import dev.yidafu.blog.engine.ext.getGitCreateTime
+import dev.yidafu.blog.engine.ext.getGitModifyTime
+import dev.yidafu.blog.engine.md.CustomCodeHighlight
 import kotlinx.serialization.decodeFromString
 import org.intellij.markdown.html.HtmlGenerator
 import org.intellij.markdown.parser.MarkdownParser
@@ -38,7 +41,7 @@ class NotebookProcessor(
    * cons: can't run cell (notebook must be pre-executed) when transform notebook
    */
   override fun transform(path: Path): CommonArticleDTO {
-    logger.logSync("transform notebook $path")
+    logger.logSync("[Notebook] transform notebook $path")
 
     val file = path.toFile()
     val notebook = JupyterParser.parse(file)
@@ -55,6 +58,8 @@ class NotebookProcessor(
         articleManager.processImage(Paths.get(path.parent.toString(), it).toFile()).toString()
       }
     val frontMatterDTO = dto.copy(cover = cover, rawContent = frontMatterCell.source)
+
+    logger.logSync("[Notebook] notebook front matter $frontMatterDTO")
 
     cells.slice(1..<cells.size).forEach { cell: Cell ->
       when (cell) {

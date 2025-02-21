@@ -1,4 +1,4 @@
-package dev.yidafu.blog.dev.yidafu.blog.engine.processor
+package dev.yidafu.blog.engine.processor
 
 import dev.yidafu.blog.common.dto.CommonArticleDTO
 import java.nio.file.Path

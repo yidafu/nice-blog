@@ -1,9 +1,6 @@
 package dev.yidafu.blog.admin.routes
 
-import dev.yidafu.blog.admin.handler.AdminHandler
-import dev.yidafu.blog.admin.handler.AuthHandler
-import dev.yidafu.blog.admin.handler.ConfigurationHandler
-import dev.yidafu.blog.admin.handler.SynchronousHandler
+import dev.yidafu.blog.admin.handler.*
 import dev.yidafu.blog.common.Routes
 import dev.yidafu.blog.common.handler.CommonHandler
 import io.vertx.core.Vertx
@@ -25,6 +22,7 @@ fun CoroutineRouterSupport.mountAdminRoutes(
   val configHandler = koin.get<ConfigurationHandler>()
   val syncHandler = koin.get<SynchronousHandler>()
   val authHandler = koin.get<AuthHandler>()
+  val articleHandler = koin.get<ArticleHandler>()
 
   val sessionHandler =
     SessionHandler.create(LocalSessionStore.create(vertx))
@@ -47,8 +45,12 @@ fun CoroutineRouterSupport.mountAdminRoutes(
   router.get(Routes.ADMIN_URL)
     .coHandler(requestHandler = adminHandler::indexPage)
 
-  router.get(Routes.CONFIGURATION_URL).coHandler(requestHandler = adminHandler::configPage)
+  router.get(Routes.ARTICLE_LIST).coHandler(requestHandler = articleHandler::articleListPage)
+  router.get(Routes.ARTICLE_ADMIN_DETAIL).coHandler(requestHandler = articleHandler::articleDetailPage)
+  router.get(Routes.ARTICLE_ADMIN_HISTORY).coHandler(requestHandler = articleHandler::articleHistoryListPage)
+  router.get(Routes.ARTICLE_ADMIN_STATISTIC).coHandler(requestHandler = articleHandler::articleStatisticPage)
 
+  router.get(Routes.CONFIGURATION_URL).coHandler(requestHandler = adminHandler::configPage)
   router.post(Routes.CONFIGURATION_URL).coHandler(requestHandler = configHandler::updateConfigAction)
 
   router.get(Routes.CONFIG_APPEARANCE_URL).coHandler(requestHandler = configHandler::appearancePage)

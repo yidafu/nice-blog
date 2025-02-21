@@ -5,14 +5,14 @@ import dev.yidafu.blog.common.Routes
 import dev.yidafu.blog.common.view.icons.AppearanceIcon
 import dev.yidafu.blog.common.view.icons.SourceIcon
 import dev.yidafu.blog.common.view.icons.SyncIcon
-import dev.yidafu.blog.common.view.tpl.Page
+import dev.yidafu.blog.common.view.tpl.PageTemplate
 import dev.yidafu.blog.common.views.components.TabOption
 import dev.yidafu.blog.common.views.components.tabs
 import dev.yidafu.blog.common.vo.PageVO
 import dev.yidafu.blog.i18n.AdminTxt
 import kotlinx.html.DIV
 
-abstract class AdminConfigBasePage<T : PageVO>(override val vo: T) : Page<T>() {
+abstract class AdminConfigBasePage<T : PageVO>(override val vo: T) : PageTemplate<T>() {
   private fun getOptions(vo: PageVO) =
     listOf(
       TabOption(

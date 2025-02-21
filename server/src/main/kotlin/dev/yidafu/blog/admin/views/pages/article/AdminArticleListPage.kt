@@ -1,16 +1,35 @@
-package dev.yidafu.blog.admin.views.pages.sync
+package dev.yidafu.blog.admin.views.pages.article
 
+import dev.yidafu.blog.admin.views.layouts.AdminLayout
 import dev.yidafu.blog.common.Routes
 import dev.yidafu.blog.common.view.components.Button
-import dev.yidafu.blog.common.vo.AdminSyncTaskListVO
+import dev.yidafu.blog.common.view.tpl.PageTemplate
+import dev.yidafu.blog.common.vo.AdminArticleListVO
 import dev.yidafu.blog.i18n.AdminTxt
 import io.github.allangomes.kotlinwind.css.*
 import kotlinx.html.*
+import org.intellij.markdown.html.urlEncode
 
-class AdminSyncLogListPage(override val vo: AdminSyncTaskListVO) : AdminSyncBasePage<AdminSyncTaskListVO>() {
-  override fun getContent(): DIV.() -> Unit =
-    {
-      val cellStyle = kw.inline { padding.x[4].y[6] }
+class AdminArticleListPage(
+  override val vo: AdminArticleListVO,
+) : PageTemplate<AdminArticleListVO>() {
+  private fun TR.cell(text: String) {
+    td {
+      style = kw.inline { padding.x[4].y[6] }
+      +text
+    }
+  }
+
+  private fun TR.cell(block: TD.() -> Unit) {
+    td {
+      style = kw.inline { padding.x[4].y[6] }
+      block()
+    }
+  }
+
+  override fun render(): String {
+    val layout = AdminLayout(vo)
+    return layout.layout {
       div {
         style = kw.inline { background.gray[I50] }
         table {
@@ -28,22 +47,12 @@ class AdminSyncLogListPage(override val vo: AdminSyncTaskListVO) : AdminSyncBase
                 font.xs
               }
             tr {
-              td {
-                style = cellStyle
-                +AdminTxt.id.toString(vo.locale)
-              }
-              td {
-                style = cellStyle
-                +AdminTxt.status.toString(vo.locale)
-              }
-              td {
-                style = cellStyle
-                +AdminTxt.callback_url.toString(vo.locale)
-              }
-              td {
-                style = cellStyle
-                +AdminTxt.created_at.toString(vo.locale)
-              }
+              cell(AdminTxt.id.toString(vo.locale))
+              cell(AdminTxt.column_title.toString(vo.locale))
+              cell(AdminTxt.status.toString(vo.locale))
+              cell(AdminTxt.column_summary.toString(vo.locale))
+              cell(AdminTxt.column_updated_at.toString(vo.locale))
+              cell(AdminTxt.column_detail.toString(vo.locale))
             }
           }
           tbody {
@@ -54,27 +63,15 @@ class AdminSyncLogListPage(override val vo: AdminSyncTaskListVO) : AdminSyncBase
                     background.white
                     border.bottom[1].gray[I900]
                   }
-                td {
-                  style = cellStyle
-                  +i.id.toString()
-                }
-                td {
-                  style = cellStyle
-                  +i.status.toString()
-                }
-                td {
-                  style = cellStyle
-                  +i.callbackUrl
-                }
-                td {
-                  style = cellStyle
-                  +i.createdAt.toString()
-                }
-                td {
-                  style = cellStyle
+                cell(i.id.toString())
+                cell(i.title)
+                cell(i.status.toString())
+                cell(i.summary ?: "-")
+                cell(i.updatedAt.toString())
+                cell {
                   a {
-                    href = Routes.SYNC_LOG_DETAIL_URL + "?uuid=" + i.uuid
-                    +AdminTxt.detail.toString(vo.locale)
+                    href = Routes.ARTICLE_DETAIL.replace(":identifier", urlEncode((i.id ?: "").toString()))
+                    +AdminTxt.column_detail.toString(vo.locale)
                   }
                 }
               }
@@ -107,5 +104,6 @@ class AdminSyncLogListPage(override val vo: AdminSyncTaskListVO) : AdminSyncBase
           }
         }
       }
-    }
+    }.finalize()
+  }
 }
