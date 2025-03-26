@@ -1,4 +1,4 @@
-package dev.yidafu.blog.admin.handler
+package dev.yidafu.blog.admin.controller
 
 import dev.yidafu.blog.admin.views.pages.config.AdminConfigAppearancePage
 import dev.yidafu.blog.admin.views.pages.config.AdminConfigDataSourcePage
@@ -14,17 +14,23 @@ import dev.yidafu.blog.common.services.ConfigurationService
 import dev.yidafu.blog.common.vo.AdminAppearanceVO
 import dev.yidafu.blog.common.vo.AdminDataSourceVO
 import dev.yidafu.blog.common.vo.AdminSynchronousVO
+import dev.yidafu.blog.ksp.annotation.Controller
+import dev.yidafu.blog.ksp.annotation.Get
+import dev.yidafu.blog.ksp.annotation.Post
 import io.vertx.core.http.HttpHeaders
 import io.vertx.ext.web.RoutingContext
 import org.koin.core.annotation.Single
 import org.slf4j.LoggerFactory
 
 @Single
-class ConfigurationHandler(
+@Controller
+class ConfigurationController(
   private val configService: ConfigurationService,
 ) {
-  private val log = LoggerFactory.getLogger(ConfigurationHandler::class.java)
 
+  private val log = LoggerFactory.getLogger(ConfigurationController::class.java)
+
+  @Get(Routes.CONFIG_APPEARANCE_URL)
   suspend fun appearancePage(ctx: RoutingContext) {
     val vo = AdminAppearanceVO()
     ctx.html(AdminConfigAppearancePage::class.java, vo)
@@ -33,6 +39,7 @@ class ConfigurationHandler(
   /**
    * 通用更新配置
    */
+  @Post(Routes.CONFIGURATION_URL)
   suspend fun updateConfigAction(ctx: RoutingContext) {
     log.info("updateAppearancePage")
     val req = ctx.request()
@@ -63,6 +70,7 @@ class ConfigurationHandler(
     ctx.redirect(referer)
   }
 
+  @Get(Routes.CONFIG_SYNC_URL)
   suspend fun synchronousPage(ctx: RoutingContext) {
     val config = configService.getByKey(ConfigurationKeys.SYNC_CRON_EXPR)
     val vo =
@@ -72,6 +80,7 @@ class ConfigurationHandler(
     ctx.html(AdminConfigSyncPage::class.java, vo)
   }
 
+  @Get(Routes.CONFIG_DATA_SOURCE_URL)
   suspend fun dataSourcePage(ctx: RoutingContext) {
     val configs =
       configService.getByKeys(

@@ -1,4 +1,4 @@
-package dev.yidafu.blog.admin.handler
+package dev.yidafu.blog.admin.controller
 
 import de.comahe.i18n4k.messages.MessageBundleLocalizedString
 import dev.whyoleg.cryptography.CryptographyProvider
@@ -17,6 +17,9 @@ import dev.yidafu.blog.common.services.ConfigurationService
 import dev.yidafu.blog.common.services.UserService
 import dev.yidafu.blog.common.vo.AdminLoginVO
 import dev.yidafu.blog.i18n.AdminTxt
+import dev.yidafu.blog.ksp.annotation.Controller
+import dev.yidafu.blog.ksp.annotation.Get
+import dev.yidafu.blog.ksp.annotation.Post
 import io.vertx.ext.web.RoutingContext
 import org.koin.core.annotation.Single
 import org.slf4j.LoggerFactory
@@ -25,12 +28,13 @@ import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
 @Single
-class AuthHandler(
+@Controller
+class AuthController(
   private val configService: ConfigurationService,
   private val userService: UserService,
 ) {
   private val MAX_RETRY_COUNT = "5"
-  private val log = LoggerFactory.getLogger(AuthHandler::class.java)
+  private val log = LoggerFactory.getLogger(AuthController::class.java)
 
   private val provider = CryptographyProvider.Default
 
@@ -76,6 +80,7 @@ class AuthHandler(
     ctx.next()
   }
 
+  @Get(Routes.LOGIN_URL)
   suspend fun loginPage(ctx: RoutingContext) {
     log.info("render login page")
 
@@ -96,6 +101,7 @@ class AuthHandler(
     ctx.html(AdminLoginPage::class.java, vo)
   }
 
+  @Post(Routes.LOGIN_URL)
   @OptIn(ExperimentalEncodingApi::class)
   suspend fun loginAction(ctx: RoutingContext) {
     val req = ctx.request()
@@ -147,6 +153,7 @@ class AuthHandler(
     ctx.redirect(Routes.ADMIN_URL)
   }
 
+  @Get(Routes.LOGOUT_URL)
   fun logoutAction(ctx: RoutingContext) {
     ctx.session().destroy()
     ctx.redirect(Routes.LOGIN_URL)
@@ -159,7 +166,8 @@ class AuthHandler(
     ctx.redirect(Routes.LOGIN_URL + "?errorCode=${err.code}")
   }
 
-  fun checkLoginAction(ctx: RoutingContext) {
+  @Get(Routes.ADMIN_URL + "/*")
+  suspend fun checkLoginAction(ctx: RoutingContext) {
     val username = ctx.session().get<String>(AUTH_CURRENT_USERNAME)
     if (username == null) {
       ctx.session().destroy()

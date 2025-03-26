@@ -11,6 +11,7 @@ import io.vertx.ext.web.handler.LoggerHandler
 import io.vertx.kotlin.coroutines.CoroutineRouterSupport
 import io.vertx.kotlin.coroutines.CoroutineVerticle
 import io.vertx.kotlin.coroutines.coAwait
+import kotlinx.coroutines.runBlocking
 import org.koin.core.Koin
 import org.quartz.CronScheduleBuilder.cronSchedule
 import org.quartz.JobBuilder

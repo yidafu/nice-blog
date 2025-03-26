@@ -1,4 +1,4 @@
-package dev.yidafu.blog.admin.handler
+package dev.yidafu.blog.admin.controller
 
 import dev.yidafu.blog.admin.services.SyncTaskService
 import dev.yidafu.blog.admin.views.pages.sync.AdminSyncLogListPage
@@ -17,16 +17,17 @@ import dev.yidafu.blog.common.sse.SseModel
 import dev.yidafu.blog.common.vo.AdminSyncTaskListVO
 import dev.yidafu.blog.common.vo.AdminSyncTaskVO
 import dev.yidafu.blog.common.vo.AdminSynchronousVO
-import dev.yidafu.blog.dev.yidafu.blog.engine.*
-import dev.yidafu.blog.dev.yidafu.blog.engine.TaskScope
-import dev.yidafu.blog.engine.DBArticleManager
-import dev.yidafu.blog.engine.DBLogger
+import dev.yidafu.blog.engine.*
+import dev.yidafu.blog.ksp.annotation.Controller
+import dev.yidafu.blog.ksp.annotation.Get
 import io.github.allangomes.kotlinwind.css.I300
 import io.github.allangomes.kotlinwind.css.I50
 import io.github.allangomes.kotlinwind.css.LG
 import io.github.allangomes.kotlinwind.css.kw
 import io.vertx.ext.web.RoutingContext
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 import kotlinx.html.div
 import kotlinx.html.stream.appendHTML
 import kotlinx.html.style
@@ -38,21 +39,25 @@ import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 @Single
-class SynchronousHandler(
+@Controller
+class SynchronousController(
   private val syncTaskService: SyncTaskService,
   private val articleService: ArticleService,
   private val configService: ConfigurationService,
-) {
+)  {
+
   private val LOG_APPEND_EVENT = "logAppend"
   private val LOG_END_EVENT = "logEnd"
 
   private val syncTaskConvertor = Mappers.getMapper(SyncTaskConvertor::class.java)
   private val koin = getKoin()
 
+  @Get(Routes.SYNC_URL)
   suspend fun syncPage(ctx: RoutingContext) {
     ctx.redirect(Routes.SYNC_OPERATE_URL)
   }
 
+  @Get(Routes.SYNC_LOG_URL)
   suspend fun syncLogListPage(ctx: RoutingContext) {
     val pageNum = ctx.queryParam("page").ifEmpty { listOf("1") }[0].toInt()
     val pageSize = ctx.queryParam("size").ifEmpty { listOf("10") }[0].toInt()
@@ -63,6 +68,7 @@ class SynchronousHandler(
     ctx.html(AdminSyncLogListPage::class.java, vo)
   }
 
+  @Get(Routes.SYNC_LOG_DETAIL_URL)
   suspend fun syncLogDetailPage(ctx: RoutingContext) {
     val uuid = ctx.queryParam("uuid")[0]
     val log = syncTaskService.getSyncLog(uuid)
@@ -71,11 +77,13 @@ class SynchronousHandler(
     ctx.html(AdminSyncLogPage::class.java, vo)
   }
 
+  @Get(Routes.SYNC_OPERATE_URL)
   suspend fun syncOperatePage(ctx: RoutingContext) {
     ctx.html(AdminSyncOperatePage::class.java, AdminSynchronousVO(""))
   }
 
   @OptIn(ExperimentalUuidApi::class)
+  @Get(Routes.SYNC_API_START_URL)
   suspend fun startSync(ctx: RoutingContext) {
     val taskUuid = Uuid.random().toHexString()
 
@@ -132,6 +140,7 @@ class SynchronousHandler(
   /**
    * https://github.com/auryn31/sse-vertx
    */
+  @Get(Routes.SYNC_API_LOG_URL)
   suspend fun getSyncLog(ctx: RoutingContext) {
     val uuid = ctx.pathParam("uuid")
     val response = ctx.response()
