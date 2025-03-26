@@ -4,7 +4,7 @@ import de.comahe.i18n4k.Locale
 import dev.yidafu.blog.common.ConstantKeys
 import dev.yidafu.blog.common.bean.bo.ConfigurationBO
 import dev.yidafu.blog.common.controller.CommonController
-import dev.yidafu.blog.common.view.tpl.Page
+import dev.yidafu.blog.common.view.tpl.PageTemplate
 import dev.yidafu.blog.common.vo.BaseVO
 import dev.yidafu.blog.common.vo.PageVO
 import io.vertx.core.Future
@@ -48,7 +48,7 @@ internal inline fun <reified T> RoutingContext.kJson(obj: T): Future<Void>? {
   }
 }
 
-internal inline fun <V : PageVO, T : Page<V>> RoutingContext.html(
+internal inline fun <V : PageVO, T : PageTemplate<V>> RoutingContext.html(
   pageClass: Class<T>,
   vo: V,
 ) {

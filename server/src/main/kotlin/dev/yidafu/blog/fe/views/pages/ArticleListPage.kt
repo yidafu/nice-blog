@@ -1,12 +1,13 @@
 package dev.yidafu.blog.fe.views.pages
 
 import dev.yidafu.blog.common.Routes
-import dev.yidafu.blog.common.view.tpl.Page
+import dev.yidafu.blog.common.view.tpl.PageTemplate
 import dev.yidafu.blog.common.vo.ArticleListVO
 import dev.yidafu.blog.common.vo.ArticleVO
 import dev.yidafu.blog.fe.views.layouts.FrontendLayout
 import dev.yidafu.blog.fe.views.layouts.HEADER_COLOR
 import dev.yidafu.blog.fe.views.layouts.TEXT_COLOR_SECONDARY
+import dev.yidafu.blog.i18n.AdminTxt
 import io.github.allangomes.kotlinwind.css.I300
 import io.github.allangomes.kotlinwind.css.I800
 import io.github.allangomes.kotlinwind.css.LG
@@ -31,6 +32,7 @@ fun FlowContent.readMore(url: String?) {
 }
 
 fun FlowContent.partialPost(vo: ArticleVO) {
+  AdminTxt.article
   article("post") {
     style =
       kw.inline {
@@ -106,7 +108,7 @@ fun FlowContent.partialPost(vo: ArticleVO) {
   }
 }
 
-class ArticleListPage(override val vo: ArticleListVO) : Page<ArticleListVO>() {
+class ArticleListPage(override val vo: ArticleListVO) : PageTemplate<ArticleListVO>() {
   override fun render(): String {
     return FrontendLayout(vo).layout {
       attributes["class"] = "m-auto"

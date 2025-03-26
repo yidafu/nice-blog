@@ -1,6 +1,7 @@
 package dev.yidafu.blog.engine
 
 import dev.yidafu.blog.engine.TaskScope.Companion.NAME
+import dev.yidafu.blog.engine.config.GitConfig
 import org.koin.core.annotation.Scope
 import org.koin.core.annotation.Scoped
 

@@ -44,6 +44,11 @@ class AdminLayout<P : PageVO>(private val vo: P) : BaseLayout(headScript = {
     listOf(
 //    Triple(AdminTxt.appearance.toString(vo.locale), Routes.CONFIG_APPEARANCE_URL, vo.currentPath == Routes.CONFIG_APPEARANCE_URL),
       Triple(
+        AdminTxt.article.toString(vo.locale),
+        Routes.ARTICLE_LIST,
+        vo.currentPath.startsWith(Routes.ARTICLE_LIST),
+      ),
+      Triple(
         AdminTxt.configuration.toString(vo.locale),
         Routes.CONFIGURATION_URL,
         vo.currentPath.startsWith(Routes.CONFIGURATION_URL),

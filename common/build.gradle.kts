@@ -17,6 +17,8 @@ dependencies {
   implementation("io.github.allangomes:kotlinwind-css:0.0.3")
   implementation("com.github.nwillc:ksvg:2.2.0")
   implementation("jakarta.persistence:jakarta.persistence-api:3.2.0")
+
+  implementation("de.comahe.i18n4k:i18n4k-core-jvm:0.9.0")
 }
 
 tasks.test {

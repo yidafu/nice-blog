@@ -26,19 +26,6 @@ class SyncTaskService(
     return taskRecord.store() > 0
   }
 
-  suspend fun changeStatus(
-    uuid: String,
-    status: SyncTaskStatus,
-  ): Boolean =
-    runDB {
-      context.update(B_SYNC_TASK).set(
-        B_SYNC_TASK.STATUS,
-        status.ordinal,
-      ).where(B_SYNC_TASK.UUID.eq(uuid)).execute()
-
-      true
-    }
-
   suspend fun getSyncLog(uuid: String): SyncTaskModel =
     runDB {
       val taskRecord = context.selectFrom(B_SYNC_TASK).where(B_SYNC_TASK.UUID.eq(uuid)).fetchOne()
@@ -47,14 +34,38 @@ class SyncTaskService(
 
   suspend fun getSyncLogs(query: PageQuery): Pair<Int, List<SyncTaskModel>> =
     runDB {
-      val logCount = context.selectCount().from(B_SYNC_TASK).fetchOne(0, Int::class.java) ?: 0
+      val logCount =
+        context
+          .fetchCount(B_SYNC_TASK)
       val taskRecords =
         context.selectFrom(B_SYNC_TASK)
           .limit(query.size)
-          .offset(query.size * (query.page - 1))
+          .offset(query.offset)
           .fetchArray()
       val list = syncTaskConvertor.recordToModal(taskRecords.toList())
 
       logCount to list
     }
+
+  private fun getCountByStatus(status: SyncTaskStatus): Int {
+    return context.fetchCount(
+      B_SYNC_TASK.where(
+        B_SYNC_TASK.STATUS
+          .eq(status.ordinal),
+      ),
+    )
+  }
+
+  suspend fun getRunningTaskCount(): Int = getCountByStatus(SyncTaskStatus.Running)
+
+  suspend fun getCreatedTaskCount(): Int = getCountByStatus(SyncTaskStatus.Created)
+
+  suspend fun findLatestRunningTask(): SyncTaskModel {
+    val record =
+      context.selectFrom(B_SYNC_TASK)
+        .where(B_SYNC_TASK.STATUS.eq(SyncTaskStatus.Created.ordinal))
+        .fetchOne()
+
+    return syncTaskConvertor.recordToModal(record)
+  }
 }

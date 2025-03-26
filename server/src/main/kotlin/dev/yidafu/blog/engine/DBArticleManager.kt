@@ -13,6 +13,8 @@ import dev.yidafu.blog.common.dto.CommonArticleDTO
 import dev.yidafu.blog.common.modal.ArticleModel
 import dev.yidafu.blog.common.modal.ArticleStatus
 import dev.yidafu.blog.common.services.BaseService
+import dev.yidafu.blog.engine.ArticleManager
+import dev.yidafu.blog.engine.Logger
 import org.jooq.CloseableDSLContext
 import org.mapstruct.factory.Mappers
 import java.io.File
@@ -37,7 +39,7 @@ class DBArticleManager(
     // if cover not exist, return default cover.
     if (!file.exists()) return URI.create("/static/default-cover.png")
 
-    logger.logSync("upload image ${file.toPath()}")
+    logger.logSync("[Image] upload image ${file.toPath()}")
     val directory = File(BlogConfig.DEFAULT_UPLOAD_DIRECTORY)
 
     if (!directory.exists()) {
@@ -118,14 +120,14 @@ class DBArticleManager(
   }
 
   private suspend fun createArticle(article: ArticleModel) {
-    logger.log("create article ${article.identifier}")
+    logger.log("[Article] create article ${article.identifier}")
     val newArticleRecord: BArticleRecord = context.newRecord(B_ARTICLE)
     articleConvertor.mapToRecord(article, newArticleRecord)
     newArticleRecord.store()
   }
 
   private suspend fun updateArticle(article: ArticleModel) {
-    logger.log("upload article ${article.identifier}")
+    logger.log("[Article] upload article ${article.identifier}")
     val oldRecord: BArticleRecord? = context.selectFrom(B_ARTICLE).where(B_ARTICLE.ID.eq(article.id)).fetchOne()
     articleConvertor.mapToRecord(article, oldRecord)
     oldRecord?.store()

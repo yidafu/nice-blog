@@ -5,8 +5,11 @@ import dev.yidafu.blog.common.dto.CommonArticleDTO
 import dev.yidafu.blog.common.dto.FrontMatterDTO
 import dev.yidafu.blog.common.modal.ArticleSourceType
 import dev.yidafu.blog.engine.*
-import dev.yidafu.blog.engine.CodeFenceGeneratingProvider
-import dev.yidafu.blog.engine.ImageGeneratingProvider
+import dev.yidafu.blog.engine.ext.findChildrenOfType
+import dev.yidafu.blog.engine.ext.indexOf
+import dev.yidafu.blog.engine.ext.slice
+import dev.yidafu.blog.engine.md.CodeFenceGeneratingProvider
+import dev.yidafu.blog.engine.md.ImageGeneratingProvider
 import kotlinx.serialization.decodeFromString
 import org.intellij.markdown.IElementType
 import org.intellij.markdown.MarkdownElementTypes
@@ -59,7 +62,7 @@ class MarkdownProcessor(val articleManager: ArticleManager, private val logger: 
   }
 
   override fun transform(path: Path): CommonArticleDTO {
-    logger.logSync("transform markdown $path")
+    logger.logSync("[Markdown] transform markdown $path")
     val markdownFile = path.toFile()
     val text = markdownFile.readText()
     val filename = path.name
@@ -77,9 +80,8 @@ class MarkdownProcessor(val articleManager: ArticleManager, private val logger: 
       frontMatterDTO?.rawContent?.let { rawContent ->
         text.replace(rawContent, "")
       } ?: text
-
+    logger.logSync("[Markdown] markdown front matter $frontMatterDTO")
     val tree = parser.buildMarkdownTreeFromString(textWithoutFrontMatter)
-//    MarkdownVisitor(path.toFile(), textWithoutFrontMatter).visitNode(tree)
     val html = HtmlGenerator(textWithoutFrontMatter, tree, flavour).generateHtml()
 
     val dto =

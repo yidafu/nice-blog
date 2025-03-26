@@ -107,3 +107,15 @@ fun FlowContent.alert(
     }
   }
 }
+
+fun FlowContent.Button(block: FlowContent.() -> Unit) {
+  button {
+    style =
+      kw.inline {
+        background.white
+        padding.x[4].y[2]
+        border[1].rounded[4].gray[I400]
+      }
+    block()
+  }
+}

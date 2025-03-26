@@ -1,5 +1,7 @@
 package dev.yidafu.blog.engine
 
+import dev.yidafu.blog.engine.ArticleManager
+import dev.yidafu.blog.engine.Logger
 import dev.yidafu.blog.engine.processor.MLink
 import org.intellij.markdown.MarkdownElementTypes
 import org.intellij.markdown.ast.ASTNode
@@ -28,10 +30,9 @@ class ImageGeneratingProvider(
         node.findChildOfType(MarkdownElementTypes.INLINE_LINK)?.let { linKNode ->
           val linkUrl = linKNode.findChildOfType(MarkdownElementTypes.LINK_DESTINATION)?.getTextInNode(text)
           val label = linKNode.findChildOfType(MarkdownElementTypes.LINK_TEXT)?.getTextInNode(text)
-          val link = MLink(linkUrl.toString(), label.toString())
-          logger.logSync("m link => $link")
+//          val link = MLink(linkUrl.toString(), label.toString())
+          logger.logSync("[Markdown] linking node => $label -- $linkUrl")
           val remoteUrl = articleManager.processImage(resolvePath(linkUrl.toString()))
-          logger.logSync("upload image url => $remoteUrl")
           visitor.consumeHtml("<img src='$remoteUrl' alt='$label' />")
         }
       }

@@ -1,6 +1,7 @@
 package dev.yidafu.blog.admin.views.pages.sync
 
 import dev.yidafu.blog.common.Routes
+import dev.yidafu.blog.common.view.components.Button
 import dev.yidafu.blog.common.vo.AdminSyncTaskListVO
 import dev.yidafu.blog.i18n.AdminTxt
 import io.github.allangomes.kotlinwind.css.*
@@ -77,6 +78,31 @@ class AdminSyncLogListPage(override val vo: AdminSyncTaskListVO) : AdminSyncBase
                   }
                 }
               }
+            }
+          }
+        }
+      }
+
+      // pagination
+      div {
+        style =
+          kw.inline {
+            padding[3]
+            flex.row.justify_between
+          }
+        if (vo.page > 1) {
+          Button {
+            a {
+              href = Routes.SYNC_LOG_URL + "?page=${vo.page - 1}"
+              +AdminTxt.prev_page.toString(vo.locale)
+            }
+          }
+        }
+        if (vo.page < vo.pageCount) {
+          Button {
+            a {
+              href = Routes.SYNC_LOG_URL + "?page=${vo.page + 1}"
+              +AdminTxt.next_page.toString(vo.locale)
             }
           }
         }

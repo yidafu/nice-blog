@@ -3,7 +3,6 @@ package dev.yidafu.blog.common.controller
 import dev.yidafu.blog.common.ConfigurationKeys
 import dev.yidafu.blog.common.ConstantKeys
 import dev.yidafu.blog.common.bean.bo.ConfigurationBO
-import dev.yidafu.blog.common.handler.CommonHandler
 import dev.yidafu.blog.common.services.ConfigurationService
 import dev.yidafu.blog.ksp.annotation.Any
 import dev.yidafu.blog.ksp.annotation.Controller
@@ -19,7 +18,7 @@ import java.util.*
 class CommonController(
   private val configurationService: ConfigurationService,
 ) {
-  private val log = LoggerFactory.getLogger(CommonHandler::class.java)
+  private val log = LoggerFactory.getLogger(CommonController::class.java)
 
   @Any
   suspend fun initConfiguration(ctx: RoutingContext) {

@@ -1,6 +1,7 @@
 package dev.yidafu.blog.engine
 
 import dev.yidafu.blog.common.dto.CommonArticleDTO
+import dev.yidafu.blog.engine.config.GitConfig
 import dev.yidafu.blog.engine.processor.IProcessor
 import dev.yidafu.blog.engine.processor.MarkdownProcessor
 import dev.yidafu.blog.engine.processor.NotebookProcessor
@@ -48,9 +49,9 @@ abstract class BaseGitSynchronousTask(
     // execute sync task in io thread
     listener.onStart()
     try {
-      logger.log("start sync task...")
+      logger.log("[Task] start sync task...")
       val repoDirectory = fetchRepository()
-      logger.log("scan markdown/notebook in ${repoDirectory.toPath()}")
+      logger.log("[Task] scan markdown/notebook in ${repoDirectory.toPath()}")
       val regularFiles =
         Files.find(repoDirectory.toPath(), Int.MAX_VALUE, { path, file: BasicFileAttributes ->
           file.isRegularFile &&
@@ -69,7 +70,7 @@ abstract class BaseGitSynchronousTask(
 
       listener.onFinish()
     } catch (e: Exception) {
-      logger.log("sync task failed: ${e.message}")
+      logger.log("[Task] sync task failed: ${e.message}")
       listener.onFailed(e)
     } finally {
       cleanup()

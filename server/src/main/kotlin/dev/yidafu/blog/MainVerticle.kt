@@ -2,6 +2,7 @@ package dev.yidafu.blog
 
 import dev.yidafu.blog.admin.AdminVerticle
 import dev.yidafu.blog.admin.controller.AdminControllerModule
+import dev.yidafu.blog.admin.manager.SynchronousManager
 import dev.yidafu.blog.admin.services.AdminServiceModule
 import dev.yidafu.blog.common.controller.CommonControllerModule
 import dev.yidafu.blog.common.dao.DefaultSchema
@@ -65,28 +66,10 @@ class MainVerticle : CoroutineVerticle(), CoroutineRouterSupport {
         val JooqModule =
           module {
             factory<CloseableDSLContext> { jooqContext }
+            single<SynchronousManager> {
+              SynchronousManager(get(), get())
+            }
           }
-//        val engineModule =
-//          module {
-//            scope<TaskScope> {
-//              scoped<GitConfig> {
-//                GitConfig("", branch = "")
-//              }
-//              scoped<SynchronousListener> {
-//                DefaultSynchronousListener()
-//              }
-//              scoped<BaseGitSynchronousTask> {
-//                // default SynchronousTask
-//                GitSynchronousTask(get<GitConfig>(), get(), get(), get())
-//              }
-//              scoped<ArticleManager> {
-//                DBArticleManager(jooqContext)
-//              }
-//              scoped<Logger> {
-//                DBLogger(jooqContext)
-//              }
-//            }
-//          }
 
         modules(
           JooqModule,

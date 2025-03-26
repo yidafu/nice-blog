@@ -59,6 +59,7 @@ dependencies {
   ksp("io.insert-koin:koin-ksp-compiler:$koinAnnotationsVersion")
   implementation("io.insert-koin:koin-core")
 
+  implementation("org.slf4j:slf4j-api:2.0.16")
   implementation("ch.qos.logback:logback-classic:1.5.6")
   implementation("org.slf4j:slf4j-api:2.0.13")
 

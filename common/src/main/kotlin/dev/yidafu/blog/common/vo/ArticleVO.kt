@@ -3,6 +3,7 @@ package dev.yidafu.blog.common.vo
 import java.time.LocalTime
 
 data class ArticleVO(
+  var id: Long = 0,
   var title: String = "",
   var cover: String? = null,
   var identifier: String? = null,
