@@ -15,3 +15,5 @@ val RouterParameterType = ParameterSpec(
 
 
 val CreateRouteClassName = ClassName("dev.yidafu.blog.ksp", "CreateRoute")
+
+val GlobalContextType = ClassName("org.koin.core.context", "GlobalContext")

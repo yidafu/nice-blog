@@ -99,49 +99,57 @@ class VertexControllerSymbolProcessor(private val environment: SymbolProcessorEn
         )
       }.toList()
 
-    infoList.forEach(::buildControllerRouteMapFile)
-
     controllerInfoList.addAll(infoList)
-
 
     return emptyList()
   }
 
   override fun finish() {
     super.finish()
-    buildRootRouteMapFile(controllerInfoList)
+    controllerInfoList.forEach(::buildControllerRouteMapFile)
+    controllerInfoList.groupBy { it.packageName }
+      .forEach { (packageName, infoList) ->
+        buildControllerGroupMap(
+          ClassName(packageName, "CreateRoutes"),
+          "createRoutes",
+          infoList,
+        )
+      }
 
+    buildRootRouteMapFile(controllerInfoList)
   }
-  private fun buildRootRouteMapFile(infoList: List<ControllerInfo>) {
-    val fileSpec = FileSpec.builder(CreateRouteClassName)
-      .addType(
-        TypeSpec.classBuilder(CreateRouteClassName)
+
+
+  private fun buildControllerGroupMap(
+    className: ClassName,
+    funName: String,
+    ctrlInfoList: List<ControllerInfo>,
+  ) {
+    val fileSpec = FileSpec.builder(className)
+      .addFunction(
+        FunSpec.builder(funName)
+          .receiver(CoroutineRouterSupportType)
           .apply {
-            addFunction(
-              FunSpec.builder("createRoute")
-                .receiver(CoroutineRouterSupportType)
-                .apply {
-                  addParameter(RouterParameterType)
-                  infoList.forEach { info ->
-                    val routerMapFunctionMember =  ClassName(info.packageName, info.routeMapFunctionName)
-//                .member(info.routeMapFunctionName)
-                    addStatement("%T(%N)", routerMapFunctionMember, RouterParameterType)
-                  }
-                }
-                .build()
-            )
+            addParameter(RouterParameterType)
+            ctrlInfoList.forEach { info ->
+              val routerMapFunctionMember =  ClassName(info.packageName, info.routeMapFunctionName)
+              addStatement("%T(%N)", routerMapFunctionMember, RouterParameterType)
+            }
           }
           .build()
-
       ).build()
 
     fileSpec.writeTo(environment.codeGenerator, false)
   }
+
+  private fun buildRootRouteMapFile(infoList: List<ControllerInfo>) {
+    buildControllerGroupMap(CreateRouteClassName, "createRoute", infoList)
+  }
+
   fun buildControllerRouteMapFile(controllerInfo: ControllerInfo) {
     val className = ClassName(controllerInfo.packageName, controllerInfo.className)
 
-    val routeMapClassName = ClassName(controllerInfo.packageName, controllerInfo.className + "${'$'}RouteMap")
-//    val routeFunctionName = "create${controllerInfo.className}Route"
+    val routeMapClassName = ClassName(controllerInfo.packageName, controllerInfo.routeMapClassName)
     val fileSpec = FileSpec
       .builder(routeMapClassName)
       .addFunction(
@@ -149,7 +157,8 @@ class VertexControllerSymbolProcessor(private val environment: SymbolProcessorEn
           .receiver(CoroutineRouterSupportType)
           .apply {
             addParameter(RouterParameterType)
-            addStatement("val controller = %T()", className)
+            addStatement("val koin = %T.get()", GlobalContextType)
+            addStatement("val controller = koin.get<%T>()", className)
             controllerInfo.paths.forEach { method ->
               addCode(buildRouteStatement(className, method))
             }
