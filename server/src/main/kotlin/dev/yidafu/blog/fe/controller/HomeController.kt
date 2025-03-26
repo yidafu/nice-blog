@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory
 class HomeController(
   private val articleService: ArticleService,
 ) {
-  private val log = LoggerFactory.getLogger(HomePageHandler::class.java)
+  private val log = LoggerFactory.getLogger(HomeController::class.java)
   private val articleConvertor = Mappers.getMapper(ArticleConvertor::class.java)
 
   @Get(Routes.ROOT_URL)
