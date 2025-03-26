@@ -6,10 +6,12 @@ import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.processing.SymbolProcessorProvider
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
+import com.google.devtools.ksp.symbol.Modifier
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.MemberName.Companion.member
 import com.squareup.kotlinpoet.ksp.writeTo
 import dev.yidafu.blog.ksp.annotation.*
+import dev.yidafu.blog.ksp.annotation.Any
 
 class VertexControllerSymbolProcessorProvider : SymbolProcessorProvider {
   override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor {
@@ -21,13 +23,15 @@ enum class HttpMethod {
   GET,
   POST,
   PUT,
-  DELETE
+  DELETE,
+  ANY,
 }
 
 data class MethodInfo(
   val method: HttpMethod,
   val path: String,
   val funName: String,
+  val isSuspend: Boolean = true,
 )
 
 data class ControllerInfo(
@@ -37,7 +41,7 @@ data class ControllerInfo(
   val paths: List<MethodInfo>,
 ) {
   val routeMapFunctionName: String
-      get() = "create${className}Route"
+    get() = "create${className}Route"
 
   val routeMapClassName: String
     get() = "$className\$RouteMap"
@@ -69,7 +73,8 @@ class VertexControllerSymbolProcessor(private val environment: SymbolProcessorEn
               Get::class.simpleName,
               Post::class.simpleName,
               Put::class.simpleName,
-              Delete::class.simpleName
+              Delete::class.simpleName,
+              Any::class.simpleName
             )
           }.map { methodAnnotation ->
             val path = methodAnnotation.arguments.first().value as String
@@ -78,6 +83,7 @@ class VertexControllerSymbolProcessor(private val environment: SymbolProcessorEn
               Post::class.simpleName -> HttpMethod.POST
               Put::class.simpleName -> HttpMethod.PUT
               Delete::class.simpleName -> HttpMethod.DELETE
+              Any::class.simpleName -> HttpMethod.ANY
               else -> throw IllegalArgumentException("unknown method")
             }
             logger.warn("Method annotation function $method=>$path ${func.simpleName.getShortName()}")
@@ -85,7 +91,8 @@ class VertexControllerSymbolProcessor(private val environment: SymbolProcessorEn
             MethodInfo(
               method,
               path,
-              func.simpleName.asString()
+              func.simpleName.asString(),
+              func.modifiers.contains(Modifier.SUSPEND)
             )
           }
         }.flatten().toList()
@@ -132,7 +139,7 @@ class VertexControllerSymbolProcessor(private val environment: SymbolProcessorEn
           .apply {
             addParameter(RouterParameterType)
             ctrlInfoList.forEach { info ->
-              val routerMapFunctionMember =  ClassName(info.packageName, info.routeMapFunctionName)
+              val routerMapFunctionMember = ClassName(info.packageName, info.routeMapFunctionName)
               addStatement("%T(%N)", routerMapFunctionMember, RouterParameterType)
             }
           }
@@ -172,6 +179,8 @@ class VertexControllerSymbolProcessor(private val environment: SymbolProcessorEn
   private fun buildRouteStatement(className: ClassName, method: MethodInfo): CodeBlock {
 
     logger.warn("build method $method")
+    val codeBlock = CodeBlock.builder()
+
     val methodMember = when (method.method) {
       HttpMethod.GET -> {
         RouterType.member("get")
@@ -188,20 +197,36 @@ class VertexControllerSymbolProcessor(private val environment: SymbolProcessorEn
       HttpMethod.DELETE -> {
         RouterType.member("delete")
       }
+
+      HttpMethod.ANY -> RouterType.member("route")
     }
+
+    codeBlock.add("router.%N", methodMember)
 
     val handlerFunction: MemberName = className.member(method.funName)
 
+    if (method.path.isEmpty()) {
+      codeBlock.add("()")
+    } else {
+      codeBlock.add("(%S)", method.path)
+    }
 
+    if (method.isSuspend) {
+      codeBlock.add(
+        ".%N(requestHandler = %N::%N)", RouterType.member("coHandler"),
+        "controller",
+        handlerFunction,
+      )
 
-    return CodeBlock.builder().addStatement(
-      "router.%N(%S).%N(requestHandler = %N::%N)",
-      methodMember,
-      method.path,
-      RouterType.member("coHandler"),
-      "controller",
-      handlerFunction,
-    )
-      .build()
+    } else {
+      codeBlock.add(
+        ".%N(%N::%N)",
+        RouterType.member("handler"),
+        "controller",
+        handlerFunction,
+      )
+    }
+    codeBlock.add("\n")
+    return codeBlock.build()
   }
 }
