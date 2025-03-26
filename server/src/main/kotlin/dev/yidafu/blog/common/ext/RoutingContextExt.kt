@@ -3,7 +3,7 @@ package dev.yidafu.blog.common.ext
 import de.comahe.i18n4k.Locale
 import dev.yidafu.blog.common.ConstantKeys
 import dev.yidafu.blog.common.bean.bo.ConfigurationBO
-import dev.yidafu.blog.common.handler.CommonHandler
+import dev.yidafu.blog.common.controller.CommonController
 import dev.yidafu.blog.common.view.tpl.Page
 import dev.yidafu.blog.common.vo.BaseVO
 import dev.yidafu.blog.common.vo.PageVO
@@ -54,7 +54,7 @@ internal inline fun <V : PageVO, T : Page<V>> RoutingContext.html(
 ) {
   val local = this.get<Locale>(ConstantKeys.LANGUAGE_CONTEXT)
 
-  val configBo = this.get<ConfigurationBO>(CommonHandler.GLOBAL_CONFIGURATION)
+  val configBo = this.get<ConfigurationBO>(CommonController.GLOBAL_CONFIGURATION)
 
   val baseVO =
     BaseVO(

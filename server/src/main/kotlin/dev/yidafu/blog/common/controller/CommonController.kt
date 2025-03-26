@@ -1,22 +1,27 @@
-package dev.yidafu.blog.common.handler
+package dev.yidafu.blog.common.controller
 
-import de.comahe.i18n4k.Locale
 import dev.yidafu.blog.common.ConfigurationKeys
 import dev.yidafu.blog.common.ConstantKeys
 import dev.yidafu.blog.common.bean.bo.ConfigurationBO
+import dev.yidafu.blog.common.handler.CommonHandler
 import dev.yidafu.blog.common.services.ConfigurationService
+import dev.yidafu.blog.ksp.annotation.Any
+import dev.yidafu.blog.ksp.annotation.Controller
 import io.vertx.core.http.Cookie
 import io.vertx.core.http.HttpHeaders
 import io.vertx.ext.web.RoutingContext
 import org.koin.core.annotation.Single
 import org.slf4j.LoggerFactory
+import java.util.*
 
+@Controller
 @Single
-class CommonHandler(
+class CommonController(
   private val configurationService: ConfigurationService,
 ) {
   private val log = LoggerFactory.getLogger(CommonHandler::class.java)
 
+  @Any
   suspend fun initConfiguration(ctx: RoutingContext) {
     val configs = configurationService.getAll()
     val siteTitle = configs.find { it.configKey == ConfigurationKeys.SITE_TITLE }?.configValue ?: ""
@@ -28,6 +33,7 @@ class CommonHandler(
     ctx.next()
   }
 
+  @Any
   fun localHandler(ctx: RoutingContext) {
     val language = ctx.request().getParam("lang")
 

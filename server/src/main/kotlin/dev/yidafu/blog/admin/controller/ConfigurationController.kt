@@ -27,7 +27,6 @@ import org.slf4j.LoggerFactory
 class ConfigurationController(
   private val configService: ConfigurationService,
 ) {
-
   private val log = LoggerFactory.getLogger(ConfigurationController::class.java)
 
   @Get(Routes.CONFIG_APPEARANCE_URL)

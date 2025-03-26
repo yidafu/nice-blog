@@ -1,6 +1,7 @@
 package dev.yidafu.blog.common
 
 object Routes {
+  internal const val ROOT_URL = "/"
   internal const val ADMIN_URL = "/admin"
   internal const val CONFIGURATION_URL = "/admin/config"
   internal const val CONFIG_APPEARANCE_URL = "/admin/config/appearance"

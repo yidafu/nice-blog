@@ -1,17 +1,22 @@
 package dev.yidafu.blog.admin
 
+import dev.yidafu.blog.admin.controller.AuthController
+import dev.yidafu.blog.admin.controller.createRoutes
 import dev.yidafu.blog.admin.jobs.SynchronousJob
-import dev.yidafu.blog.admin.routes.mountAdminRoutes
 import dev.yidafu.blog.common.ConfigurationKeys
 import dev.yidafu.blog.common.ConstantKeys
+import dev.yidafu.blog.common.Routes
 import dev.yidafu.blog.common.routes.mountPublicRoutes
 import dev.yidafu.blog.common.services.ConfigurationService
+import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.Router
+import io.vertx.ext.web.handler.BodyHandler
 import io.vertx.ext.web.handler.LoggerHandler
+import io.vertx.ext.web.handler.SessionHandler
+import io.vertx.ext.web.sstore.LocalSessionStore
 import io.vertx.kotlin.coroutines.CoroutineRouterSupport
 import io.vertx.kotlin.coroutines.CoroutineVerticle
 import io.vertx.kotlin.coroutines.coAwait
-import kotlinx.coroutines.runBlocking
 import org.koin.core.Koin
 import org.quartz.CronScheduleBuilder.cronSchedule
 import org.quartz.JobBuilder
@@ -19,6 +24,7 @@ import org.quartz.TriggerBuilder
 import org.quartz.TriggerKey.triggerKey
 import org.quartz.impl.StdSchedulerFactory
 import org.slf4j.LoggerFactory
+import dev.yidafu.blog.common.controller.createRoutes as createCommonRouter
 
 class AdminVerticle(private val koin: Koin) : CoroutineVerticle(), CoroutineRouterSupport {
   private val log = LoggerFactory.getLogger(AdminVerticle::class.java)
@@ -31,10 +37,24 @@ class AdminVerticle(private val koin: Koin) : CoroutineVerticle(), CoroutineRout
     try {
       val server = vertx.createHttpServer()
       val router = Router.router(vertx)
-      router.route().handler(LoggerHandler.create())
-
-      mountAdminRoutes(router, koin, vertx)
       mountPublicRoutes(router)
+
+      router.route().handler(LoggerHandler.create())
+      val authCtrl = koin.get<AuthController>()
+      val sessionHandler =
+        SessionHandler.create(LocalSessionStore.create(vertx))
+          .setCookieHttpOnlyFlag(true)
+
+
+      router.route().method(HttpMethod.POST).handler(BodyHandler.create())
+      router.route().handler(sessionHandler)
+      createCommonRouter(router)
+
+      router.get(Routes.LOGIN_URL)
+        .coHandler(requestHandler = authCtrl::genRsaKeyPair)
+        .coHandler(requestHandler = authCtrl::loginPage)
+
+      createRoutes(router)
 
       router.errorHandler(404) { ctx ->
         ctx.end("<h1>404 Not Found</h1>")

@@ -1,14 +1,14 @@
 package dev.yidafu.blog
 
 import dev.yidafu.blog.admin.AdminVerticle
-import dev.yidafu.blog.admin.handler.AdminHandlerModule
+import dev.yidafu.blog.admin.controller.AdminControllerModule
 import dev.yidafu.blog.admin.services.AdminServiceModule
+import dev.yidafu.blog.common.controller.CommonControllerModule
 import dev.yidafu.blog.common.dao.DefaultSchema
-import dev.yidafu.blog.common.handler.CommonHandlerModule
 import dev.yidafu.blog.common.services.CommonServiceModule
-import dev.yidafu.blog.dev.yidafu.blog.engine.*
+import dev.yidafu.blog.engine.*
 import dev.yidafu.blog.fe.FrontendVerticle
-import dev.yidafu.blog.fe.handler.FeHandlerModule
+import dev.yidafu.blog.fe.controller.FeControllerModule
 import dev.yidafu.blog.fe.service.FeServiceModule
 import io.vertx.kotlin.coroutines.CoroutineRouterSupport
 import io.vertx.kotlin.coroutines.CoroutineVerticle
@@ -90,12 +90,15 @@ class MainVerticle : CoroutineVerticle(), CoroutineRouterSupport {
 
         modules(
           JooqModule,
-          CommonHandlerModule().module,
+
           CommonServiceModule().module,
           FeServiceModule().module,
-          FeHandlerModule().module,
-          AdminHandlerModule().module,
           AdminServiceModule().module,
+
+          CommonControllerModule().module,
+          FeControllerModule().module,
+          AdminControllerModule().module,
+
           EngineModule().module,
         )
       }

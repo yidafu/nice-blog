@@ -44,8 +44,7 @@ class SynchronousController(
   private val syncTaskService: SyncTaskService,
   private val articleService: ArticleService,
   private val configService: ConfigurationService,
-)  {
-
+) {
   private val LOG_APPEND_EVENT = "logAppend"
   private val LOG_END_EVENT = "logEnd"
 
