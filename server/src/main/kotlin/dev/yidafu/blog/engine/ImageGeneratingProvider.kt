@@ -1,6 +1,6 @@
-package dev.yidafu.blog.dev.yidafu.blog.engine
+package dev.yidafu.blog.engine
 
-import dev.yidafu.blog.dev.yidafu.blog.engine.processor.MLink
+import dev.yidafu.blog.engine.processor.MLink
 import org.intellij.markdown.MarkdownElementTypes
 import org.intellij.markdown.ast.ASTNode
 import org.intellij.markdown.ast.CompositeASTNode

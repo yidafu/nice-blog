@@ -1,4 +1,4 @@
-package dev.yidafu.blog.dev.yidafu.blog.engine
+package dev.yidafu.blog.engine
 
 // @Scope(name = NAME)
 // @Scoped

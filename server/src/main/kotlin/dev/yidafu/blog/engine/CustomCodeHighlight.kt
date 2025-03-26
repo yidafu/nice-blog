@@ -1,4 +1,4 @@
-package dev.yidafu.blog.dev.yidafu.blog.engine
+package dev.yidafu.blog.engine
 
 import dev.snipme.highlights.Highlights
 import dev.snipme.highlights.model.*

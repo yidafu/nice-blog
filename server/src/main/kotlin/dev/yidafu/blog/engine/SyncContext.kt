@@ -1,6 +1,6 @@
-package dev.yidafu.blog.dev.yidafu.blog.engine
+package dev.yidafu.blog.engine
 
-import dev.yidafu.blog.dev.yidafu.blog.engine.TaskScope.Companion.NAME
+import dev.yidafu.blog.engine.TaskScope.Companion.NAME
 import org.koin.core.annotation.Scope
 import org.koin.core.annotation.Scoped
 import org.slf4j.LoggerFactory

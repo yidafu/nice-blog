@@ -1,8 +1,8 @@
-package dev.yidafu.blog.dev.yidafu.blog.engine
+package dev.yidafu.blog.engine
 
 import com.github.syari.kgit.KGit
 import dev.yidafu.blog.common.dto.CommonArticleDTO
-import dev.yidafu.blog.dev.yidafu.blog.engine.TaskScope.Companion.NAME
+import dev.yidafu.blog.engine.TaskScope.Companion.NAME
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -65,6 +65,7 @@ open class GitSynchronousTask(
 //    return File("/Users/yidafu/github/nice-blog/server/yidafu.dev")
     val monitor = TextProgressMonitor(writer)
     val directory = gitConfig.getLocalRepoFile()
+    return directory
     val git =
       if (!directory.exists()) {
         logger.log("repository is not exist, clone repository into ${directory.toPath()}")

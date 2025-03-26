@@ -13,8 +13,6 @@ import dev.yidafu.blog.common.dto.CommonArticleDTO
 import dev.yidafu.blog.common.modal.ArticleModel
 import dev.yidafu.blog.common.modal.ArticleStatus
 import dev.yidafu.blog.common.services.BaseService
-import dev.yidafu.blog.dev.yidafu.blog.engine.ArticleManager
-import dev.yidafu.blog.dev.yidafu.blog.engine.Logger
 import org.jooq.CloseableDSLContext
 import org.mapstruct.factory.Mappers
 import java.io.File

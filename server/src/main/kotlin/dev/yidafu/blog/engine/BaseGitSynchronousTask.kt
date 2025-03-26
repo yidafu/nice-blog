@@ -1,9 +1,9 @@
-package dev.yidafu.blog.dev.yidafu.blog.engine
+package dev.yidafu.blog.engine
 
 import dev.yidafu.blog.common.dto.CommonArticleDTO
-import dev.yidafu.blog.dev.yidafu.blog.engine.processor.IProcessor
-import dev.yidafu.blog.dev.yidafu.blog.engine.processor.MarkdownProcessor
-import dev.yidafu.blog.dev.yidafu.blog.engine.processor.NotebookProcessor
+import dev.yidafu.blog.engine.processor.IProcessor
+import dev.yidafu.blog.engine.processor.MarkdownProcessor
+import dev.yidafu.blog.engine.processor.NotebookProcessor
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path

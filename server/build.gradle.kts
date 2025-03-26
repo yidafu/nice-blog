@@ -15,6 +15,7 @@ plugins {
   id("org.jooq.jooq-codegen-gradle") version "3.19.16"
   id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
   id("de.comahe.i18n4k") version "0.9.0"
+  id("org.graalvm.buildtools.native") version "0.10.5"
 }
 
 group = "dev.yidafu.blog"
@@ -37,9 +38,9 @@ application {
 
 dependencies {
   implementation(project(":common"))
-  implementation(project(":engine"))
+//  implementation(project(":engine"))
   implementation("io.vertx:vertx-web:$vertxVersion")
-  implementation("io.vertx:vertx-core:${vertxVersion}")
+  implementation("io.vertx:vertx-core:$vertxVersion")
   implementation("io.vertx:vertx-jdbc-client:$vertxVersion")
   implementation("org.xerial:sqlite-jdbc:3.47.1.0")
   implementation("io.vertx:vertx-lang-kotlin-coroutines:$vertxVersion")
@@ -53,9 +54,9 @@ dependencies {
 
   implementation("com.github.sya-ri:kgit:1.1.0")
 
-  implementation("io.insert-koin:koin-annotations-jvm:$koinAnnotationsVersion")
-  ksp("io.insert-koin:koin-ksp-compiler:$koinAnnotationsVersion")
   implementation(platform("io.insert-koin:koin-bom:$koinVersion"))
+  implementation("io.insert-koin:koin-annotations:$koinAnnotationsVersion")
+  ksp("io.insert-koin:koin-ksp-compiler:$koinAnnotationsVersion")
   implementation("io.insert-koin:koin-core")
 
   implementation("ch.qos.logback:logback-classic:1.5.6")
@@ -77,14 +78,34 @@ dependencies {
   implementation("dev.whyoleg.cryptography:cryptography-core-jvm:0.4.0")
   implementation("dev.whyoleg.cryptography:cryptography-provider-jdk:0.4.0")
 
+  implementation(platform("io.insert-koin:koin-bom:$koinVersion"))
+  implementation("io.insert-koin:koin-core")
+  implementation("io.insert-koin:koin-annotations:$koinAnnotationsVersion")
+  ksp("io.insert-koin:koin-ksp-compiler:$koinAnnotationsVersion")
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
+
+  implementation("org.jetbrains:markdown:0.7.3")
+  implementation("com.github.sya-ri:kgit:1.1.0")
+  implementation("com.charleskorn.kaml:kaml:0.66.0")
+  implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.7.3")
+  implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
+
+  implementation("org.jetbrains.kotlinx:kotlinx-html:0.8.0")
+  implementation("org.jetbrains.kotlin-wrappers:kotlin-css:1.0.0-pre.832")
+  implementation("org.jetbrains.kotlinx:jupyter-notebooks-parser:0.2.0-dev-10")
+
+  implementation("dev.snipme:highlights:1.0.0")
+
+  implementation(project(":ksp-plugin"))
+  ksp(project(":ksp-plugin"))
+
   implementation("org.jooq:jooq:3.19.16")
 
-  jooqCodegen("org.jooq:jooq-meta-extensions:3.19.16")
-  jooqCodegen("mysql:mysql-connector-java:8.0.33")
   jooqCodegen("org.jooq:jooq-meta-extensions-hibernate:3.19.17")
   jooqCodegen("org.hibernate:hibernate-core-jakarta:5.6.15.Final")
-  jooqCodegen(project(":common"))
+  jooqCodegen("org.jooq:jooq-meta-extensions:3.19.16")
   jooqCodegen("org.xerial:sqlite-jdbc:3.47.1.0")
+  jooqCodegen(project(":common"))
 }
 
 kapt {
@@ -97,7 +118,7 @@ kapt {
 }
 
 val compileKotlin: KotlinCompile by tasks
-compileKotlin.kotlinOptions.jvmTarget = "17"
+compileKotlin.kotlinOptions.jvmTarget = "21"
 
 tasks.withType<ShadowJar> {
   archiveClassifier.set("fat")
@@ -174,7 +195,6 @@ configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
   debug.set(true)
 }
 
-
 tasks.create<proguard.gradle.ProGuardTask>("obfuscate") {
   configuration(file("proguard-rules.pro"))
 //  configuration = file("proguard-rules.pro")
@@ -186,5 +206,4 @@ tasks.create<proguard.gradle.ProGuardTask>("obfuscate") {
   outjars(layout.buildDirectory.file("libs/server-1.0.0-SNAPSHOT-optimized.jar"))
 
   verbose()
-
 }

@@ -1,4 +1,4 @@
-package dev.yidafu.blog.dev.yidafu.blog.engine
+package dev.yidafu.blog.engine
 
 import java.io.File
 import java.util.concurrent.TimeUnit

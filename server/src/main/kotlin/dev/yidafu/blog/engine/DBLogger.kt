@@ -1,9 +1,6 @@
 package dev.yidafu.blog.engine
 
 import dev.yidafu.blog.common.dao.tables.references.B_SYNC_TASK
-import dev.yidafu.blog.dev.yidafu.blog.engine.GitConfig
-import dev.yidafu.blog.dev.yidafu.blog.engine.Logger
-import dev.yidafu.blog.dev.yidafu.blog.engine.TaskScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.BufferOverflow
