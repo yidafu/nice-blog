@@ -2,7 +2,6 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
 import org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED
 import org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jooq.meta.jaxb.Logging
 
 plugins {
@@ -13,7 +12,7 @@ plugins {
   id("com.google.devtools.ksp") version "2.0.21-1.0.27"
   kotlin("plugin.serialization") version "2.0.21"
   id("org.jooq.jooq-codegen-gradle") version "3.19.16"
-  id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
+  id("org.jlleitschuh.gradle.ktlint") version "12.2.0"
   id("de.comahe.i18n4k") version "0.9.0"
   id("org.graalvm.buildtools.native") version "0.10.5"
 }
@@ -118,9 +117,9 @@ kapt {
   }
 }
 
-val compileKotlin: KotlinCompile by tasks
-compileKotlin.kotlinOptions.jvmTarget = "21"
-
+kotlin {
+  jvmToolchain(21)
+}
 tasks.withType<ShadowJar> {
   archiveClassifier.set("fat")
   exclude("**/*.md", "**/test/**", "*.dll")
@@ -193,7 +192,6 @@ jooq {
   }
 }
 configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
-  debug.set(true)
 }
 
 tasks.create<proguard.gradle.ProGuardTask>("obfuscate") {

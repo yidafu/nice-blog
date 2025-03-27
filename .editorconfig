@@ -13,3 +13,9 @@ insert_final_newline = true
 [*.{kt,kts}]
 ktlint_code_style = ktlint_official
 ktlint_standard_no-wildcard-imports = disabled
+
+
+[*/build/generated/*]
+ktlint_standard = disabled
+ktlint_experimental = disabled
+ktlint_custom-rule-set = disabled
