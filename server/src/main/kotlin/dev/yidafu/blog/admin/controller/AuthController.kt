@@ -33,7 +33,10 @@ class AuthController(
   private val configService: ConfigurationService,
   private val userService: UserService,
 ) {
-  private val MAX_RETRY_COUNT = "5"
+  companion object {
+    private const val MAX_RETRY_COUNT = "5"
+  }
+
   private val log = LoggerFactory.getLogger(AuthController::class.java)
 
   private val provider = CryptographyProvider.Default
@@ -60,13 +63,13 @@ class AuthController(
     val message: MessageBundleLocalizedString,
   )
 
+  /**
+   * 1. username is incorrect
+   * 2. password is incorrect
+   * 3. user not exist in user table
+   */
   private val errorList =
     listOf(
-      /**
-       * 1. username is incorrect
-       * 2. password is incorrect
-       * 3. user not exist in user table
-       */
       LoginError(1, AdminTxt.username_or_password_error),
       LoginError(2, AdminTxt.required_username_or_password),
       LoginError(3, AdminTxt.account_locked),

@@ -3,7 +3,6 @@ package dev.yidafu.blog.engine
 import com.github.syari.kgit.KGit
 import dev.yidafu.blog.common.dto.CommonArticleDTO
 import dev.yidafu.blog.engine.TaskScope.Companion.NAME
-import dev.yidafu.blog.engine.config.GitConfig
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -63,7 +62,7 @@ open class GitSynchronousTask(
   }
 
   override suspend fun fetchRepository(): File {
-    return File("/Users/yidafu/github/nice-blog/server/yidafu.dev")
+    return File("/Users/dovyih/Codes/nice-blog/server/yidafu.dev")
     val monitor = TextProgressMonitor(writer)
     val directory = gitConfig.getLocalRepoFile()
     val git =

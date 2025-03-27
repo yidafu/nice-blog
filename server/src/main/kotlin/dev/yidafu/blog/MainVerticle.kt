@@ -63,7 +63,7 @@ class MainVerticle : CoroutineVerticle(), CoroutineRouterSupport {
       startKoin {
         printLogger()
 
-        val JooqModule =
+        val jooqModule =
           module {
             factory<CloseableDSLContext> { jooqContext }
             single<SynchronousManager> {
@@ -72,16 +72,13 @@ class MainVerticle : CoroutineVerticle(), CoroutineRouterSupport {
           }
 
         modules(
-          JooqModule,
-
+          jooqModule,
           CommonServiceModule().module,
           FeServiceModule().module,
           AdminServiceModule().module,
-
           CommonControllerModule().module,
           FeControllerModule().module,
           AdminControllerModule().module,
-
           EngineModule().module,
         )
       }

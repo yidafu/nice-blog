@@ -45,7 +45,6 @@ class AdminVerticle(private val koin: Koin) : CoroutineVerticle(), CoroutineRout
         SessionHandler.create(LocalSessionStore.create(vertx))
           .setCookieHttpOnlyFlag(true)
 
-
       router.route().method(HttpMethod.POST).handler(BodyHandler.create())
       router.route().handler(sessionHandler)
       createCommonRouter(router)

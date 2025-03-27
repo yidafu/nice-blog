@@ -17,7 +17,7 @@ import io.github.allangomes.kotlinwind.css.kw
 import kotlinx.html.*
 
 class AdminLoginPage(override val vo: AdminLoginVO) : PageTemplate<AdminLoginVO>() {
-  private val LOGON_FROM = "login_from"
+  private val loginFrom = "login_from"
   private val layout =
     BaseLayout(
       headScript = {
@@ -139,7 +139,7 @@ class AdminLoginPage(override val vo: AdminLoginVO) : PageTemplate<AdminLoginVO>
           )
 
           form {
-            id = LOGON_FROM
+            id = loginFrom
             action = Routes.LOGIN_URL
             method = FormMethod.post
 

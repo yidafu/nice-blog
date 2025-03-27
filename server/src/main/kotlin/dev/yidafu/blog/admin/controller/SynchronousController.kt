@@ -41,8 +41,8 @@ class SynchronousController(
   private val synchronousManager: SynchronousManager,
 ) {
   private val log = LoggerFactory.getLogger(SynchronousController::class.java)
-  private val LOG_APPEND_EVENT = "logAppend"
-  private val LOG_END_EVENT = "logEnd"
+  private val logAppendEvent = "logAppend"
+  private val logEndEvent = "logEnd"
 
   private val syncTaskConvertor = Mappers.getMapper(SyncTaskConvertor::class.java)
   private val koin = getKoin()
@@ -95,14 +95,14 @@ class SynchronousController(
           attributes["hx-ext"] = "sse"
           attributes["sse-connect"] = Routes.SYNC_API_LOG_URL.replace(":uuid", taskUuid)
           attributes["sse-swap"] = "message"
-          attributes["sse-close"] = LOG_END_EVENT
+          attributes["sse-close"] = logEndEvent
 
           div {
-            attributes["sse-swap"] = LOG_APPEND_EVENT
+            attributes["sse-swap"] = logAppendEvent
             attributes["hx-swap"] = "beforeend"
           }
           div {
-            attributes["sse-swap"] = LOG_END_EVENT
+            attributes["sse-swap"] = logEndEvent
           }
         }
       }
@@ -135,14 +135,14 @@ class SynchronousController(
             response.write(
               SseModel(
                 data = str,
-                event = LOG_APPEND_EVENT,
+                event = logAppendEvent,
               ).toString(),
             )
           }
           response.end(
             SseModel(
               data = "=== LOG END ===",
-              event = LOG_END_EVENT,
+              event = logEndEvent,
             ).toString(),
           )
           return
@@ -156,7 +156,7 @@ class SynchronousController(
                 response.write(
                   SseModel(
                     data = str,
-                    event = LOG_APPEND_EVENT,
+                    event = logAppendEvent,
 //                      id = pollingCount.toString()
                   ).toString(),
                 )
