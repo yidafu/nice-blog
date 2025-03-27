@@ -3,23 +3,34 @@ package dev.yidafu.blog.common.view.icons
 import com.github.nwillc.ksvg.elements.SVG
 import kotlinx.html.*
 
+@Suppress("ktlint:standard:function-naming")
 val languageIcon =
   SVG.svg(true) {
     viewBox = "0 0 1280 1024"
     cssClass = "icon"
     path {
       d =
-        "M0 256c0-70.6 57.4-128 128-128h1024c70.6 0 128 57.4 128 128v512c0 70.6-57.4 128-128 128H128c-70.6 0-128-57.4-128-128V256z m640 0v512h512V256H640z m-283.4 95.8c-6.4-14.4-20.8-23.8-36.6-23.8s-30.2 9.4-36.6 23.8l-128 288c-9 20.2 0.2 43.8 20.4 52.8s43.8-0.2 52.8-20.4l17.8-40.2h147.2l17.8 40.2c9 20.2 32.6 29.2 52.8 20.4s29.2-32.6 20.4-52.8l-128-288zM320 466.4l38 85.6h-76l38-85.6zM896 328c22 0 40 18 40 40v8h120c22 0 40 18 40 40s-18 40-40 40h-4l-3.2 9c-17.8 48.8-44.8 93.2-79.2 130.8 1.8 1.2 3.6 2.2 5.4 3.2l37.8 22.6c19 11.4 25 36 13.8 54.8s-36 25-54.8 13.8L934 667.6c-9-5.4-17.6-11-26.2-17-21.2 15-43.8 28-68 38.8l-7.2 3.2c-20.2 9-43.8-0.2-52.8-20.4s0.2-43.8 20.4-52.8l7.2-3.2c12.8-5.8 25.2-12.2 37-19.6L820 572.2c-15.6-15.6-15.6-41 0-56.6s41-15.6 56.6 0l29.2 29.2 1 1c24.8-26.2 45-56.6 59.6-90H752c-22 0-40-18-40-40s18-40 40-40h104v-8c0-22 18-40 40-40z"
+        "M0 256c0-70.6 57.4-128 128-128h1024c70.6 0 128 57.4 128 128v512c0 70.6-57.4 128-128 128H128c-70.6 " +
+        "0-128-57.4-128-128V256z m640 0v512h512V256H640z m-283.4 95.8c-6.4-14.4-20.8-23.8-36.6-23.8s-30.2 9.4-36.6 " +
+        "23.8l-128 288c-9 20.2 0.2 43.8 20.4 52.8s43.8-0.2 52.8-20.4l17.8-40.2h147.2l17.8 40.2c9 20.2 32.6 29.2 52.8 " +
+        "20.4s29.2-32.6 20.4-52.8l-128-288zM320 466.4l38 85.6h-76l38-85.6zM896 328c22 0 40 18 40 40v8h120c22 0 40 " +
+        "18 40 40s-18 40-40 40h-4l-3.2 9c-17.8 48.8-44.8 93.2-79.2 130.8 1.8 1.2 3.6 2.2 5.4 3.2l37.8 22.6c19 11.4 " +
+        "25 36 13.8 54.8s-36 25-54.8 13.8L934 667.6c-9-5.4-17.6-11-26.2-17-21.2 15-43.8 28-68 38.8l-7.2 3.2c-20.2 " +
+        "9-43.8-0.2-52.8-20.4s0.2-43.8 20.4-52.8l7.2-3.2c12.8-5.8 25.2-12.2 37-19.6L820 572.2c-15.6-15.6-15.6-41 " +
+        "0-56.6s41-15.6 56.6 0l29.2 29.2 1 1c24.8-26.2 45-56.6 59.6-90H752c-22 0-40-18-40-40s18-40 40-40h104v-8c0-22 " +
+        "18-40 40-40z"
       fill = "currentColor"
     }
   }
 
+@Suppress("ktlint:standard:function-naming")
 fun FlowContent.Language() {
   consumer.onTagContentUnsafe {
     raw(languageIcon.toString())
   }
 }
 
+@Suppress("ktlint:standard:max-line-length")
 val githubIcon =
   SVG.svg(true) {
     viewBox = "0 0 1024 1024"
@@ -31,12 +42,14 @@ val githubIcon =
     }
   }
 
+@Suppress("ktlint:standard:function-naming")
 fun FlowContent.Github() {
   consumer.onTagContentUnsafe {
     raw(githubIcon.toString())
   }
 }
 
+@Suppress("ktlint:standard:max-line-length")
 val englishIcon =
   SVG.svg {
     viewBox = "0 0 1024 1024"
@@ -48,12 +61,14 @@ val englishIcon =
     }
   }
 
+@Suppress("ktlint:standard:function-naming")
 fun FlowContent.English() {
   consumer.onTagContentUnsafe {
     raw(englishIcon.toString())
   }
 }
 
+@Suppress("ktlint:standard:max-line-length")
 val chineseIcon =
   SVG.svg(true) {
     viewBox = "0 0 1024 1024"
@@ -70,12 +85,14 @@ val chineseIcon =
     }
   }
 
+@Suppress("ktlint:standard:function-naming")
 fun FlowContent.Chinese() {
   consumer.onTagContentUnsafe {
     raw(chineseIcon.toString())
   }
 }
 
+@Suppress("ktlint:standard:max-line-length")
 class AppearanceIcon : Icon {
   override fun render(container: FlowContent) {
     val icon =
@@ -94,11 +111,13 @@ class AppearanceIcon : Icon {
   }
 }
 
+@Suppress("ktlint:standard:function-naming")
 fun FlowContent.Sync() {
   SyncIcon().render(this).toString()
 }
 
 class SyncIcon : Icon {
+  @Suppress("ktlint:standard:max-line-length")
   override fun render(container: FlowContent) {
     val icon =
       SVG.svg {
@@ -127,6 +146,7 @@ class SyncIcon : Icon {
 }
 
 class SourceIcon : Icon {
+  @Suppress("ktlint:standard:max-line-length")
   override fun render(container: FlowContent) {
     val icon =
       SVG.svg(true) {
@@ -144,6 +164,7 @@ class SourceIcon : Icon {
   }
 }
 
+@Suppress("ktlint:standard:max-line-length")
 val alertSuccessIcon =
   SVG.svg(true) {
     viewBox = "0 0 24 24"
@@ -155,6 +176,7 @@ val alertSuccessIcon =
     }
   }
 
+@Suppress("ktlint:standard:max-line-length")
 val alertWarningIcon =
   SVG.svg(true) {
     viewBox = "0 0 24 24"
@@ -166,6 +188,7 @@ val alertWarningIcon =
     }
   }
 
+@Suppress("ktlint:standard:max-line-length")
 val alertInfoIcon =
   SVG.svg {
     viewBox = "0 0 24 24"
@@ -177,6 +200,7 @@ val alertInfoIcon =
     }
   }
 
+@Suppress("ktlint:standard:max-line-length")
 val alertErrorIcon =
   SVG.svg(true) {
     viewBox = "0 0 24 24"
@@ -188,6 +212,7 @@ val alertErrorIcon =
     }
   }
 
+@Suppress("ktlint:standard:max-line-length")
 val logoutIcon =
   SVG.svg(true) {
     cssClass = "icon"
@@ -199,12 +224,14 @@ val logoutIcon =
     }
   }
 
+@Suppress("ktlint:standard:function-naming")
 fun FlowContent.Logout() {
   consumer.onTagContentUnsafe {
     raw(logoutIcon.toString())
   }
 }
 
+@Suppress("ktlint:standard:max-line-length")
 val syncLogIcon =
   SVG.svg {
     cssClass = "icon"
@@ -222,6 +249,7 @@ val syncLogIcon =
     }
   }
 
+@Suppress("ktlint:standard:function-naming")
 fun FlowContent.SyncLog() {
   consumer.onTagContentUnsafe {
     raw(syncLogIcon.toString())
@@ -234,6 +262,7 @@ class SyncLogIcon : Icon {
   }
 }
 
+@Suppress("ktlint:standard:max-line-length")
 val emailIcon =
   SVG.svg {
     viewBox = "0 0 1024 1024"
@@ -244,6 +273,7 @@ val emailIcon =
     }
   }
 
+@Suppress("ktlint:standard:function-naming")
 fun FlowContent.Email() {
   consumer.onTagContentUnsafe {
     raw(emailIcon.toString())
@@ -251,6 +281,7 @@ fun FlowContent.Email() {
 }
 
 class Article : Icon {
+  @Suppress("ktlint:standard:max-line-length")
   override fun render(container: FlowContent) {
     container.consumer.onTagContentUnsafe {
       raw(
@@ -267,6 +298,7 @@ class Article : Icon {
 }
 
 class ArticleHistory : Icon {
+  @Suppress("ktlint:standard:max-line-length")
   override fun render(container: FlowContent) {
     container.consumer.onTagContentUnsafe {
       raw(
@@ -292,6 +324,7 @@ class ArticleHistory : Icon {
 }
 
 class ArticleStatistic : Icon {
+  @Suppress("ktlint:standard:max-line-length")
   override fun render(container: FlowContent) {
     container.consumer.onTagContentUnsafe {
       raw(

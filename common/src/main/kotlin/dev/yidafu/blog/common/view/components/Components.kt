@@ -108,6 +108,7 @@ fun FlowContent.alert(
   }
 }
 
+@Suppress("ktlint:standard:function-naming")
 fun FlowContent.Button(block: FlowContent.() -> Unit) {
   button {
     style =
