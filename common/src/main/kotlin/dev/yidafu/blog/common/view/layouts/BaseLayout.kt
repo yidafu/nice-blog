@@ -105,6 +105,9 @@ open class BaseLayout(
                     marginBottom = 16.px
                   }
                 }
+                ".markdown-body code.code-cell"{
+                  padding = Padding(0.px)
+                }
               }.toString(),
             )
           }
