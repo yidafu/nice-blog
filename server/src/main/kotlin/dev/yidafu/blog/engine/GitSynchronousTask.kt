@@ -62,7 +62,6 @@ open class GitSynchronousTask(
   }
 
   override suspend fun fetchRepository(): File {
-    return File("/Users/dovyih/Codes/nice-blog/server/yidafu.dev")
     val monitor = TextProgressMonitor(writer)
     val directory = gitConfig.getLocalRepoFile()
     val git =

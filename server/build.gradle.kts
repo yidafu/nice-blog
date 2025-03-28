@@ -106,6 +106,10 @@ dependencies {
   jooqCodegen("org.jooq:jooq-meta-extensions:3.19.16")
   jooqCodegen("org.xerial:sqlite-jdbc:3.47.1.0")
   jooqCodegen(project(":common"))
+
+  testImplementation("io.kotest:kotest-runner-junit5:5.9.0")
+  testImplementation("io.kotest:kotest-assertions-core:5.9.0")
+  testImplementation("io.kotest:kotest-property:5.9.0")
 }
 
 kapt {
@@ -122,13 +126,15 @@ kotlin {
 }
 tasks.withType<ShadowJar> {
   archiveClassifier.set("fat")
-  exclude("**/*.md", "**/test/**", "*.dll")
-//  minimize()
   manifest {
     attributes(mapOf("Main-Verticle" to mainVerticleName))
   }
   mergeServiceFiles()
+  from("src/main/resources") {
+    include( "**/*.xml")
+  }
 }
+
 
 tasks.withType<Test> {
   useJUnitPlatform()
@@ -192,17 +198,4 @@ jooq {
   }
 }
 configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
-}
-
-tasks.create<proguard.gradle.ProGuardTask>("obfuscate") {
-  configuration(file("proguard-rules.pro"))
-//  configuration = file("proguard-rules.pro")
-//
-
-//  injars(tasks.named('jar', Jar).flatMap { it.archiveFile })
-  injars(tasks.named<ShadowJar>("shadowJar").flatMap { it.archiveFile })
-
-  outjars(layout.buildDirectory.file("libs/server-1.0.0-SNAPSHOT-optimized.jar"))
-
-  verbose()
 }

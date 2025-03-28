@@ -2,12 +2,36 @@ package dev.yidafu.blog.engine.md
 
 import dev.snipme.highlights.Highlights
 import dev.snipme.highlights.model.*
-import kotlinx.html.b
-import kotlinx.html.span
+import kotlinx.html.*
 import kotlinx.html.stream.createHTML
-import kotlinx.html.style
 
 object CustomCodeHighlight {
+
+  private fun formatCode(code: String): String {
+    return code.replace("\n", "<br/>\n")
+      .replace(" ", "&nbsp;")
+      .replace("\t", "&nbsp;&nbsp;")
+  }
+
+  private fun  SPAN.appendCode(code: String) {
+    if (code.isNotEmpty()) {
+    unsafe {
+      +formatCode(code)
+    }
+
+    }
+  }
+
+  private fun TagConsumer<String>.appendCode(code: String, color: Int = Int.MIN_VALUE) {
+    if (code.isNotEmpty()) {
+      span {
+        if (color !=  Int.MIN_VALUE) {
+          style = "color: #${Integer.toHexString(color)}"
+        }
+        appendCode(code)
+      }
+    }
+  }
   private fun toSyntaxLanguage(language: String): SyntaxLanguage =
     when (language.toLowerCase()) {
       "js", "javascript" -> SyntaxLanguage.JAVASCRIPT
@@ -100,49 +124,54 @@ object CustomCodeHighlight {
           nodes.forEach { node ->
             val highlight = node.data
             if (lastHighlight.location.end < highlight.location.end) {
-              span {
-                +code.substring(lastHighlight.location.end, highlight.location.start)
-              }
+              val codeSegment = code.substring(lastHighlight.location.end, highlight.location.start)
+              appendCode(codeSegment)
+
             }
             lastHighlight = highlight
 
             if (highlight is ColorHighlight) {
-              span {
-                style = "color: #${Integer.toHexString(highlight.rgb)}"
-                if (node.children.isEmpty()) {
-                  +code.substring(highlight.location.start, highlight.location.end)
-                } else {
-                  +code.substring(highlight.location.start, node.getChildStart())
+              if (node.children.isEmpty()) {
+                val codeSegment = code.substring(highlight.location.start, highlight.location.end)
+                appendCode(codeSegment, highlight.rgb)
+              } else {
+                span {
+                  style = "color: #${Integer.toHexString(highlight.rgb)}"
+                  appendCode(
+                    code.substring(highlight.location.start, node.getChildStart())
+                  )
                   buildNode(node.getSortedChildren())
-                  +code.substring(node.getChildEnd(), highlight.location.end)
+                  appendCode(
+                    code.substring(node.getChildEnd(), highlight.location.end)
+                  )
                 }
               }
             } else if (highlight is BoldHighlight) {
               b {
                 if (node.children.isEmpty()) {
-                  +code.substring(highlight.location.start, highlight.location.end)
+                  appendCode(code.substring(highlight.location.start, highlight.location.end))
+
                 } else {
-                  +code.substring(highlight.location.start, node.getChildStart())
+                  appendCode((code.substring(highlight.location.start, node.getChildStart())))
                   buildNode(node.getSortedChildren())
-                  +code.substring(node.getChildEnd(), highlight.location.end)
+                  appendCode(
+                    code.substring(node.getChildEnd(), highlight.location.end)
+                  )
                 }
               }
             }
           }
         }
 
+
         buildNode(sortedHighlights)
-//        resolveConflictHighlights.fold(0) { acc, highlight ->
-//          if (acc != highlight.location.start) {
-//
-//            span {
-//              +code.substring(acc, highlight.location.start)
-//            }
-//          }
-//
-//          highlight.location.end
-//        }
+
+        val last = sortedHighlights.last()
+        if (last.data.location.end < code.length) {
+          span { appendCode(code.substring(last.data.location.end)) }
+        }
       }.finalize()
+
 
     return codeHtml
   }
