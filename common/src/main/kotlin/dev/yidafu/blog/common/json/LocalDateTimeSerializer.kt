@@ -11,10 +11,10 @@ import java.time.format.DateTimeFormatter
 
 @Serializer(forClass = LocalDateTime::class)
 class LocalDateTimeSerializer {
-  private val formatter = DateTimeFormatter.ofPattern("HH:mm:ss hh:mm:ss")
+  private val formatter = DateTimeFormatter.ofPattern("yyyy:MM:dd HH:mm:ss")
 
   override val descriptor: SerialDescriptor
-    get() = PrimitiveSerialDescriptor("LocalTime", PrimitiveKind.STRING)
+    get() = PrimitiveSerialDescriptor("LocalDateTime", PrimitiveKind.STRING)
 
   override fun serialize(
     encoder: Encoder,

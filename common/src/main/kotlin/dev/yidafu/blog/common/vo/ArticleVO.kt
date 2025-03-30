@@ -1,8 +1,8 @@
 package dev.yidafu.blog.common.vo
 
-import dev.yidafu.blog.common.json.LocalDateSerializer
+import dev.yidafu.blog.common.json.LocalDateTimeSerializer
 import kotlinx.serialization.Serializable
-import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Serializable
 data class ArticleVO(
@@ -15,6 +15,8 @@ data class ArticleVO(
   var summary: String? = null,
   var content: String? = null,
   var html: String? = null,
-  @Serializable(with = LocalDateSerializer::class)
-  val updatedAt: LocalDate? = null,
+  @Serializable(with = LocalDateTimeSerializer::class)
+  var createdAt: LocalDateTime? = null,
+  @Serializable(with = LocalDateTimeSerializer::class)
+  var updatedAt: LocalDateTime? = null,
 )
