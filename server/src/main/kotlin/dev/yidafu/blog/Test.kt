@@ -1,15 +1,22 @@
 package dev.yidafu.blog
 
-import dev.whyoleg.cryptography.CryptographyProvider
-import dev.whyoleg.cryptography.DelicateCryptographyApi
-import dev.whyoleg.cryptography.algorithms.MD5
-import kotlin.io.encoding.Base64
-import kotlin.io.encoding.ExperimentalEncodingApi
+import dev.yidafu.blog.engine.*
+import dev.yidafu.blog.engine.GitConfig
+import org.koin.core.context.startKoin
+import org.koin.core.qualifier.StringQualifier
+import org.koin.ksp.generated.module
 
-@OptIn(ExperimentalEncodingApi::class, DelicateCryptographyApi::class)
 suspend fun main() {
-  val provider = CryptographyProvider.Default
-  val md5 = provider.get(MD5)
+  val koin =
+    startKoin {
+      modules(EngineModule().module)
+    }
+  val scope = koin.koin.createScope("uuid", StringQualifier(TaskScope.NAME), TaskScope::class)
 
-  println(Base64.encode(md5.hasher().hash("admin".toByteArray())))
+  scope.declare(GitConfig("https://github.com/yidafu/yidafu.dev.git", "master", "uuid"))
+  scope.declare<Logger>(StdLogger(scope.get()))
+  scope.declare<ArticleManager>(DefaultArticleManager())
+  scope.declare<SynchronousListener>(DefaultSynchronousListener())
+  scope.get<GitSynchronousTask>().sync()
+  scope.close()
 }
