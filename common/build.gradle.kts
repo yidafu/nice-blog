@@ -1,7 +1,7 @@
 plugins {
   kotlin("jvm") version "2.0.21"
   kotlin("plugin.serialization") version "2.0.21"
-  id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
+  id("org.jlleitschuh.gradle.ktlint") version "12.2.0"
 }
 
 group = "dev.yidafu.blog"
@@ -16,15 +16,14 @@ dependencies {
 
   implementation("io.github.allangomes:kotlinwind-css:0.0.3")
   implementation("com.github.nwillc:ksvg:2.2.0")
-// https://mvnrepository.com/artifact/org.hibernate/hibernate-core
-  implementation("org.hibernate:hibernate-core:5.6.15.Final")
-  // https://mvnrepository.com/artifact/jakarta.persistence/jakarta.persistence-api
   implementation("jakarta.persistence:jakarta.persistence-api:3.2.0")
+
+  implementation("de.comahe.i18n4k:i18n4k-core-jvm:0.9.0")
 }
 
 tasks.test {
   useJUnitPlatform()
 }
 kotlin {
-  jvmToolchain(17)
+  jvmToolchain(21)
 }

@@ -54,14 +54,14 @@ fun FlowContent.partialPost(vo: ArticleVO) {
           text.center.color[TEXT_COLOR_SECONDARY.toString()]
           margin.top[4]
         }
-      span {
-        style = kw.inline { font.size[4] }
-        +"Hangzhou Xihu District"
-      }
-      span {
-        style = kw.inline { margin.x[4] }
-        +"•"
-      }
+      // span {
+      //   style = kw.inline { font.size[4] }
+      //   +"Hangzhou Xihu District"
+      // }
+      // span {
+      //   style = kw.inline { margin.x[4] }
+      //   +"•"
+      // }
       span {
         style = kw.inline { font.size[4] }
         +"Added By Dov Yih"

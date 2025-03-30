@@ -4,5 +4,5 @@ plugins {
 rootProject.name = "nice-blog"
 
 include("server")
-include("engine")
 include("common")
+include("ksp-plugin")

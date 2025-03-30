@@ -1,4 +1,15 @@
 plugins {
+  id( "ca.cutterslade.analyze") version "1.9.1"
+
+}
+
+buildscript {
+  repositories {
+    mavenCentral()
+  }
+  dependencies {
+    classpath ("com.guardsquare:proguard-gradle:7.6.1")
+  }
 }
 
 allprojects {
@@ -12,4 +23,6 @@ allprojects {
     google()
     maven("https://jitpack.io")
   }
+
+  apply(plugin = "ca.cutterslade.analyze")
 }

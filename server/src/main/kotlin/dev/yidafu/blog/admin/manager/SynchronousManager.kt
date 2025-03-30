@@ -4,13 +4,7 @@ import dev.yidafu.blog.admin.services.SyncTaskService
 import dev.yidafu.blog.common.ConfigurationKeys
 import dev.yidafu.blog.common.ext.getByKey
 import dev.yidafu.blog.common.services.ConfigurationService
-import dev.yidafu.blog.engine.BaseGitSynchronousTask
-import dev.yidafu.blog.engine.Logger
-import dev.yidafu.blog.engine.SynchronousListener
-import dev.yidafu.blog.engine.TaskScope
-import dev.yidafu.blog.engine.config.GitConfig
-import dev.yidafu.blog.engine.DBLogger
-import dev.yidafu.blog.engine.DBSynchronousListener
+import dev.yidafu.blog.engine.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.koin.core.annotation.Single
@@ -60,6 +54,7 @@ class SynchronousManager(
       taskScope.declare(config)
       taskScope.declare<Logger>(DBLogger(config, taskScope.get()))
       taskScope.declare<SynchronousListener>(DBSynchronousListener(taskScope.get(), taskScope.get(), taskScope.get()))
+      taskScope.declare<ArticleManager>(DBArticleManager(taskScope.get(), taskScope.get()))
       val syncTask: BaseGitSynchronousTask = taskScope.get<BaseGitSynchronousTask>()
       syncTask.sync()
       taskScope.close()

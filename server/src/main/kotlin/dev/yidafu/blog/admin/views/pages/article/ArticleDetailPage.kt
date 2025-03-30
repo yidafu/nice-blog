@@ -12,6 +12,7 @@ import kotlinx.html.FlowContent
 import kotlinx.html.div
 import kotlinx.html.style
 
+@Suppress("ktlint:standard:function-naming")
 fun FlowContent.DescriptionItem(
   title: String,
   content: String,

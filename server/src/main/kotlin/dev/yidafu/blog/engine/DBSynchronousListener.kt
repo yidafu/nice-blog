@@ -2,9 +2,6 @@ package dev.yidafu.blog.engine
 
 import dev.yidafu.blog.common.dao.tables.references.B_SYNC_TASK
 import dev.yidafu.blog.common.modal.SyncTaskStatus
-import dev.yidafu.blog.engine.Logger
-import dev.yidafu.blog.engine.SynchronousListener
-import dev.yidafu.blog.engine.config.GitConfig
 import org.jooq.CloseableDSLContext
 
 class DBSynchronousListener(

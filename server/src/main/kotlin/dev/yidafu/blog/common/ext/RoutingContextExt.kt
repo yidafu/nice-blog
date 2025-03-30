@@ -3,7 +3,7 @@ package dev.yidafu.blog.common.ext
 import de.comahe.i18n4k.Locale
 import dev.yidafu.blog.common.ConstantKeys
 import dev.yidafu.blog.common.bean.bo.ConfigurationBO
-import dev.yidafu.blog.common.handler.CommonHandler
+import dev.yidafu.blog.common.controller.CommonController
 import dev.yidafu.blog.common.view.tpl.PageTemplate
 import dev.yidafu.blog.common.vo.BaseVO
 import dev.yidafu.blog.common.vo.PageVO
@@ -14,8 +14,6 @@ import io.vertx.core.json.EncodeException
 import io.vertx.ext.web.RoutingContext
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import kotlin.reflect.KClass
-import kotlin.reflect.full.primaryConstructor
 
 internal val jsonCodec =
   Json {
@@ -51,12 +49,12 @@ internal inline fun <reified T> RoutingContext.kJson(obj: T): Future<Void>? {
 }
 
 internal inline fun <V : PageVO, T : PageTemplate<V>> RoutingContext.html(
-  pageClass: KClass<T>,
+  pageClass: Class<T>,
   vo: V,
 ) {
   val local = this.get<Locale>(ConstantKeys.LANGUAGE_CONTEXT)
 
-  val configBo = this.get<ConfigurationBO>(CommonHandler.GLOBAL_CONFIGURATION)
+  val configBo = this.get<ConfigurationBO>(CommonController.GLOBAL_CONFIGURATION)
 
   val baseVO =
     BaseVO(
@@ -66,7 +64,8 @@ internal inline fun <V : PageVO, T : PageTemplate<V>> RoutingContext.html(
       githubUrl = configBo.githubUrl,
     )
   vo.baseVO = baseVO
-  val page = pageClass.primaryConstructor?.call(vo)
+  val page: T? = pageClass.constructors.find { it.parameters.size == 1 }?.newInstance(vo) as T?
+//  = pageClass.primaryConstructor?.call(vo)
 
   val htmlStr = page?.render()
 
