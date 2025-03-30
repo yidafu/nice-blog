@@ -1,12 +1,13 @@
 package dev.yidafu.blog.admin.handler
 
 import dev.yidafu.blog.admin.views.pages.article.AdminArticleListPage
-import dev.yidafu.blog.admin.views.pages.article.ArticleDetailPage
 import dev.yidafu.blog.common.converter.ArticleConvertor
 import dev.yidafu.blog.common.ext.html
+import dev.yidafu.blog.common.ext.render
 import dev.yidafu.blog.common.query.PageQuery
 import dev.yidafu.blog.common.services.ArticleService
-import dev.yidafu.blog.common.vo.AdminArticleListVO
+import dev.yidafu.blog.common.vo.AdminArticlePageVO
+import dev.yidafu.blog.themes.PageNames
 import io.vertx.ext.web.RoutingContext
 import org.koin.core.annotation.Single
 import org.mapstruct.factory.Mappers
@@ -26,7 +27,7 @@ class ArticleHandler(
     val query = PageQuery(pageNum, pageSize)
     val (total, list) = articleService.getListByPage(query)
     val vo =
-      AdminArticleListVO(
+      AdminArticlePageVO(
         pageNum,
         pageSize,
         total,
@@ -43,7 +44,7 @@ class ArticleHandler(
       return
     }
     val vo = convertor.toVO(model)
-    ctx.html(ArticleDetailPage::class.java, vo)
+    ctx.render(PageNames.ARTICLE_DETAIL, vo)
   }
 
   suspend fun articleHistoryListPage(ctx: RoutingContext) {
@@ -54,7 +55,7 @@ class ArticleHandler(
       return
     }
     val vo = convertor.toVO(model)
-    ctx.html(ArticleDetailPage::class.java, vo)
+    ctx.render(PageNames.ARTICLE_DETAIL, vo)
   }
 
   suspend fun articleStatisticPage(ctx: RoutingContext) {
@@ -65,6 +66,6 @@ class ArticleHandler(
       return
     }
     val vo = convertor.toVO(model)
-    ctx.html(ArticleDetailPage::class.java, vo)
+    ctx.render(PageNames.ARTICLE_DETAIL, vo)
   }
 }
