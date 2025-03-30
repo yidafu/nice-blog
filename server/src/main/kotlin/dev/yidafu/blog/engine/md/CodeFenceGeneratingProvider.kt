@@ -1,5 +1,8 @@
 package dev.yidafu.blog.engine.md
 
+import kotlinx.css.code
+import org.intellij.markdown.MarkdownElementType
+import org.intellij.markdown.MarkdownElementTypes
 import org.intellij.markdown.MarkdownTokenTypes
 import org.intellij.markdown.ast.ASTNode
 import org.intellij.markdown.ast.getTextInNode
@@ -23,32 +26,36 @@ class CodeFenceGeneratingProvider : GeneratingProvider {
       childrenToConsider = childrenToConsider.subList(0, childrenToConsider.size - 1)
     }
 
-    var lastChildWasContent = false
-
-    val attributes = ArrayList<String>()
     var language = ""
+    var codeContent = ""
     for (child in childrenToConsider) {
-      if (state == 1 && child.type == MarkdownTokenTypes.CODE_FENCE_CONTENT) {
-        val codeStr = HtmlGenerator.trimIndents(child.getTextInNode(text), indentBefore)
-        visitor.consumeHtml(CustomCodeHighlight.generateCodeHighlight(codeStr.toString(), language))
-        lastChildWasContent = child.type == MarkdownTokenTypes.CODE_FENCE_CONTENT
+
+      if (child.type == MarkdownTokenTypes.FENCE_LANG) {
+        language = HtmlGenerator.leafText(text, child).toString().trim().split(' ')[0]
+      }
+      var ignoreType = listOf(
+        MarkdownTokenTypes.FENCE_LANG,
+        MarkdownTokenTypes.CODE_FENCE_END,
+        MarkdownTokenTypes.CODE_FENCE_START,
+      )
+      if (child.type in ignoreType) {
+        continue
       }
 
-      if (state == 0 && child.type == MarkdownTokenTypes.FENCE_LANG) {
-        language = HtmlGenerator.leafText(text, child).toString().trim().split(' ')[0]
-        attributes.add("class=\"language-${language}\"")
+      if (child.type == MarkdownTokenTypes.CODE_FENCE_CONTENT) {
+        val codeStr = child.getTextInNode(text)
+
+        codeContent += codeStr
       }
-      if (state == 0 && child.type == MarkdownTokenTypes.EOL) {
-        visitor.consumeTagOpen(node, "code", *attributes.toTypedArray())
-        state = 1
+      if (child.type == MarkdownTokenTypes.EOL) {
+        codeContent += "\n"
       }
     }
-    if (state == 0) {
-      visitor.consumeTagOpen(node, "code", *attributes.toTypedArray())
-    }
-    if (lastChildWasContent) {
-      visitor.consumeHtml("\n")
-    }
-    visitor.consumeHtml("</code></pre>")
+
+    visitor.consumeHtml(
+      "<code class=\"code-cell language-$language\"><pre>\n" +
+        CustomCodeHighlight.generateCodeHighlight(codeContent, language) +
+        "\n</pre></code>",
+    )
   }
 }

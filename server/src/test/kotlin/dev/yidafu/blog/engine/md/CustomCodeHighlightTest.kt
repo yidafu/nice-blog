@@ -48,4 +48,25 @@ class CustomCodeHighlightTest : StringSpec({
     val actualHtml = CustomCodeHighlight.generateCodeHighlight(code, language)
     actualHtml shouldBe expectedHtml
   }
+
+  "generateCodeHighlight with javascript highlights generates correct HTML" {
+    val code = """
+// jQuery 官网示例
+var hiddenBox = ${'$'}( "#banner-message" );
+${'$'}( "#button-container button" ).on( "click", function( event ) {
+  hiddenBox.show();
+});
+    """.trimIndent()
+    val language = "javascript"
+    val expectedHtml = """
+<span style="color: #a1a1a1">//&nbsp;jQuery&nbsp;官网示例</span><span><br/>
+</span><span style="color: #a626a4">var</span><span>&nbsp;hiddenBox&nbsp;</span><span style="color: #526fff">=</span><span>&nbsp;${'$'}</span><span style="color: #526fff">(</span><span>&nbsp;</span><span style="color: #50a14f">"<span style="color: #a1a1a1">#banner<span style="color: #526fff">-</span><span>message"&nbsp;</span><span style="color: #526fff">)</span><span style="color: #e45649">;</span></span><span><br/>
+${'$'}</span><span style="color: #526fff">(</span><span>&nbsp;"</span><span style="color: #a1a1a1">#button<span style="color: #526fff">-</span><span>container&nbsp;button"&nbsp;</span><span style="color: #526fff">)</span><span style="color: #e45649">.</span><span>on</span><span style="color: #526fff">(</span><span>&nbsp;"click"</span><span style="color: #e45649">,</span><span>&nbsp;function</span><span style="color: #526fff">(</span><span>&nbsp;event&nbsp;</span><span style="color: #526fff">)</span><span>&nbsp;</span><span style="color: #526fff">{</span></span><span><br/>
+&nbsp;&nbsp;hiddenBox</span><span style="color: #e45649">.</span><span>show</span><span style="color: #526fff">(</span><span style="color: #526fff">)</span><span style="color: #e45649">;</span><span><br/>
+</span><span style="color: #526fff">}</span><span style="color: #526fff">)</span><span style="color: #e45649">;</span>
+    """.trimIndent()
+
+    val actualHtml = CustomCodeHighlight.generateCodeHighlight(code, language)
+    actualHtml shouldBe expectedHtml
+  }
 })
