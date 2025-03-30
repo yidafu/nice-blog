@@ -1,6 +1,6 @@
 package dev.yidafu.blog.themes.simple.components
 
-import dev.yidafu.blog.common.view.icons.Icon
+import dev.yidafu.blog.themes.icons.Icon
 import io.github.allangomes.kotlinwind.css.I50
 import io.github.allangomes.kotlinwind.css.I700
 import io.github.allangomes.kotlinwind.css.LG

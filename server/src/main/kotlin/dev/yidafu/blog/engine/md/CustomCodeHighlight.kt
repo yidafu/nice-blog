@@ -6,32 +6,34 @@ import kotlinx.html.*
 import kotlinx.html.stream.createHTML
 
 object CustomCodeHighlight {
-
   private fun formatCode(code: String): String {
     return code.replace("\n", "<br/>\n")
       .replace(" ", "&nbsp;")
       .replace("\t", "&nbsp;&nbsp;")
   }
 
-  private fun  SPAN.appendCode(code: String) {
+  private fun SPAN.appendCode(code: String) {
     if (code.isNotEmpty()) {
-    unsafe {
-      +formatCode(code)
-    }
-
+      unsafe {
+        +formatCode(code)
+      }
     }
   }
 
-  private fun TagConsumer<String>.appendCode(code: String, color: Int = Int.MIN_VALUE) {
+  private fun TagConsumer<String>.appendCode(
+    code: String,
+    color: Int = Int.MIN_VALUE,
+  ) {
     if (code.isNotEmpty()) {
       span {
-        if (color !=  Int.MIN_VALUE) {
+        if (color != Int.MIN_VALUE) {
           style = "color: #${Integer.toHexString(color)}"
         }
         appendCode(code)
       }
     }
   }
+
   private fun toSyntaxLanguage(language: String): SyntaxLanguage =
     when (language.toLowerCase()) {
       "js", "javascript" -> SyntaxLanguage.JAVASCRIPT
@@ -126,7 +128,6 @@ object CustomCodeHighlight {
             if (lastHighlight.location.end < highlight.location.end) {
               val codeSegment = code.substring(lastHighlight.location.end, highlight.location.start)
               appendCode(codeSegment)
-
             }
             lastHighlight = highlight
 
@@ -138,11 +139,11 @@ object CustomCodeHighlight {
                 span {
                   style = "color: #${Integer.toHexString(highlight.rgb)}"
                   appendCode(
-                    code.substring(highlight.location.start, node.getChildStart())
+                    code.substring(highlight.location.start, node.getChildStart()),
                   )
                   buildNode(node.getSortedChildren())
                   appendCode(
-                    code.substring(node.getChildEnd(), highlight.location.end)
+                    code.substring(node.getChildEnd(), highlight.location.end),
                   )
                 }
               }
@@ -150,19 +151,17 @@ object CustomCodeHighlight {
               b {
                 if (node.children.isEmpty()) {
                   appendCode(code.substring(highlight.location.start, highlight.location.end))
-
                 } else {
                   appendCode((code.substring(highlight.location.start, node.getChildStart())))
                   buildNode(node.getSortedChildren())
                   appendCode(
-                    code.substring(node.getChildEnd(), highlight.location.end)
+                    code.substring(node.getChildEnd(), highlight.location.end),
                   )
                 }
               }
             }
           }
         }
-
 
         buildNode(sortedHighlights)
 
@@ -171,7 +170,6 @@ object CustomCodeHighlight {
           span { appendCode(code.substring(last.data.location.end)) }
         }
       }.finalize()
-
 
     return codeHtml
   }

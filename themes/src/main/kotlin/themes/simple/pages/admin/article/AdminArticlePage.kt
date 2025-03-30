@@ -1,9 +1,9 @@
 package dev.yidafu.blog.themes.simple.pages.admin.article
 
 import dev.yidafu.blog.common.Routes
-import dev.yidafu.blog.common.view.icons.Article
-import dev.yidafu.blog.common.view.icons.ArticleHistory
-import dev.yidafu.blog.common.view.icons.ArticleStatistic
+import dev.yidafu.blog.themes.icons.Article
+import dev.yidafu.blog.themes.icons.ArticleHistory
+import dev.yidafu.blog.themes.icons.ArticleStatistic
 import dev.yidafu.blog.i18n.AdminTxt
 import dev.yidafu.blog.themes.DataModal
 import dev.yidafu.blog.themes.articleDetail
@@ -20,31 +20,30 @@ abstract class AdminArticlePage(modal: DataModal) : AdminPage(modal) {
   private fun getOptions() =
     listOf(
       TabOption(
-        AdminTxt.article_detail.toText(),
-        getRoute(Routes.ARTICLE_ADMIN_DETAIL),
+        AdminTxt.article.toText(),
+        getRoute(Routes.ADMIN_ARTICLE_DETAIL),
         Article(),
         Routes.ARTICLE_DETAIL == currentPath,
       ),
       TabOption(
         AdminTxt.article_statistic.toText(),
-        getRoute(Routes.ARTICLE_ADMIN_STATISTIC),
+        getRoute(Routes.ADMIN_ARTICLE_STATISTIC),
         ArticleStatistic(),
-        Routes.ARTICLE_ADMIN_STATISTIC == currentPath,
+        Routes.ADMIN_ARTICLE_STATISTIC == currentPath,
       ),
       TabOption(
         AdminTxt.article_history.toText(),
-        getRoute(Routes.ARTICLE_ADMIN_HISTORY),
+        getRoute(Routes.ADMIN_ARTICLE_HISTORY),
         ArticleHistory(),
-        Routes.ARTICLE_ADMIN_HISTORY == currentPath,
+        Routes.ADMIN_ARTICLE_HISTORY == currentPath,
       ),
     )
 
   abstract fun DIV.createContent(): Unit
 
   override fun DIV.layoutBlock() {
-    tabs(options = getOptions())
-    createContent()
+    tabs(options = getOptions()) {
+      createContent()
+    }
   }
 }
-
-

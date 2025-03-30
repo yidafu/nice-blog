@@ -5,7 +5,6 @@ import dev.yidafu.blog.themes.*
 
 @AutoService(TemplateManager::class)
 class BlankTemplateManager : BaseTemplateManager() {
-
   init {
     registerPageProvider(ArticleListPageProvider())
     registerPageProvider(AboutMePageProvider())

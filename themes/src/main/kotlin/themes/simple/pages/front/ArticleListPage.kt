@@ -1,6 +1,7 @@
-package dev.yidafu.blog.themes.simple.pages
+package dev.yidafu.blog.themes.simple.pages.front
 
 import dev.yidafu.blog.common.Routes
+import dev.yidafu.blog.common.ext.formatString
 import dev.yidafu.blog.common.vo.ArticleVO
 import dev.yidafu.blog.i18n.AdminTxt
 import dev.yidafu.blog.themes.*
@@ -9,7 +10,6 @@ import io.github.allangomes.kotlinwind.css.I800
 import io.github.allangomes.kotlinwind.css.LG
 import io.github.allangomes.kotlinwind.css.kw
 import kotlinx.html.*
-
 
 fun FlowContent.readMore(url: String?) {
   a(if (url.isNullOrEmpty()) "/404" else url, classes = "center") {
@@ -49,7 +49,7 @@ fun FlowContent.partialPost(vo: ArticleVO) {
       style =
         kw.inline {
           text.center.color[TEXT_COLOR_SECONDARY.toString()]
-          margin.top[4]
+          margin.y[4]
         }
       // span {
       //   style = kw.inline { font.size[4] }
@@ -61,7 +61,7 @@ fun FlowContent.partialPost(vo: ArticleVO) {
       // }
       span {
         style = kw.inline { font.size[4] }
-        +"Added By Dov Yih"
+        +"Author: Dov Yih"
       }
       span {
         style = kw.inline { margin.x[4] }
@@ -69,7 +69,7 @@ fun FlowContent.partialPost(vo: ArticleVO) {
       }
       span {
         style = kw.inline { font.size[4] }
-        +"Updated At ${(vo.updatedAt)}"
+        +"Updated At ${vo.updatedAt.formatString()}"
       }
     }
 
@@ -105,8 +105,8 @@ fun FlowContent.partialPost(vo: ArticleVO) {
   }
 }
 
-class ArticleListPage(modal: DataModal) : SimplePage(modal) {
-  override val bodyBlock: BODY.() -> Unit = {
+class ArticleListPage(modal: DataModal) : FrontPage(modal) {
+  override fun MAIN.createContent() {
     div {
       attributes["class"] = "m-auto"
       style =
@@ -129,7 +129,7 @@ class ArticleListPage(modal: DataModal) : SimplePage(modal) {
   }
 }
 
-class ArticleListPageProvider: CacheablePageProvider() {
+class ArticleListPageProvider : CacheablePageProvider() {
   override fun getName(): String {
     return PageNames.ARTICLE_LIST
   }

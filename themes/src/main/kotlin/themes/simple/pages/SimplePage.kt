@@ -1,10 +1,11 @@
 package dev.yidafu.blog.themes.simple.pages
 
 import de.comahe.i18n4k.Locale
+import de.comahe.i18n4k.messages.MessageBundleLocalizedString
 import dev.yidafu.blog.themes.DataModal
 import dev.yidafu.blog.themes.Page
 import kotlinx.html.*
-import kotlinx.html.stream.createHTML as createHTMLX
+import kotlinx.html.stream.createHTML
 
 open class SimplePage(final override val modal: DataModal) : Page {
   protected open val headBlock: HEAD.() -> Unit = {}
@@ -14,11 +15,15 @@ open class SimplePage(final override val modal: DataModal) : Page {
   protected val locale: Locale = modal.locale
 
   protected val currentPath: String = modal.path
-  protected val siteTitle: String = modal.path
-  protected val githubUrl: String = modal.path
+  protected val siteTitle: String = modal.siteTitle
+  protected val githubUrl: String = modal.githubUrl
+
+  protected fun MessageBundleLocalizedString.toText(): String {
+    return toString(locale)
+  }
 
   override fun createPageHtml(): String {
-    return createHTMLX().apply {
+    return createHTML().apply {
       head {
         link {
           rel = "stylesheet"
@@ -30,12 +35,12 @@ open class SimplePage(final override val modal: DataModal) : Page {
         }
         meta { charset = "UTF-8" }
         title {
-          + modal.siteTitle
+          +modal.siteTitle
         }
 
         style {
           unsafe {
-            + defaultHeadStyle.toString()
+            +defaultHeadStyle.toString()
           }
         }
         link {

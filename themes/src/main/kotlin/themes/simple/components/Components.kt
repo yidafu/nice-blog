@@ -1,9 +1,9 @@
-package dev.yidafu.blog.common.view.components
+package dev.yidafu.blog.themes.simple.components
 
-import dev.yidafu.blog.common.view.icons.alertErrorIcon
-import dev.yidafu.blog.common.view.icons.alertInfoIcon
-import dev.yidafu.blog.common.view.icons.alertSuccessIcon
-import dev.yidafu.blog.common.view.icons.alertWarningIcon
+import dev.yidafu.blog.themes.icons.alertErrorIcon
+import dev.yidafu.blog.themes.icons.alertInfoIcon
+import dev.yidafu.blog.themes.icons.alertSuccessIcon
+import dev.yidafu.blog.themes.icons.alertWarningIcon
 import io.github.allangomes.kotlinwind.css.*
 import kotlinx.html.*
 

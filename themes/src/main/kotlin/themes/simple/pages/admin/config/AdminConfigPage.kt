@@ -5,6 +5,9 @@ import dev.yidafu.blog.common.view.icons.*
 import dev.yidafu.blog.i18n.AdminTxt
 import dev.yidafu.blog.themes.DataModal
 import dev.yidafu.blog.themes.articleDetail
+import dev.yidafu.blog.themes.icons.AppearanceIcon
+import dev.yidafu.blog.themes.icons.SourceIcon
+import dev.yidafu.blog.themes.icons.SyncIcon
 import dev.yidafu.blog.themes.simple.components.TabOption
 import dev.yidafu.blog.themes.simple.components.tabs
 import dev.yidafu.blog.themes.simple.pages.admin.AdminPage
@@ -35,9 +38,8 @@ abstract class AdminConfigPage(modal: DataModal) : AdminPage(modal) {
   abstract fun DIV.createContent(): Unit
 
   override fun DIV.layoutBlock() {
-    tabs(options = getOptions())
-    createContent()
+    tabs(options = getOptions()) {
+      createContent()
+    }
   }
 }
-
-

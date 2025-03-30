@@ -1,7 +1,6 @@
 
 package dev.yidafu.blog.themes.blank
 
-
 import dev.yidafu.blog.themes.DataModal
 import dev.yidafu.blog.themes.PageNames
 import io.kotest.core.spec.style.StringSpec
@@ -13,13 +12,17 @@ import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.serialization.json.*
 
 class BlankTemplateManagerTest : StringSpec({
-  fun createDataModal(title: String, path: String): DataModal {
-    val dataStore = mapOf<String, JsonElement>(
-      DataModal.SITE_TITLE to JsonPrimitive(title),
-      DataModal.CURRENT_PATH to JsonPrimitive(path),
-      DataModal.COMMON_LOCALE to JsonPrimitive("en"),
-      DataModal.GITHUB_URL to JsonPrimitive("https://github.com/exmaple/repo"),
-    )
+  fun createDataModal(
+    title: String,
+    path: String,
+  ): DataModal {
+    val dataStore =
+      mapOf<String, JsonElement>(
+        DataModal.SITE_TITLE to JsonPrimitive(title),
+        DataModal.CURRENT_PATH to JsonPrimitive(path),
+        DataModal.COMMON_LOCALE to JsonPrimitive("en"),
+        DataModal.GITHUB_URL to JsonPrimitive("https://github.com/exmaple/repo"),
+      )
     return DataModal(Json.encodeToJsonElement(dataStore) as JsonObject)
   }
   "should return correct name" {

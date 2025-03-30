@@ -71,10 +71,10 @@ internal inline fun FlowContent.formItem(item: FormItem) {
 }
 
 internal data class RadioItem(
-    val name: String,
-    val label: String,
-    val value: String,
-    val options: List<Option>,
+  val name: String,
+  val label: String,
+  val value: String,
+  val options: List<Option>,
 ) {
   data class Option(val id: String, val label: String, val value: String)
 }

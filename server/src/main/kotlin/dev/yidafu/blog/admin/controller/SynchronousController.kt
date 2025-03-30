@@ -2,22 +2,19 @@ package dev.yidafu.blog.admin.controller
 
 import dev.yidafu.blog.admin.manager.SynchronousManager
 import dev.yidafu.blog.admin.services.SyncTaskService
-import dev.yidafu.blog.admin.views.pages.sync.AdminSyncLogListPage
-import dev.yidafu.blog.admin.views.pages.sync.AdminSyncLogPage
-import dev.yidafu.blog.admin.views.pages.sync.AdminSyncOperatePage
 import dev.yidafu.blog.common.Routes
 import dev.yidafu.blog.common.converter.SyncTaskConvertor
-import dev.yidafu.blog.common.ext.html
+import dev.yidafu.blog.common.ext.render
 import dev.yidafu.blog.common.modal.SyncTaskStatus
 import dev.yidafu.blog.common.query.PageQuery
 import dev.yidafu.blog.common.services.ArticleService
 import dev.yidafu.blog.common.services.ConfigurationService
 import dev.yidafu.blog.common.sse.SseModel
-import dev.yidafu.blog.common.vo.AdminSyncTaskListVO
-import dev.yidafu.blog.common.vo.AdminSyncTaskVO
 import dev.yidafu.blog.common.vo.AdminSynchronousVO
+import dev.yidafu.blog.common.vo.PaginationVO
 import dev.yidafu.blog.ksp.annotation.Controller
 import dev.yidafu.blog.ksp.annotation.Get
+import dev.yidafu.blog.themes.PageNames
 import io.github.allangomes.kotlinwind.css.I300
 import io.github.allangomes.kotlinwind.css.I50
 import io.github.allangomes.kotlinwind.css.LG
@@ -59,8 +56,8 @@ class SynchronousController(
 
     val (total, list) = syncTaskService.getSyncLogs(PageQuery(pageNum, pageSize))
 
-    val vo = AdminSyncTaskListVO(pageNum, pageSize, total, syncTaskConvertor.toVOList(list))
-    ctx.html(AdminSyncLogListPage::class.java, vo)
+    val vo = PaginationVO(pageNum, pageSize, total, syncTaskConvertor.toVOList(list))
+    ctx.render(PageNames.ADMIN_CONFIG_SYNC_LOG_LIST_PAGE, vo)
   }
 
   @Get(Routes.SYNC_LOG_DETAIL_URL)
@@ -68,13 +65,13 @@ class SynchronousController(
     val uuid = ctx.queryParam("uuid")[0]
     val log = syncTaskService.getSyncLog(uuid)
 
-    val vo = AdminSyncTaskVO(syncTaskConvertor.toVO(log))
-    ctx.html(AdminSyncLogPage::class.java, vo)
+    val vo = syncTaskConvertor.toVO(log)
+    ctx.render(PageNames.ADMIN_CONFIG_SYNC_LOG_DETAIL_PAGE, vo)
   }
 
   @Get(Routes.SYNC_OPERATE_URL)
   suspend fun syncOperatePage(ctx: RoutingContext) {
-    ctx.html(AdminSyncOperatePage::class.java, AdminSynchronousVO(""))
+    ctx.render(PageNames.ADMIN_CONFIG_SYNC_LOG_OPERATE_PAGE, AdminSynchronousVO(""))
   }
 
   @Get(Routes.SYNC_API_START_URL)

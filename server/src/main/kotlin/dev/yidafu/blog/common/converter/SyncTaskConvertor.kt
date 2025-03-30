@@ -4,6 +4,7 @@ import dev.yidafu.blog.common.dao.tables.records.BSyncTaskRecord
 import dev.yidafu.blog.common.dto.SimpleSyncTaskDTO
 import dev.yidafu.blog.common.dto.SyncTaskDTO
 import dev.yidafu.blog.common.modal.SyncTaskModel
+import dev.yidafu.blog.common.vo.SyncTaskVO
 import org.mapstruct.Mapper
 
 @Mapper
@@ -14,5 +15,5 @@ interface SyncTaskConvertor {
 
   fun toVO(modal: SyncTaskModel): SyncTaskDTO
 
-  fun toVOList(modal: List<SyncTaskModel>): List<SimpleSyncTaskDTO>
+  fun toVOList(modal: List<SyncTaskModel>): List<SyncTaskVO>
 }

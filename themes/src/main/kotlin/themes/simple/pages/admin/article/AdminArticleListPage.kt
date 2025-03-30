@@ -1,15 +1,17 @@
 package dev.yidafu.blog.themes.simple.pages.admin.article
 
 import dev.yidafu.blog.common.Routes
-import dev.yidafu.blog.common.view.components.Button
+import dev.yidafu.blog.themes.simple.components.Button
 import dev.yidafu.blog.i18n.AdminTxt
 import dev.yidafu.blog.themes.*
+import dev.yidafu.blog.themes.simple.pages.admin.AdminPage
 import io.github.allangomes.kotlinwind.css.*
 import kotlinx.html.*
-import java.net.URLEncoder
 
-class AdminArticleListPage(modal: DataModal) : AdminArticlePage(modal){
-  override fun DIV.createContent() {
+class AdminArticleListPage(modal: DataModal) : AdminPage(modal) {
+  override fun DIV.layoutBlock() {
+
+
     val vo = modal.articlePage
     div {
       style = kw.inline { background.gray[I50] }
@@ -51,7 +53,7 @@ class AdminArticleListPage(modal: DataModal) : AdminArticlePage(modal){
               cell(i.updatedAt.toString())
               cell {
                 a {
-                  href = Routes.ARTICLE_DETAIL.replace(":identifier", URLEncoder.encode((i.id.toString())))
+                  href = Routes.ADMIN_ARTICLE_DETAIL.replace(":id", i.id.toString())
                   +AdminTxt.column_detail.toText()
                 }
               }
@@ -87,7 +89,6 @@ class AdminArticleListPage(modal: DataModal) : AdminArticlePage(modal){
     }
   }
 }
-
 
 class AdminArticleListPageProvider : CacheablePageProvider() {
   override fun getName(): String = PageNames.ADMIN_ARTICLE_LIST

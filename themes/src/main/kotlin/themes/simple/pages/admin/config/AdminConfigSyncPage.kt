@@ -41,9 +41,7 @@ class AdminConfigSyncPage(modal: DataModal) : AdminConfigPage(modal) {
 }
 
 class AdminConfigSyncPageProvider : CacheablePageProvider() {
-
-
-  override fun getName(): String  = PageNames.ADMIN_CONFIG_SYNC_PAGE
+  override fun getName(): String = PageNames.ADMIN_CONFIG_SYNC_PAGE
 
   override fun createPage(modal: DataModal): Page {
     return AdminConfigSyncPage(modal)

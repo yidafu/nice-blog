@@ -28,7 +28,6 @@ class BlankPage(override val modal: DataModal) : Page {
   }
 }
 
-
 class ArticleListPageProvider : CacheablePageProvider() {
   override fun getName(): String = PageNames.ARTICLE_LIST
 
@@ -36,7 +35,6 @@ class ArticleListPageProvider : CacheablePageProvider() {
     return BlankPage(modal)
   }
 }
-
 
 class ArticleDetailPageProvider : CacheablePageProvider() {
   override fun getName(): String = PageNames.ARTICLE_DETAIL
@@ -46,7 +44,6 @@ class ArticleDetailPageProvider : CacheablePageProvider() {
   }
 }
 
-
 class AboutMePageProvider : CacheablePageProvider() {
   override fun getName(): String = PageNames.ABOUT_ME
 
@@ -54,4 +51,3 @@ class AboutMePageProvider : CacheablePageProvider() {
     return BlankPage(modal)
   }
 }
-

@@ -1,11 +1,8 @@
 package dev.yidafu.blog.common.vo
 
 import dev.yidafu.blog.common.json.LocalDateSerializer
-import dev.yidafu.blog.common.json.LocalTimeSerializer
-import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 import java.time.LocalDate
-import java.time.LocalTime
 
 @Serializable
 data class ArticleVO(

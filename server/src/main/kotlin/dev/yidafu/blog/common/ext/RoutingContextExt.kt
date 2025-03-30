@@ -5,9 +5,6 @@ import dev.yidafu.blog.common.ConstantKeys
 import dev.yidafu.blog.common.TemplateManagerLoader
 import dev.yidafu.blog.common.bean.bo.ConfigurationBO
 import dev.yidafu.blog.common.controller.CommonController
-import dev.yidafu.blog.common.view.tpl.PageTemplate
-import dev.yidafu.blog.common.vo.BaseVO
-import dev.yidafu.blog.common.vo.PageVO
 import dev.yidafu.blog.themes.DataModal
 import dev.yidafu.blog.themes.NotFoundPage
 import dev.yidafu.blog.themes.Page
@@ -54,48 +51,25 @@ internal inline fun <reified T> RoutingContext.kJson(obj: T): Future<Void>? {
   }
 }
 
-internal inline fun <V : PageVO, T : PageTemplate<V>> RoutingContext.html(
-  pageClass: Class<T>,
+internal inline fun <reified V> RoutingContext.render(
+  pageName: String,
   vo: V,
 ) {
   val local = this.get<Locale>(ConstantKeys.LANGUAGE_CONTEXT)
 
   val configBo = this.get<ConfigurationBO>(CommonController.GLOBAL_CONFIGURATION)
 
-  val baseVO =
-    BaseVO(
-      locale = local,
-      currentPath = request().path(),
-      siteTitle = configBo.siteTitle,
-      githubUrl = configBo.githubUrl,
-    )
-  vo.baseVO = baseVO
-  val page: T? = pageClass.constructors.find { it.parameters.size == 1 }?.newInstance(vo) as T?
-//  = pageClass.primaryConstructor?.call(vo)
-
-  val htmlStr = page?.render()
-
-  response().putHeader(HttpHeaders.CONTENT_TYPE, "text/html")
-  this.end(htmlStr)
-}
-
-internal inline fun <reified V> RoutingContext.render(
-  pageName: String, vo: V,
-) {
-  val local = this.get<Locale>(ConstantKeys.LANGUAGE_CONTEXT)
-
-  val configBo = this.get<ConfigurationBO>(CommonController.GLOBAL_CONFIGURATION)
-
   val voData = Json.encodeToJsonElement(vo)
-  val modalObject = JsonObject(
-    mapOf(
-      DataModal.COMMON_LOCALE to local.toString().toJson(),
-      DataModal.CURRENT_PATH to request().path().toJson(),
-      DataModal.SITE_TITLE to configBo.siteTitle.toJson(),
-      DataModal.GITHUB_URL to configBo.githubUrl.toJson(),
-      DataModal.VO_DATA to voData,
+  val modalObject =
+    JsonObject(
+      mapOf(
+        DataModal.COMMON_LOCALE to local.toString().toJson(),
+        DataModal.CURRENT_PATH to request().path().toJson(),
+        DataModal.SITE_TITLE to configBo.siteTitle.toJson(),
+        DataModal.GITHUB_URL to configBo.githubUrl.toJson(),
+        DataModal.VO_DATA to voData,
+      ),
     )
-  )
   val tplManager = TemplateManagerLoader.getTemplateManager(SimpleTemplateManager.NAME)
   val page = tplManager.createPage(pageName, DataModal(modalObject))
 

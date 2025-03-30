@@ -1,7 +1,6 @@
 package dev.yidafu.blog.themes
 
 interface TemplateManager {
-
   /**
    * get template name. must be unique name
    */

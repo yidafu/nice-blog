@@ -7,7 +7,6 @@ import org.intellij.markdown.html.GeneratingProvider
 import org.intellij.markdown.html.HtmlGenerator
 
 class CodeFenceGeneratingProvider : GeneratingProvider {
-
   override fun processNode(
     visitor: HtmlGenerator.HtmlGeneratingVisitor,
     text: String,

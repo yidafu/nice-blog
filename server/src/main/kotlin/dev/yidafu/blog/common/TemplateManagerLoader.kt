@@ -5,6 +5,7 @@ import java.util.*
 
 object TemplateManagerLoader {
   private var managers: List<TemplateManager> = mutableListOf()
+
   fun load() {
     managers = ServiceLoader.load(TemplateManager::class.java).toList()
     managers.forEach {

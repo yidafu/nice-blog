@@ -1,15 +1,12 @@
 package dev.yidafu.blog.admin.controller
 
-import dev.yidafu.blog.admin.views.pages.config.AdminConfigAppearancePage
-import dev.yidafu.blog.admin.views.pages.config.AdminConfigDataSourcePage
-import dev.yidafu.blog.admin.views.pages.config.AdminConfigSyncPage
 import dev.yidafu.blog.common.ConfigurationKeys
 import dev.yidafu.blog.common.ConstantKeys
 import dev.yidafu.blog.common.FormKeys
 import dev.yidafu.blog.common.Routes
 import dev.yidafu.blog.common.dto.ConfigurationDTO
 import dev.yidafu.blog.common.ext.getByKey
-import dev.yidafu.blog.common.ext.html
+import dev.yidafu.blog.common.ext.render
 import dev.yidafu.blog.common.services.ConfigurationService
 import dev.yidafu.blog.common.vo.AdminAppearanceVO
 import dev.yidafu.blog.common.vo.AdminDataSourceVO
@@ -17,6 +14,7 @@ import dev.yidafu.blog.common.vo.AdminSynchronousVO
 import dev.yidafu.blog.ksp.annotation.Controller
 import dev.yidafu.blog.ksp.annotation.Get
 import dev.yidafu.blog.ksp.annotation.Post
+import dev.yidafu.blog.themes.PageNames
 import io.vertx.core.http.HttpHeaders
 import io.vertx.ext.web.RoutingContext
 import org.koin.core.annotation.Single
@@ -32,7 +30,7 @@ class ConfigurationController(
   @Get(Routes.CONFIG_APPEARANCE_URL)
   suspend fun appearancePage(ctx: RoutingContext) {
     val vo = AdminAppearanceVO()
-    ctx.html(AdminConfigAppearancePage::class.java, vo)
+    ctx.render(PageNames.ADMIN_CONFIG_APPEARANCE_PAGE, vo)
   }
 
   /**
@@ -76,7 +74,7 @@ class ConfigurationController(
       AdminSynchronousVO(
         config.configValue,
       )
-    ctx.html(AdminConfigSyncPage::class.java, vo)
+    ctx.render(PageNames.ADMIN_CONFIG_SYNC_PAGE, vo)
   }
 
   @Get(Routes.CONFIG_DATA_SOURCE_URL)
@@ -99,6 +97,6 @@ class ConfigurationController(
         configs.getByKey(ConfigurationKeys.SOURCE_BRANCH) ?: "",
       )
 
-    ctx.html(AdminConfigDataSourcePage::class.java, vo)
+    ctx.render(PageNames.ADMIN_CONFIG_DATA_SOURCE_PAGE, vo)
   }
 }

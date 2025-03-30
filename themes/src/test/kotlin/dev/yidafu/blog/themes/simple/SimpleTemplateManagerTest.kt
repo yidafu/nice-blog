@@ -2,7 +2,9 @@ package dev.yidafu.blog.themes.simple
 
 import dev.yidafu.blog.common.vo.ArticleVO
 import dev.yidafu.blog.themes.*
-import dev.yidafu.blog.themes.simple.pages.*
+import dev.yidafu.blog.themes.simple.pages.front.AboutMePageProvider
+import dev.yidafu.blog.themes.simple.pages.front.ArticleDetailPageProvider
+import dev.yidafu.blog.themes.simple.pages.front.ArticleListPageProvider
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
@@ -11,35 +13,41 @@ import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.serialization.json.*
 import java.time.LocalDate
-import java.time.LocalTime
-
 
 class SimpleTemplateManagerTest : StringSpec({
-  val articleVo = ArticleVO(
-    id = 1L,
-    title = "Sample Article",
-    cover = "https://example.com/cover.jpg",
-    identifier = "sample-article",
-    series = "Sample Series",
-    status = 1,
-    summary = "This is a sample article summary.",
-    content = "This is the content of the sample article.",
-    html = "<p>This is the HTML content of the sample article.</p>",
-    updatedAt = LocalDate.now()
-  )
-
-  fun createDataModal(title: String, path: String, isList: Boolean = true): DataModal {
-    val json = if (isList)
-      Json.encodeToJsonElement(listOf(articleVo))
-    else
-      Json.encodeToJsonElement(articleVo)
-    val dataStore = mapOf<String, JsonElement>(
-      DataModal.SITE_TITLE to JsonPrimitive(title),
-      DataModal.CURRENT_PATH to JsonPrimitive(path),
-      DataModal.COMMON_LOCALE to JsonPrimitive("en"),
-      DataModal.GITHUB_URL to JsonPrimitive("https://github.com/exmaple/repo"),
-      DataModal.VO_DATA to json,
+  val articleVo =
+    ArticleVO(
+      id = 1L,
+      title = "Sample Article",
+      cover = "https://example.com/cover.jpg",
+      identifier = "sample-article",
+      series = "Sample Series",
+      status = 1,
+      summary = "This is a sample article summary.",
+      content = "This is the content of the sample article.",
+      html = "<p>This is the HTML content of the sample article.</p>",
+      updatedAt = LocalDate.now(),
     )
+
+  fun createDataModal(
+    title: String,
+    path: String,
+    isList: Boolean = true,
+  ): DataModal {
+    val json =
+      if (isList) {
+        Json.encodeToJsonElement(listOf(articleVo))
+      } else {
+        Json.encodeToJsonElement(articleVo)
+      }
+    val dataStore =
+      mapOf<String, JsonElement>(
+        DataModal.SITE_TITLE to JsonPrimitive(title),
+        DataModal.CURRENT_PATH to JsonPrimitive(path),
+        DataModal.COMMON_LOCALE to JsonPrimitive("en"),
+        DataModal.GITHUB_URL to JsonPrimitive("https://github.com/exmaple/repo"),
+        DataModal.VO_DATA to json,
+      )
     return DataModal(Json.encodeToJsonElement(dataStore) as JsonObject)
   }
 

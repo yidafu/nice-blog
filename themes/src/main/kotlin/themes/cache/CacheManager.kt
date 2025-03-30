@@ -4,7 +4,6 @@ import java.util.concurrent.ConcurrentHashMap
 import kotlin.time.Duration.Companion.hours
 
 class CacheManager<T> {
-
   data class CacheEntry<T>(
     var value: T,
     val expirationTime: Long = System.currentTimeMillis() + DEFAULT_EXPIRE,
@@ -35,7 +34,10 @@ class CacheManager<T> {
     }
   }
 
-  fun set(key: String, value: T) {
+  fun set(
+    key: String,
+    value: T,
+  ) {
     cache[key] = CacheEntry(value)
   }
 

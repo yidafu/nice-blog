@@ -1,4 +1,4 @@
-package dev.yidafu.blog.common.view.icons
+package dev.yidafu.blog.themes.icons
 
 import com.github.nwillc.ksvg.elements.SVG
 import kotlinx.html.*

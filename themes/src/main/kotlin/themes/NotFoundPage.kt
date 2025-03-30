@@ -5,14 +5,13 @@ import kotlinx.html.stream.createHTML
 
 class NotFoundPage : Page {
   override val modal: DataModal
-    get() =  DataModal()
+    get() = DataModal()
 
   override fun createPageHtml(): String {
     return createHTML().apply {
       h1 {
-        + "Not Found"
+        +"Not Found"
       }
     }.finalize()
   }
-
 }

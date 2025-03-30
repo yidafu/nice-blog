@@ -63,10 +63,6 @@ class AdminConfigDataSourcePage(modal: DataModal) : AdminConfigPage(modal) {
 }
 
 class AdminConfigDataSourcePageProvider : CacheablePageProvider() {
-
-
-
-
   override fun getName(): String = PageNames.ADMIN_CONFIG_DATA_SOURCE_PAGE
 
   override fun createPage(modal: DataModal): Page {

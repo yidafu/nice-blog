@@ -46,5 +46,4 @@ class AdminConfigAppearancePageProvider : CacheablePageProvider() {
   override fun createPage(modal: DataModal): Page {
     return AdminConfigAppearancePage(modal)
   }
-
 }

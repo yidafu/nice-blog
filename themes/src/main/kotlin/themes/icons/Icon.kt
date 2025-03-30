@@ -1,4 +1,4 @@
-package dev.yidafu.blog.common.view.icons
+package dev.yidafu.blog.themes.icons
 
 import kotlinx.html.FlowContent
 

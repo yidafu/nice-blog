@@ -11,6 +11,7 @@ import kotlinx.html.DIV
 import kotlinx.html.FlowContent
 import kotlinx.html.div
 import kotlinx.html.style
+
 fun FlowContent.descriptionItem(
   title: String,
   content: String,

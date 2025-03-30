@@ -1,14 +1,38 @@
 package dev.yidafu.blog.themes.simple.pages.admin
 
-import de.comahe.i18n4k.messages.MessageBundleLocalizedString
 import dev.yidafu.blog.common.Routes
-import dev.yidafu.blog.common.view.components.footerComponent
+import dev.yidafu.blog.themes.simple.components.footerComponent
 import dev.yidafu.blog.common.view.icons.*
 import dev.yidafu.blog.i18n.AdminTxt
 import dev.yidafu.blog.themes.DataModal
+import dev.yidafu.blog.themes.icons.*
 import dev.yidafu.blog.themes.simple.pages.SimplePage
 import io.github.allangomes.kotlinwind.css.*
 import kotlinx.html.*
+
+
+fun FlowOrInteractiveOrPhrasingContent.linkItem(
+  link: String,
+  url: String,
+  active: Boolean = false,
+) {
+  a {
+    style =
+      kw.inline {
+        margin.top[4]
+        font.size[6]
+        margin.right[4]
+        if (active) {
+          text.green[I800]
+          border.bottom[1].green[I600]
+        } else {
+          text.black
+        }
+      }
+    href = url
+    +link
+  }
+}
 
 abstract class AdminPage(modal: DataModal) : SimplePage(modal) {
   internal fun TR.cell(text: String) {
@@ -25,17 +49,13 @@ abstract class AdminPage(modal: DataModal) : SimplePage(modal) {
     }
   }
 
-  protected fun MessageBundleLocalizedString.toText(): String {
-    return toString(locale)
-  }
-
   private val linkList =
     listOf(
 //    Triple(AdminTxt.appearance.toText(), Routes.CONFIG_APPEARANCE_URL, vo.currentPath == Routes.CONFIG_APPEARANCE_URL),
       Triple(
         AdminTxt.article.toText(),
-        Routes.ARTICLE_LIST,
-        currentPath.startsWith(Routes.ARTICLE_LIST),
+        Routes.ADMIN_ARTICLE_LIST,
+        currentPath.startsWith(Routes.ADMIN_ARTICLE_LIST),
       ),
       Triple(
         AdminTxt.configuration.toText(),
@@ -79,7 +99,7 @@ abstract class AdminPage(modal: DataModal) : SimplePage(modal) {
 
           span {
             style = kw.inline { font.size[XL5].weight_600 }
-            + siteTitle
+            +siteTitle
           }
         }
 
@@ -87,12 +107,11 @@ abstract class AdminPage(modal: DataModal) : SimplePage(modal) {
           style = kw.inline { flex.row.fill.items_center.justify_between }
           div {
             style = kw.inline { font.size[SM] }
-
             linkList.forEach { item ->
-
-              link(item.first, item.second, item.third.toString())
+              linkItem(item.first, item.second, item.third)
             }
           }
+
           div {
             style = kw.inline { flex.row }
 
@@ -179,8 +198,7 @@ abstract class AdminPage(modal: DataModal) : SimplePage(modal) {
     }
 
     div("m-auto") {
-      style =
-        kw.inline {
+      style = kw.inline {
           max_width[256]
           padding[6]
           background.white

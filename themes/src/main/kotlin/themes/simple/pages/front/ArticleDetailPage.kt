@@ -1,4 +1,4 @@
-package dev.yidafu.blog.themes.simple.pages
+package dev.yidafu.blog.themes.simple.pages.front
 
 import dev.yidafu.blog.common.vo.ArticleVO
 import dev.yidafu.blog.themes.*
@@ -77,14 +77,15 @@ fun FlowContent.fullArticle(vo: ArticleVO) {
   }
 }
 
-class ArticleDetailPage(modal: DataModal) : SimplePage(modal) {
-  override val bodyBlock: BODY.() -> Unit = {
+class ArticleDetailPage(modal: DataModal) : FrontPage(modal) {
+  override fun MAIN.createContent() {
     div {
       attributes["class"] = "m-auto"
-      style = kw.inline {
-        background.white
-        width[200]
-      }
+      style =
+        kw.inline {
+          background.white
+          width[200]
+        }
       fullArticle(modal.articleDetail)
     }
   }
@@ -99,4 +100,3 @@ class ArticleDetailPageProvider : CacheablePageProvider() {
     return ArticleDetailPage(modal)
   }
 }
-

@@ -1,6 +1,6 @@
 package dev.yidafu.blog.themes
 
-abstract  class BaseTemplateManager : TemplateManager {
+abstract class BaseTemplateManager : TemplateManager {
   private val pages: MutableList<PageProvider> = mutableListOf()
 
   override fun registerPageProvider(pageProvider: PageProvider) {
@@ -13,7 +13,7 @@ abstract  class BaseTemplateManager : TemplateManager {
     return pages.firstOrNull { p -> p.getName() == name }
   }
 
-  fun getNotFoundPage() : Page {
-     return NotFoundPage()
+  fun getNotFoundPage(): Page {
+    return NotFoundPage()
   }
 }
