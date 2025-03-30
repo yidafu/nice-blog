@@ -2,18 +2,24 @@ package dev.yidafu.blog.common.ext
 
 import de.comahe.i18n4k.Locale
 import dev.yidafu.blog.common.ConstantKeys
+import dev.yidafu.blog.common.TemplateManagerLoader
 import dev.yidafu.blog.common.bean.bo.ConfigurationBO
 import dev.yidafu.blog.common.controller.CommonController
 import dev.yidafu.blog.common.view.tpl.PageTemplate
 import dev.yidafu.blog.common.vo.BaseVO
 import dev.yidafu.blog.common.vo.PageVO
+import dev.yidafu.blog.themes.DataModal
+import dev.yidafu.blog.themes.NotFoundPage
+import dev.yidafu.blog.themes.Page
+import dev.yidafu.blog.themes.TemplateManager
+import dev.yidafu.blog.themes.simple.SimpleTemplateManager
 import io.vertx.core.Future
 import io.vertx.core.http.HttpHeaders
 import io.vertx.core.impl.ContextInternal
 import io.vertx.core.json.EncodeException
 import io.vertx.ext.web.RoutingContext
 import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.*
 
 internal val jsonCodec =
   Json {
@@ -72,3 +78,36 @@ internal inline fun <V : PageVO, T : PageTemplate<V>> RoutingContext.html(
   response().putHeader(HttpHeaders.CONTENT_TYPE, "text/html")
   this.end(htmlStr)
 }
+
+internal inline fun <reified V> RoutingContext.render(
+  pageName: String, vo: V,
+) {
+  val local = this.get<Locale>(ConstantKeys.LANGUAGE_CONTEXT)
+
+  val configBo = this.get<ConfigurationBO>(CommonController.GLOBAL_CONFIGURATION)
+
+  val voData = Json.encodeToJsonElement(vo)
+  val modalObject = JsonObject(
+    mapOf(
+      DataModal.COMMON_LOCALE to local.toString().toJson(),
+      DataModal.CURRENT_PATH to request().path().toJson(),
+      DataModal.SITE_TITLE to configBo.siteTitle.toJson(),
+      DataModal.GITHUB_URL to configBo.githubUrl.toJson(),
+      DataModal.VO_DATA to voData,
+    )
+  )
+  val tplManager = TemplateManagerLoader.getTemplateManager(SimpleTemplateManager.NAME)
+  val page = tplManager.createPage(pageName, DataModal(modalObject))
+
+  this.end(page.createPageHtml())
+}
+
+fun TemplateManager.createPage(
+  pageName: String,
+  modal: DataModal,
+): Page {
+  val page = getPageProvider(pageName)?.createPage(modal)
+  return page ?: NotFoundPage()
+}
+
+inline fun String.toJson() = JsonPrimitive(this)

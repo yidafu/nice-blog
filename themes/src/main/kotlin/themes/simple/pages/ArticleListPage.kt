@@ -1,18 +1,15 @@
-package dev.yidafu.blog.fe.views.pages
+package dev.yidafu.blog.themes.simple.pages
 
 import dev.yidafu.blog.common.Routes
-import dev.yidafu.blog.common.view.tpl.PageTemplate
-import dev.yidafu.blog.common.vo.ArticleListVO
 import dev.yidafu.blog.common.vo.ArticleVO
-import dev.yidafu.blog.fe.views.layouts.FrontendLayout
-import dev.yidafu.blog.fe.views.layouts.HEADER_COLOR
-import dev.yidafu.blog.fe.views.layouts.TEXT_COLOR_SECONDARY
 import dev.yidafu.blog.i18n.AdminTxt
+import dev.yidafu.blog.themes.*
 import io.github.allangomes.kotlinwind.css.I300
 import io.github.allangomes.kotlinwind.css.I800
 import io.github.allangomes.kotlinwind.css.LG
 import io.github.allangomes.kotlinwind.css.kw
 import kotlinx.html.*
+
 
 fun FlowContent.readMore(url: String?) {
   a(if (url.isNullOrEmpty()) "/404" else url, classes = "center") {
@@ -108,16 +105,16 @@ fun FlowContent.partialPost(vo: ArticleVO) {
   }
 }
 
-class ArticleListPage(override val vo: ArticleListVO) : PageTemplate<ArticleListVO>() {
-  override fun render(): String {
-    return FrontendLayout(vo).layout {
+class ArticleListPage(modal: DataModal) : SimplePage(modal) {
+  override val bodyBlock: BODY.() -> Unit = {
+    div {
       attributes["class"] = "m-auto"
       style =
         kw.inline {
           background.white
           width[200]
         }
-      vo.articleList.forEach { vo ->
+      modal.articleList.forEach { vo ->
         partialPost(vo)
         div {
           style =
@@ -128,6 +125,16 @@ class ArticleListPage(override val vo: ArticleListVO) : PageTemplate<ArticleList
             }
         }
       }
-    }.finalize()
+    }
+  }
+}
+
+class ArticleListPageProvider: CacheablePageProvider() {
+  override fun getName(): String {
+    return PageNames.ARTICLE_LIST
+  }
+
+  override fun createPage(modal: DataModal): Page {
+    return ArticleListPage(modal)
   }
 }

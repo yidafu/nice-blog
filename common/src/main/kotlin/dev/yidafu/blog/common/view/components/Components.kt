@@ -7,7 +7,7 @@ import dev.yidafu.blog.common.view.icons.alertWarningIcon
 import io.github.allangomes.kotlinwind.css.*
 import kotlinx.html.*
 
-fun FlowContent.footerBlock() {
+fun FlowContent.footerComponent() {
   footer {
     style =
       kw.inline {

@@ -4,6 +4,7 @@ import dev.yidafu.blog.admin.AdminVerticle
 import dev.yidafu.blog.admin.controller.AdminControllerModule
 import dev.yidafu.blog.admin.manager.SynchronousManager
 import dev.yidafu.blog.admin.services.AdminServiceModule
+import dev.yidafu.blog.common.TemplateManagerLoader
 import dev.yidafu.blog.common.controller.CommonControllerModule
 import dev.yidafu.blog.common.dao.DefaultSchema
 import dev.yidafu.blog.common.services.CommonServiceModule
@@ -82,6 +83,7 @@ class MainVerticle : CoroutineVerticle(), CoroutineRouterSupport {
           EngineModule().module,
         )
       }
+    TemplateManagerLoader.load()
 
     log.info("start FrontendVerticle")
     vertx.deployVerticle(FrontendVerticle(koin.koin)).andThen { res ->

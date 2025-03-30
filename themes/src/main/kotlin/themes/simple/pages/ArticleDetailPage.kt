@@ -1,13 +1,15 @@
-package dev.yidafu.blog.fe.views.pages
+package dev.yidafu.blog.themes.simple.pages
 
-import dev.yidafu.blog.common.view.tpl.PageTemplate
 import dev.yidafu.blog.common.vo.ArticleVO
-import dev.yidafu.blog.fe.views.layouts.FrontendLayout
-import dev.yidafu.blog.fe.views.layouts.HEADER_COLOR
-import dev.yidafu.blog.fe.views.layouts.TEXT_COLOR_SECONDARY
+import dev.yidafu.blog.themes.*
 import io.github.allangomes.kotlinwind.css.LG
 import io.github.allangomes.kotlinwind.css.kw
+import kotlinx.css.Color
 import kotlinx.html.*
+
+val COLOR_PRIMARY = Color("#1E1E1E")
+val HEADER_COLOR = COLOR_PRIMARY
+val TEXT_COLOR_SECONDARY = Color("#9B9B9B")
 
 fun FlowContent.fullArticle(vo: ArticleVO) {
   article {
@@ -75,16 +77,26 @@ fun FlowContent.fullArticle(vo: ArticleVO) {
   }
 }
 
-class ArticleDetailPage(override val vo: ArticleVO) : PageTemplate<ArticleVO>() {
-  override fun render(): String {
-    return FrontendLayout(vo).layout {
+class ArticleDetailPage(modal: DataModal) : SimplePage(modal) {
+  override val bodyBlock: BODY.() -> Unit = {
+    div {
       attributes["class"] = "m-auto"
-      style =
-        kw.inline {
-          background.white
-          width[200]
-        }
-      fullArticle(vo)
-    }.finalize()
+      style = kw.inline {
+        background.white
+        width[200]
+      }
+      fullArticle(modal.articleDetail)
+    }
   }
 }
+
+class ArticleDetailPageProvider : CacheablePageProvider() {
+  override fun getName(): String {
+    return PageNames.ARTICLE_DETAIL
+  }
+
+  override fun createPage(modal: DataModal): Page {
+    return ArticleDetailPage(modal)
+  }
+}
+

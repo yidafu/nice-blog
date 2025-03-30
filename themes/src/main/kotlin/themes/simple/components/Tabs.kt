@@ -1,4 +1,4 @@
-package dev.yidafu.blog.common.views.components
+package dev.yidafu.blog.themes.simple.components
 
 import dev.yidafu.blog.common.view.icons.Icon
 import io.github.allangomes.kotlinwind.css.I50
