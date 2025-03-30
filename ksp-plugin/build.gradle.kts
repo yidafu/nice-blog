@@ -2,6 +2,7 @@ plugins {
   kotlin("jvm") version "2.0.21"
 
   id("com.google.devtools.ksp") version "2.0.21-1.0.27"
+  id("org.jlleitschuh.gradle.ktlint") version "12.2.0"
 }
 
 group = "dev.yidafu.blog"
@@ -25,5 +26,5 @@ tasks.test {
   useJUnitPlatform()
 }
 kotlin {
-  jvmToolchain(17)
+  jvmToolchain(21)
 }
