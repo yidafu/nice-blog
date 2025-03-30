@@ -2,13 +2,11 @@ package dev.yidafu.blog.fe.controller
 
 import dev.yidafu.blog.common.Routes
 import dev.yidafu.blog.common.converter.ArticleConvertor
-import dev.yidafu.blog.common.ext.html
+import dev.yidafu.blog.common.ext.render
 import dev.yidafu.blog.common.services.ArticleService
-import dev.yidafu.blog.common.vo.ArticleListVO
-import dev.yidafu.blog.fe.views.pages.ArticleDetailPage
-import dev.yidafu.blog.fe.views.pages.ArticleListPage
 import dev.yidafu.blog.ksp.annotation.Controller
 import dev.yidafu.blog.ksp.annotation.Get
+import dev.yidafu.blog.themes.PageNames
 import io.vertx.ext.web.RoutingContext
 import org.koin.core.annotation.Single
 import org.mapstruct.factory.Mappers
@@ -27,7 +25,8 @@ class HomeController(
   suspend fun indexPage(ctx: RoutingContext) {
     val list = articleService.getAll()
     val voList = articleConvertor.toVO(list)
-    ctx.html(ArticleListPage::class.java, ArticleListVO(voList))
+
+    ctx.render(PageNames.ARTICLE_LIST, voList)
   }
 
   @Get(Routes.ARTICLE_DETAIL)
@@ -36,7 +35,7 @@ class HomeController(
     val article = articleService.getOneByIdentifier(id)
     article?.let {
       val vo = articleConvertor.toVO(it)
-      ctx.html(ArticleDetailPage::class.java, vo)
+      ctx.render(PageNames.ARTICLE_DETAIL, vo)
     } ?: run {
       ctx.redirect("/404")
     }

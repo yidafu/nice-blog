@@ -6,13 +6,12 @@ import dev.whyoleg.cryptography.DelicateCryptographyApi
 import dev.whyoleg.cryptography.algorithms.MD5
 import dev.whyoleg.cryptography.algorithms.RSA
 import dev.whyoleg.cryptography.algorithms.SHA256
-import dev.yidafu.blog.admin.views.pages.AdminLoginPage
 import dev.yidafu.blog.common.*
 import dev.yidafu.blog.common.ConstantKeys
 import dev.yidafu.blog.common.ConstantKeys.AUTH_CURRENT_USERNAME
 import dev.yidafu.blog.common.ConstantKeys.AUTH_RSA_PRIVATE_KEY
 import dev.yidafu.blog.common.ConstantKeys.AUTH_RSA_PUBLIC_KEY
-import dev.yidafu.blog.common.ext.html
+import dev.yidafu.blog.common.ext.render
 import dev.yidafu.blog.common.services.ConfigurationService
 import dev.yidafu.blog.common.services.UserService
 import dev.yidafu.blog.common.vo.AdminLoginVO
@@ -20,6 +19,7 @@ import dev.yidafu.blog.i18n.AdminTxt
 import dev.yidafu.blog.ksp.annotation.Controller
 import dev.yidafu.blog.ksp.annotation.Get
 import dev.yidafu.blog.ksp.annotation.Post
+import dev.yidafu.blog.themes.PageNames
 import io.vertx.ext.web.RoutingContext
 import org.koin.core.annotation.Single
 import org.slf4j.LoggerFactory
@@ -101,7 +101,7 @@ class AuthController(
         errorMessage,
       )
     log.info("render login page")
-    ctx.html(AdminLoginPage::class.java, vo)
+    ctx.render(PageNames.ADMIN_LOGIN, vo)
   }
 
   @Post(Routes.LOGIN_URL)

@@ -27,7 +27,9 @@ class ArticleService(
 
   suspend fun getAll(): List<ArticleModel> =
     runDB {
-      val articles: Array<BArticleRecord> = context.selectFrom(B_ARTICLE).fetchArray()
+      val articles: Array<BArticleRecord> = context.selectFrom(B_ARTICLE)
+        .orderBy(B_ARTICLE.UPDATED_AT.desc())
+        .fetchArray()
       articleConvertor.recordToModal(articles.toList())
     }
 

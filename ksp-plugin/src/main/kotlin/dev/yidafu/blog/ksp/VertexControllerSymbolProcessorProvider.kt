@@ -59,13 +59,13 @@ class VertexControllerSymbolProcessor(private val environment: SymbolProcessorEn
       .map { symbol ->
         val rootPath =
           symbol.annotations.firstOrNull { a ->
-            logger.warn("@Controller annotation 1 ${a.shortName.asString()} ${Controller::class.simpleName}")
+//            logger.warn("@Controller annotation 1 ${a.shortName.asString()} ${Controller::class.simpleName}")
 
             a.shortName.asString() == Controller::class.simpleName
           }?.arguments?.firstOrNull()?.value as String?
         val packageName = symbol.packageName.asString()
         val className = symbol.simpleName.asString()
-        logger.warn("@Controller annotation package $packageName class name $className")
+//        logger.warn("@Controller annotation package $packageName class name $className")
 
         val methodList = symbol.getAllFunctions().map { func ->
           func.annotations.filter {
@@ -77,7 +77,7 @@ class VertexControllerSymbolProcessor(private val environment: SymbolProcessorEn
               Any::class.simpleName
             )
           }.map { methodAnnotation ->
-            val path = methodAnnotation.arguments.first().value as String
+            val path = methodAnnotation.arguments.firstOrNull()?.value as String?
             val method = when (methodAnnotation.shortName.getShortName()) {
               Get::class.simpleName -> HttpMethod.GET
               Post::class.simpleName -> HttpMethod.POST
@@ -86,17 +86,17 @@ class VertexControllerSymbolProcessor(private val environment: SymbolProcessorEn
               Any::class.simpleName -> HttpMethod.ANY
               else -> throw IllegalArgumentException("unknown method")
             }
-            logger.warn("Method annotation function $method=>$path ${func.simpleName.getShortName()}")
+//            logger.warn("Method annotation function $method=>$path ${func.simpleName.getShortName()}")
 
             MethodInfo(
               method,
-              path,
+              path ?: "",
               func.simpleName.asString(),
               func.modifiers.contains(Modifier.SUSPEND)
             )
           }
         }.flatten().toList()
-        logger.warn("controller info $rootPath $className ${methodList.size}")
+//        logger.warn("controller info $rootPath $className ${methodList.size}")
 
         ControllerInfo(
           rootPath ?: "/",
@@ -178,7 +178,7 @@ class VertexControllerSymbolProcessor(private val environment: SymbolProcessorEn
 
   private fun buildRouteStatement(className: ClassName, method: MethodInfo): CodeBlock {
 
-    logger.warn("build method $method")
+//    logger.warn("build method $method")
     val codeBlock = CodeBlock.builder()
 
     val methodMember = when (method.method) {

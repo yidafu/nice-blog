@@ -1,6 +1,7 @@
 package dev.yidafu.blog.common.modal
 
 import jakarta.persistence.*
+import kotlinx.serialization.Serializable
 
 /**
  * 考虑两种情况
@@ -10,6 +11,7 @@ import jakarta.persistence.*
  */
 @Entity
 @Table(name = "b_article")
+@Serializable
 class ArticleModel(
   @Column
   var title: String = "",

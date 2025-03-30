@@ -6,3 +6,4 @@ rootProject.name = "nice-blog"
 include("server")
 include("common")
 include("ksp-plugin")
+include("themes")
