@@ -2,7 +2,7 @@ package dev.yidafu.blog.common.dto
 
 import java.time.LocalTime
 
-class ArticleDTO(
+data class ArticleDTO(
   val title: String = "",
   var cover: String? = null,
   var identifier: String? = null,

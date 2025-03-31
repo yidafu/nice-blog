@@ -13,4 +13,6 @@ internal object ConstantKeys {
   const val AUTH_RSA_PUBLIC_KEY = "rsa_public_key"
   const val AUTH_RSA_PRIVATE_KEY = "rsa_private_key"
   const val AUTH_CURRENT_USERNAME = "current_username"
+
+  const val COOKIE_UID_KEY = "uid"
 }

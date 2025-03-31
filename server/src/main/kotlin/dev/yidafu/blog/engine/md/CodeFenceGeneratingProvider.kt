@@ -1,8 +1,5 @@
 package dev.yidafu.blog.engine.md
 
-import kotlinx.css.code
-import org.intellij.markdown.MarkdownElementType
-import org.intellij.markdown.MarkdownElementTypes
 import org.intellij.markdown.MarkdownTokenTypes
 import org.intellij.markdown.ast.ASTNode
 import org.intellij.markdown.ast.getTextInNode
@@ -29,15 +26,15 @@ class CodeFenceGeneratingProvider : GeneratingProvider {
     var language = ""
     var codeContent = ""
     for (child in childrenToConsider) {
-
       if (child.type == MarkdownTokenTypes.FENCE_LANG) {
         language = HtmlGenerator.leafText(text, child).toString().trim().split(' ')[0]
       }
-      var ignoreType = listOf(
-        MarkdownTokenTypes.FENCE_LANG,
-        MarkdownTokenTypes.CODE_FENCE_END,
-        MarkdownTokenTypes.CODE_FENCE_START,
-      )
+      var ignoreType =
+        listOf(
+          MarkdownTokenTypes.FENCE_LANG,
+          MarkdownTokenTypes.CODE_FENCE_END,
+          MarkdownTokenTypes.CODE_FENCE_START,
+        )
       if (child.type in ignoreType) {
         continue
       }
