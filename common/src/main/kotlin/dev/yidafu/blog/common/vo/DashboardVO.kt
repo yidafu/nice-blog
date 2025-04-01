@@ -1,4 +1,9 @@
 package dev.yidafu.blog.common.vo
 
-class DashboardVo {
-}
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class DashboardVO(
+  val articleCount: Long,
+  val accessCount: Long,
+)
