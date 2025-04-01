@@ -56,14 +56,13 @@ internal inline fun <reified V> RoutingContext.render(
   vo: V,
 ) {
   val local = this.get<Locale>(ConstantKeys.LANGUAGE_CONTEXT)
-
   val configBo = this.get<ConfigurationBO>(CommonController.GLOBAL_CONFIGURATION)
 
   val voData = Json.encodeToJsonElement(vo)
   val modalObject =
     JsonObject(
       mapOf(
-        DataModal.COMMON_LOCALE to local.toString().toJson(),
+        DataModal.COMMON_LOCALE to local.toLanguageTag().toJson(),
         DataModal.CURRENT_PATH to request().path().toJson(),
         DataModal.SITE_TITLE to configBo.siteTitle.toJson(),
         DataModal.GITHUB_URL to configBo.githubUrl.toJson(),
