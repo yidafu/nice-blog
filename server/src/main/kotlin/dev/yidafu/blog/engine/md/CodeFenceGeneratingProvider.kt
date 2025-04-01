@@ -12,11 +12,6 @@ class CodeFenceGeneratingProvider : GeneratingProvider {
     text: String,
     node: ASTNode,
   ) {
-    val indentBefore = node.getTextInNode(text).commonPrefixWith(" ".repeat(10)).length
-
-    visitor.consumeHtml("<pre>")
-
-    var state = 0
 
     var childrenToConsider = node.children
     if (childrenToConsider.last().type == MarkdownTokenTypes.CODE_FENCE_END) {
