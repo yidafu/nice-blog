@@ -45,4 +45,8 @@ class ArticleService(
       val record = context.selectFrom(B_ARTICLE).where(B_ARTICLE.ID.eq(id.toLong())).fetchOne()
       articleConvertor.recordToModal(record)
     }
+
+  suspend fun countAll() = runDB {
+    context.selectCount().from(B_ARTICLE).fetchOne(0, Long::class.java) ?: 0
+  }
 }

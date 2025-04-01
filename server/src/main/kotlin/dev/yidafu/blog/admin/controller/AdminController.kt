@@ -14,7 +14,7 @@ class AdminController {
 
   @Get(Routes.ADMIN_URL)
   suspend fun indexPage(ctx: RoutingContext) {
-    ctx.redirect(Routes.CONFIG_APPEARANCE_URL)
+    ctx.redirect(Routes.ADMIN_DASHBOARD_URL)
   }
 
   @Get(Routes.CONFIGURATION_URL)

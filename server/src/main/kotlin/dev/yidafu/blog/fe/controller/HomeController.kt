@@ -33,7 +33,7 @@ class HomeController(
   fun anyAccessLog(ctx: RoutingContext) {
     val url = ctx.request().uri()
     val header = ctx.request().headers()
-    val referer = header.get(HttpHeaders.REFERER)
+    val referer = header.get(HttpHeaders.REFERER) ?: ""
     val ua = header.get(HttpHeaders.USER_AGENT)
     val ip = getClientIp(ctx.request())
     val cookie: Cookie? = ctx.request().getCookie(ConstantKeys.COOKIE_UID_KEY)
