@@ -7,6 +7,7 @@ import dev.yidafu.blog.themes.simple.pages.front.AboutMePageProvider
 import dev.yidafu.blog.themes.simple.pages.front.ArticleDetailPageProvider
 import dev.yidafu.blog.themes.simple.pages.front.ArticleListPageProvider
 import dev.yidafu.blog.themes.simple.pages.admin.AdminLoginPageProvider
+import dev.yidafu.blog.themes.simple.pages.admin.AdminDashboardPageProvider
 import dev.yidafu.blog.themes.simple.pages.admin.article.AdminArticleDetailPageProvider
 import dev.yidafu.blog.themes.simple.pages.admin.article.AdminArticleListPageProvider
 import dev.yidafu.blog.themes.simple.pages.admin.config.AdminConfigAppearancePageProvider
@@ -29,6 +30,7 @@ class SimpleTemplateManager : BaseTemplateManager() {
     // admin pages
     registerPageProvider(AdminLoginPageProvider())
 
+    registerPageProvider(AdminDashboardPageProvider())
     registerPageProvider(AdminArticleListPageProvider())
     registerPageProvider(AdminArticleDetailPageProvider())
     registerPageProvider(AdminConfigAppearancePageProvider())

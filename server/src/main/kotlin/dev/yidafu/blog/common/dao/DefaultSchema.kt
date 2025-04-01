@@ -3,6 +3,7 @@
  */
 package dev.yidafu.blog.common.dao
 
+import dev.yidafu.blog.common.dao.tables.BAccessLog
 import dev.yidafu.blog.common.dao.tables.BArticle
 import dev.yidafu.blog.common.dao.tables.BArticleHistory
 import dev.yidafu.blog.common.dao.tables.BConfiguration
@@ -25,6 +26,11 @@ open class DefaultSchema : SchemaImpl("", DefaultCatalog.DEFAULT_CATALOG) {
      */
     val DEFAULT_SCHEMA: DefaultSchema = DefaultSchema()
   }
+
+  /**
+   * The table <code>B_ACCESS_LOG</code>.
+   */
+  val B_ACCESS_LOG: BAccessLog get() = BAccessLog.B_ACCESS_LOG
 
   /**
    * The table <code>B_ARTICLE</code>.
@@ -60,6 +66,7 @@ open class DefaultSchema : SchemaImpl("", DefaultCatalog.DEFAULT_CATALOG) {
 
   override fun getTables(): List<Table<*>> =
     listOf(
+      BAccessLog.B_ACCESS_LOG,
       BArticle.B_ARTICLE,
       BArticleHistory.B_ARTICLE_HISTORY,
       BConfiguration.B_CONFIGURATION,

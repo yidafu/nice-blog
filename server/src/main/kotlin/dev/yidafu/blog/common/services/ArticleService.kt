@@ -27,9 +27,10 @@ class ArticleService(
 
   suspend fun getAll(): List<ArticleModel> =
     runDB {
-      val articles: Array<BArticleRecord> = context.selectFrom(B_ARTICLE)
-        .orderBy(B_ARTICLE.UPDATED_AT.desc())
-        .fetchArray()
+      val articles: Array<BArticleRecord> =
+        context.selectFrom(B_ARTICLE)
+          .orderBy(B_ARTICLE.UPDATED_AT.desc())
+          .fetchArray()
       articleConvertor.recordToModal(articles.toList())
     }
 
@@ -44,4 +45,8 @@ class ArticleService(
       val record = context.selectFrom(B_ARTICLE).where(B_ARTICLE.ID.eq(id.toLong())).fetchOne()
       articleConvertor.recordToModal(record)
     }
+
+  suspend fun countAll() = runDB {
+    context.selectCount().from(B_ARTICLE).fetchOne(0, Long::class.java) ?: 0
+  }
 }

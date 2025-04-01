@@ -2,7 +2,6 @@ package dev.yidafu.blog.themes.simple.pages.admin
 
 import dev.yidafu.blog.common.Routes
 import dev.yidafu.blog.themes.simple.components.footerComponent
-import dev.yidafu.blog.common.view.icons.*
 import dev.yidafu.blog.i18n.AdminTxt
 import dev.yidafu.blog.themes.DataModal
 import dev.yidafu.blog.themes.icons.*

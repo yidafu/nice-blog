@@ -13,7 +13,7 @@ plugins {
   kotlin("plugin.serialization") version "2.0.21"
   id("org.jooq.jooq-codegen-gradle") version "3.19.16"
   id("org.jlleitschuh.gradle.ktlint") version "12.2.0"
-  id("de.comahe.i18n4k") version "0.9.0"
+//  id("de.comahe.i18n4k") version "0.9.0"
   id("org.graalvm.buildtools.native") version "0.10.5"
 }
 
@@ -37,7 +37,7 @@ application {
 
 dependencies {
   implementation(project(":common"))
-//  implementation(project(":engine"))
+  implementation(project(":themes"))
   implementation("io.vertx:vertx-web:$vertxVersion")
   implementation("io.vertx:vertx-core:$vertxVersion")
   implementation("io.vertx:vertx-jdbc-client:$vertxVersion")
@@ -131,10 +131,9 @@ tasks.withType<ShadowJar> {
   }
   mergeServiceFiles()
   from("src/main/resources") {
-    include( "**/*.xml")
+    include("**/*.xml")
   }
 }
-
 
 tasks.withType<Test> {
   useJUnitPlatform()
@@ -154,10 +153,10 @@ tasks.withType<JavaExec> {
     )
 }
 
-i18n4k {
-  commentLocale = "zh-CN"
-  sourceCodeLocales = listOf("en", "zh-CN")
-}
+// i18n4k {
+//  commentLocale = "zh-CN"
+//  sourceCodeLocales = listOf("en", "zh-CN")
+// }
 
 jooq {
   configuration {

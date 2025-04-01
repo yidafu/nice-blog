@@ -114,3 +114,13 @@ internal val DataModal.loginVo: AdminLoginVO
       errorMessage = null,
     )
   }
+
+internal val DataModal.dashboardData: DashboardVO
+  get() {
+    return getValue(DataModal.VO_DATA)?.let {
+      Json.decodeFromJsonElement<DashboardVO>(it)
+    } ?: DashboardVO(
+      articleCount = 0L,
+      accessCount = 0L,
+    )
+  }

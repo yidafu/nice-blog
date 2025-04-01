@@ -11,6 +11,7 @@ object Routes {
   const val PUBLIC_URL = "/public/*"
 
   const val ADMIN_URL = "/admin"
+  const val ADMIN_DASHBOARD_URL = "/admin/dashboard"
   const val CONFIGURATION_URL = "/admin/config"
   const val CONFIG_APPEARANCE_URL = "/admin/config/appearance"
   const val CONFIG_SYNC_URL = "/admin/config/sync"

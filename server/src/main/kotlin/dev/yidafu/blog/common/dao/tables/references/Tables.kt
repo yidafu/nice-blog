@@ -3,12 +3,18 @@
  */
 package dev.yidafu.blog.common.dao.tables.references
 
+import dev.yidafu.blog.common.dao.tables.BAccessLog
 import dev.yidafu.blog.common.dao.tables.BArticle
 import dev.yidafu.blog.common.dao.tables.BArticleHistory
 import dev.yidafu.blog.common.dao.tables.BConfiguration
 import dev.yidafu.blog.common.dao.tables.BSyncTask
 import dev.yidafu.blog.common.dao.tables.BUser
 import dev.yidafu.blog.common.dao.tables.BUserToken
+
+/**
+ * The table <code>B_ACCESS_LOG</code>.
+ */
+val B_ACCESS_LOG: BAccessLog = BAccessLog.B_ACCESS_LOG
 
 /**
  * The table <code>B_ARTICLE</code>.

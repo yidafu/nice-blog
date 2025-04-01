@@ -3,12 +3,14 @@
  */
 package dev.yidafu.blog.common.dao.keys
 
+import dev.yidafu.blog.common.dao.tables.BAccessLog
 import dev.yidafu.blog.common.dao.tables.BArticle
 import dev.yidafu.blog.common.dao.tables.BArticleHistory
 import dev.yidafu.blog.common.dao.tables.BConfiguration
 import dev.yidafu.blog.common.dao.tables.BSyncTask
 import dev.yidafu.blog.common.dao.tables.BUser
 import dev.yidafu.blog.common.dao.tables.BUserToken
+import dev.yidafu.blog.common.dao.tables.records.BAccessLogRecord
 import dev.yidafu.blog.common.dao.tables.records.BArticleHistoryRecord
 import dev.yidafu.blog.common.dao.tables.records.BArticleRecord
 import dev.yidafu.blog.common.dao.tables.records.BConfigurationRecord
@@ -23,6 +25,13 @@ import org.jooq.impl.Internal
 // UNIQUE and PRIMARY KEY definitions
 // -------------------------------------------------------------------------
 
+val CONSTRAINT_1: UniqueKey<BAccessLogRecord> =
+  Internal.createUniqueKey(
+    BAccessLog.B_ACCESS_LOG,
+    DSL.name("CONSTRAINT_1"),
+    arrayOf(BAccessLog.B_ACCESS_LOG.ID),
+    true,
+  )
 val CONSTRAINT_C: UniqueKey<BArticleRecord> =
   Internal.createUniqueKey(
     BArticle.B_ARTICLE,
