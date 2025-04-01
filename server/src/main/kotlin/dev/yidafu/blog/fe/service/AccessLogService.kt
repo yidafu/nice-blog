@@ -28,7 +28,8 @@ class AccessLogService(
     return false
   }
 
-  suspend fun countAll(): Long = runDB {
-    context.selectCount().from(B_ACCESS_LOG).fetchOne(0, Long::class.java) ?: 0
-  }
+  suspend fun countAll(): Long =
+    runDB {
+      context.selectCount().from(B_ACCESS_LOG).fetchOne(0, Long::class.java) ?: 0
+    }
 }

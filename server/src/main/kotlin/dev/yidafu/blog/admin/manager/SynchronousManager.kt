@@ -23,7 +23,7 @@ class SynchronousManager(
   private val koin = getKoin()
 
   @OptIn(ExperimentalUuidApi::class)
-  suspend fun startSync(): String {
+  suspend fun startSync(forceSync: Boolean): String {
     val taskUuid = Uuid.random().toHexString()
     log.info("start synchronous task {}", taskUuid)
 
@@ -32,12 +32,15 @@ class SynchronousManager(
     val count = syncTaskService.getRunningTaskCount()
     // if there is any task running, execute current task after preview task end
     if (count == 0) {
-      executeTask(taskUuid)
+      executeTask(taskUuid, forceSync)
     }
     return taskUuid
   }
 
-  private suspend fun executeTask(taskUuid: String) {
+  private suspend fun executeTask(
+    taskUuid: String,
+    forceSync: Boolean,
+  ) {
     val configs =
       configService.getByKeys(
         listOf(
@@ -50,11 +53,11 @@ class SynchronousManager(
       configs.getByKey(ConfigurationKeys.SOURCE_BRANCH) ?: throw IllegalStateException("Git url can't be null")
     withContext(Dispatchers.IO) {
       val taskScope = koin.createScope(taskUuid, StringQualifier(TaskScope.NAME), TaskScope::class)
-      val config = GitConfig(gitUrl, gitBranch, uuid = taskUuid)
+      val config = GitConfig(gitUrl, gitBranch, uuid = taskUuid, forceSync = forceSync)
       taskScope.declare(config)
       taskScope.declare<Logger>(DBLogger(config, taskScope.get()))
       taskScope.declare<SynchronousListener>(DBSynchronousListener(taskScope.get(), taskScope.get(), taskScope.get()))
-      taskScope.declare<ArticleManager>(DBArticleManager(taskScope.get(), taskScope.get()))
+      taskScope.declare<ArticleManager>(DBArticleManager(taskScope.get(), taskScope.get(), taskScope.get()))
       val syncTask: BaseGitSynchronousTask = taskScope.get<BaseGitSynchronousTask>()
       syncTask.sync()
       taskScope.close()
@@ -62,7 +65,7 @@ class SynchronousManager(
       if (syncTaskService.getRunningTaskCount() > 0) {
         val task = syncTaskService.findLatestRunningTask()
         task.uuid?.let { uuid ->
-          executeTask(uuid)
+          executeTask(uuid, task.forceSync ?: false)
         }
       }
     }

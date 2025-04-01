@@ -18,7 +18,7 @@ class SynchronousJob : Job {
     log.info("execute jobs!")
     CoroutineScope(Dispatchers.IO).launch {
       val synchronousManager = koin.get<SynchronousManager>()
-      synchronousManager.startSync()
+      synchronousManager.startSync(false)
     }
   }
 

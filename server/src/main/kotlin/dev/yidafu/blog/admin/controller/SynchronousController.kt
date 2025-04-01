@@ -76,7 +76,8 @@ class SynchronousController(
 
   @Get(Routes.SYNC_API_START_URL)
   suspend fun startSync(ctx: RoutingContext) {
-    val taskUuid = synchronousManager.startSync()
+    val forceSync = ctx.queryParam("force")?.firstOrNull() == "1"
+    val taskUuid = synchronousManager.startSync(forceSync)
 
     log.info("start synchronous task {}", taskUuid)
     val htmlFragment =

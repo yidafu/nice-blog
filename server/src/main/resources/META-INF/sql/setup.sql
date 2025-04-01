@@ -13,3 +13,6 @@ INSERT OR IGNORE INTO B_CONFIGURATION (id, config_key, config_value) VALUES(7, '
 
 -- admin user  admin, password: admin123
 INSERT OR IGNORE INTO B_USER (id, username, password, email, status) VALUES (1, "admin", "AZICOnu9cyUFFvBp3xi1AA==","", 1);
+
+-- sqlite not support `ALTER TABLE `table` ADD COLUMN IF NOT EXISTS `col_name` INTEGER;
+ALTER TABLE B_SYNC_TASK ADD COLUMN FORCE_SYNC INTEGER DEFAULT 0;

@@ -21,11 +21,26 @@ class AdminSyncOperatePage(modal: DataModal) : AdminSyncPage(modal) {
             border.rounded[LG]
             text.white
             background.blue[I700]
+            margin.right[6]
           }
         attributes["hx-get"] = Routes.SYNC_API_START_URL
         attributes["hx-target"] = "#log-output"
         +AdminTxt.sync_start.toText()
       }
+
+      button {
+        style =
+          kw.inline {
+            padding.x[4].y[3]
+            border.rounded[LG]
+            text.white
+            background.blue[I700]
+          }
+        attributes["hx-get"] = Routes.SYNC_API_START_URL + "?force=1"
+        attributes["hx-target"] = "#log-output"
+        +AdminTxt.sync_force_start.toText()
+      }
+
 
       div {
         style =

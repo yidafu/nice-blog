@@ -31,7 +31,6 @@ dependencies {
   testImplementation("io.kotest:kotest-property:5.9.0")
 }
 
-
 tasks.test {
   useJUnitPlatform()
 }
@@ -44,6 +43,6 @@ ksp {
 }
 
 i18n4k {
-  commentLocale = "zh_CN"
-  sourceCodeLocales = listOf("en", "zh_CN")
+  commentLocale = "zh-CN"
+  sourceCodeLocales = listOf("en", "zh-CN")
 }

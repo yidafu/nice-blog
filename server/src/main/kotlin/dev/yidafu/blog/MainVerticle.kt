@@ -41,8 +41,11 @@ class MainVerticle : CoroutineVerticle(), CoroutineRouterSupport {
         "",
         "",
       )
-    dslContext = jooqContext
 
+    val rs = jooqContext.resultQuery("SELECT sqlite_version()").fetchOne()
+    println("Sqlite Version: " + rs?.get(0))
+
+    dslContext = jooqContext
     val dbConfig =
       DDLExportConfiguration()
         .flags(DDLFlag.TABLE, DDLFlag.PRIMARY_KEY, DDLFlag.UNIQUE, DDLFlag.INDEX, DDLFlag.COMMENT)
@@ -58,7 +61,18 @@ class MainVerticle : CoroutineVerticle(), CoroutineRouterSupport {
     readResource("META-INF/sql/setup.sql")
       .filterNot { it.isBlank() }
       .filterNot { it.startsWith("--") }
-      .forEach { jooqContext.execute(it) }
+      .forEach {
+        try {
+          jooqContext.execute(it)
+        } catch (e: Exception) {
+          // catch `duplicate column name: FORCE_SYNC` error
+          if (e.message?.contains("duplicate column name") == true) {
+            log.warn("ignore sql duplicate column error")
+          } else {
+            log.warn("execute sql error", e)
+          }
+        }
+      }
 
     val koin =
       startKoin {

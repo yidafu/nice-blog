@@ -25,6 +25,7 @@ import java.util.*
 class DBArticleManager(
   private val context: CloseableDSLContext,
   private val logger: Logger,
+  private val config: GitConfig,
 ) : ArticleManager, BaseService(context) {
   override suspend fun needUpdate(
     identifier: String,
@@ -91,8 +92,12 @@ class DBArticleManager(
     val oldArticle = findArticleByName(article.identifier!!)
 
     val md5Hash = hash(article.content ?: "")
-    if (oldArticle?.hash == md5Hash) {
-      return true
+
+    // force update
+    if (!config.forceSync) {
+      if (oldArticle?.hash == md5Hash) {
+        return true
+      }
     }
     article.hash = md5Hash
 

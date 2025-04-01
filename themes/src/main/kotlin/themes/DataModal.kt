@@ -22,9 +22,7 @@ class DataModal(
   }
 
   val locale: Locale by lazy {
-    Locale.forLanguageTag(
-      getValueAsString(COMMON_LOCALE),
-    )
+    Locale.forLanguageTag(getValueAsString(COMMON_LOCALE))
   }
 
   val path: String = getValueAsString(CURRENT_PATH)

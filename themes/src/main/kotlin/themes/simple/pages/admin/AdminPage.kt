@@ -50,6 +50,7 @@ abstract class AdminPage(modal: DataModal) : SimplePage(modal) {
 
   private val linkList =
     listOf(
+      Triple(AdminTxt.dashboard.toText(), Routes.ADMIN_DASHBOARD_URL, currentPath == Routes.ADMIN_DASHBOARD_URL),
 //    Triple(AdminTxt.appearance.toText(), Routes.CONFIG_APPEARANCE_URL, vo.currentPath == Routes.CONFIG_APPEARANCE_URL),
       Triple(
         AdminTxt.article.toText(),

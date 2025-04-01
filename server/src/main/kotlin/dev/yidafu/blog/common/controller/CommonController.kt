@@ -12,6 +12,7 @@ import io.vertx.ext.web.RoutingContext
 import org.koin.core.annotation.Single
 import org.slf4j.LoggerFactory
 import java.util.*
+import kotlin.time.Duration.Companion.days
 
 @Controller
 @Single
@@ -37,7 +38,14 @@ class CommonController(
     val language = ctx.request().getParam("lang")
 
     if (!language.isNullOrBlank()) {
-      ctx.response().addCookie(Cookie.cookie(ConstantKeys.LANGUAGE_COOKIE_KEY, language).setHttpOnly(true))
+      ctx.response()
+        .addCookie(
+          Cookie
+            .cookie(ConstantKeys.LANGUAGE_COOKIE_KEY, language)
+            .setHttpOnly(true)
+            .setPath("/")
+            .setMaxAge(30.days.inWholeSeconds),
+        )
       val uri = ctx.request().uri().replace("lang=$language", "").removeSuffix("?")
       ctx.redirect(uri)
       return

@@ -41,7 +41,7 @@ dependencies {
   implementation("io.vertx:vertx-web:$vertxVersion")
   implementation("io.vertx:vertx-core:$vertxVersion")
   implementation("io.vertx:vertx-jdbc-client:$vertxVersion")
-  implementation("org.xerial:sqlite-jdbc:3.47.1.0")
+  implementation("org.xerial:sqlite-jdbc:3.49.1.0")
   implementation("io.vertx:vertx-lang-kotlin-coroutines:$vertxVersion")
 
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.8.1")
