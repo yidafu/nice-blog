@@ -29,17 +29,21 @@ open class BSyncTaskRecord() : UpdatableRecordImpl<BSyncTaskRecord>(BSyncTask.B_
     set(value): Unit = set(3, value)
     get(): String? = get(3) as String?
 
-  open var logs: String?
+  open var forceSync: Boolean?
     set(value): Unit = set(4, value)
-    get(): String? = get(4) as String?
+    get(): Boolean? = get(4) as Boolean?
+
+  open var logs: String?
+    set(value): Unit = set(5, value)
+    get(): String? = get(5) as String?
 
   open var status: Int?
-    set(value): Unit = set(5, value)
-    get(): Int? = get(5) as Int?
+    set(value): Unit = set(6, value)
+    get(): Int? = get(6) as Int?
 
   open var uuid: String?
-    set(value): Unit = set(6, value)
-    get(): String? = get(6) as String?
+    set(value): Unit = set(7, value)
+    get(): String? = get(7) as String?
 
   // -------------------------------------------------------------------------
   // Primary key information
@@ -55,6 +59,7 @@ open class BSyncTaskRecord() : UpdatableRecordImpl<BSyncTaskRecord>(BSyncTask.B_
     createdAt: LocalDateTime? = null,
     updatedAt: LocalDateTime? = null,
     callbackUrl: String? = null,
+    forceSync: Boolean? = null,
     logs: String? = null,
     status: Int? = null,
     uuid: String? = null,
@@ -63,6 +68,7 @@ open class BSyncTaskRecord() : UpdatableRecordImpl<BSyncTaskRecord>(BSyncTask.B_
     this.createdAt = createdAt
     this.updatedAt = updatedAt
     this.callbackUrl = callbackUrl
+    this.forceSync = forceSync
     this.logs = logs
     this.status = status
     this.uuid = uuid

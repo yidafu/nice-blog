@@ -26,6 +26,8 @@ class SyncTaskModel(
   var status: SyncTaskStatus? = null,
   @Column(columnDefinition = "TEXT DEFAULT ''")
   var logs: String? = "",
+  @Column(name = "force_sync")
+  val forceSync: Boolean? = false,
 ) : BaseModel() {
   companion object {
     const val APPEND_LOG_TEXT = "APPEND_LOG_TEXT"

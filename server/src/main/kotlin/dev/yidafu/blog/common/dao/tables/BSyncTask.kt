@@ -98,6 +98,11 @@ open class BSyncTask(
   val CALLBACK_URL: TableField<BSyncTaskRecord, String?> = createField(DSL.name("CALLBACK_URL"), SQLDataType.VARCHAR(255), this, "")
 
   /**
+   * The column <code>B_SYNC_TASK.FORCE_SYNC</code>.
+   */
+  val FORCE_SYNC: TableField<BSyncTaskRecord, Boolean?> = createField(DSL.name("FORCE_SYNC"), SQLDataType.BOOLEAN, this, "")
+
+  /**
    * The column <code>B_SYNC_TASK.LOGS</code>.
    */
   val LOGS: TableField<BSyncTaskRecord, String?> =
