@@ -39,4 +39,9 @@
     <appender-ref ref="CONSOLE" />
     <appender-ref ref="FILE" />
   </root>
+
+  <logger name="org.jooq.tools.LoggerListener" level="DEBUG">
+    <appender-ref ref="CONSOLE" />
+  </logger>
+
 </configuration>
