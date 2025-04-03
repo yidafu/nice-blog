@@ -1,10 +1,10 @@
 package dev.yidafu.blog.themes.simple.pages.admin.sync
 
 import dev.yidafu.blog.common.Routes
-import dev.yidafu.blog.themes.icons.SyncIcon
-import dev.yidafu.blog.themes.icons.SyncLogIcon
 import dev.yidafu.blog.i18n.AdminTxt
 import dev.yidafu.blog.themes.DataModal
+import dev.yidafu.blog.themes.icons.SyncIcon
+import dev.yidafu.blog.themes.icons.SyncLogIcon
 import dev.yidafu.blog.themes.simple.components.TabOption
 import dev.yidafu.blog.themes.simple.components.tabs
 import dev.yidafu.blog.themes.simple.pages.admin.AdminPage

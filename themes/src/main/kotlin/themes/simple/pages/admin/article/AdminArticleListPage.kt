@@ -1,17 +1,15 @@
 package dev.yidafu.blog.themes.simple.pages.admin.article
 
 import dev.yidafu.blog.common.Routes
-import dev.yidafu.blog.themes.simple.components.Button
 import dev.yidafu.blog.i18n.AdminTxt
 import dev.yidafu.blog.themes.*
+import dev.yidafu.blog.themes.simple.components.Button
 import dev.yidafu.blog.themes.simple.pages.admin.AdminPage
 import io.github.allangomes.kotlinwind.css.*
 import kotlinx.html.*
 
 class AdminArticleListPage(modal: DataModal) : AdminPage(modal) {
   override fun DIV.layoutBlock() {
-
-
     val vo = modal.articlePage
     div {
       style = kw.inline { background.gray[I50] }

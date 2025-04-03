@@ -41,7 +41,6 @@ class AdminSyncOperatePage(modal: DataModal) : AdminSyncPage(modal) {
         +AdminTxt.sync_force_start.toText()
       }
 
-
       div {
         style =
           kw.inline {

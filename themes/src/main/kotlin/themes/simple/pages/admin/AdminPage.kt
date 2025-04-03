@@ -1,14 +1,13 @@
 package dev.yidafu.blog.themes.simple.pages.admin
 
 import dev.yidafu.blog.common.Routes
-import dev.yidafu.blog.themes.simple.components.footerComponent
 import dev.yidafu.blog.i18n.AdminTxt
 import dev.yidafu.blog.themes.DataModal
 import dev.yidafu.blog.themes.icons.*
+import dev.yidafu.blog.themes.simple.components.footerComponent
 import dev.yidafu.blog.themes.simple.pages.SimplePage
 import io.github.allangomes.kotlinwind.css.*
 import kotlinx.html.*
-
 
 fun FlowOrInteractiveOrPhrasingContent.linkItem(
   link: String,
@@ -198,7 +197,8 @@ abstract class AdminPage(modal: DataModal) : SimplePage(modal) {
     }
 
     div("m-auto") {
-      style = kw.inline {
+      style =
+        kw.inline {
           max_width[256]
           padding[6]
           background.white

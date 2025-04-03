@@ -1,9 +1,9 @@
 package dev.yidafu.blog.themes.simple.pages.admin.sync
 
 import dev.yidafu.blog.common.Routes
-import dev.yidafu.blog.themes.simple.components.Button
 import dev.yidafu.blog.i18n.AdminTxt
 import dev.yidafu.blog.themes.*
+import dev.yidafu.blog.themes.simple.components.Button
 import dev.yidafu.blog.themes.syncLogPage
 import io.github.allangomes.kotlinwind.css.*
 import kotlinx.html.*

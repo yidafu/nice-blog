@@ -1,16 +1,15 @@
 package dev.yidafu.blog.themes.simple.pages.front
 
 import dev.yidafu.blog.common.Routes
-import dev.yidafu.blog.themes.simple.components.footerComponent
+import dev.yidafu.blog.themes.DataModal
 import dev.yidafu.blog.themes.icons.Email
 import dev.yidafu.blog.themes.icons.Github
-import dev.yidafu.blog.themes.DataModal
+import dev.yidafu.blog.themes.simple.components.footerComponent
 import dev.yidafu.blog.themes.simple.pages.SimplePage
 import io.github.allangomes.kotlinwind.css.kw
 import kotlinx.html.*
 
 abstract class FrontPage(modal: DataModal) : SimplePage(modal) {
-
   abstract fun MAIN.createContent(): Unit
 
   override val bodyBlock: BODY.() -> Unit = {

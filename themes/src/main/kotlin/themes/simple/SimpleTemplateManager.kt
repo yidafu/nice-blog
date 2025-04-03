@@ -3,11 +3,8 @@ package dev.yidafu.blog.themes.simple
 import com.google.auto.service.AutoService
 import dev.yidafu.blog.themes.BaseTemplateManager
 import dev.yidafu.blog.themes.TemplateManager
-import dev.yidafu.blog.themes.simple.pages.front.AboutMePageProvider
-import dev.yidafu.blog.themes.simple.pages.front.ArticleDetailPageProvider
-import dev.yidafu.blog.themes.simple.pages.front.ArticleListPageProvider
-import dev.yidafu.blog.themes.simple.pages.admin.AdminLoginPageProvider
 import dev.yidafu.blog.themes.simple.pages.admin.AdminDashboardPageProvider
+import dev.yidafu.blog.themes.simple.pages.admin.AdminLoginPageProvider
 import dev.yidafu.blog.themes.simple.pages.admin.article.AdminArticleDetailPageProvider
 import dev.yidafu.blog.themes.simple.pages.admin.article.AdminArticleListPageProvider
 import dev.yidafu.blog.themes.simple.pages.admin.config.AdminConfigAppearancePageProvider
@@ -16,6 +13,9 @@ import dev.yidafu.blog.themes.simple.pages.admin.config.AdminConfigSyncPageProvi
 import dev.yidafu.blog.themes.simple.pages.admin.sync.AdminSyncLogDetailPageProvider
 import dev.yidafu.blog.themes.simple.pages.admin.sync.AdminSyncLogListPageProvider
 import dev.yidafu.blog.themes.simple.pages.admin.sync.AdminSyncOperatePageProvider
+import dev.yidafu.blog.themes.simple.pages.front.AboutMePageProvider
+import dev.yidafu.blog.themes.simple.pages.front.ArticleDetailPageProvider
+import dev.yidafu.blog.themes.simple.pages.front.ArticleListPageProvider
 
 @AutoService(TemplateManager::class)
 class SimpleTemplateManager : BaseTemplateManager() {

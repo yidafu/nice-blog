@@ -9,7 +9,7 @@ import kotlinx.html.h1
 
 class AboutMePage(modal: DataModal) : FrontPage(modal) {
   override fun MAIN.createContent() {
-    h1 { + "About Me" }
+    h1 { +"About Me" }
   }
 }
 
