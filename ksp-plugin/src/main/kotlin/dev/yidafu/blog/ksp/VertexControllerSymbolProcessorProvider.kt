@@ -53,58 +53,62 @@ class VertexControllerSymbolProcessor(private val environment: SymbolProcessorEn
   private val controllerInfoList = mutableListOf<ControllerInfo>()
 
   override fun process(resolver: Resolver): List<KSAnnotated> {
-    val infoList = resolver
-      .getSymbolsWithAnnotation(Controller::class.qualifiedName!!)
-      .filterIsInstance<KSClassDeclaration>()
-      .map { symbol ->
-        val rootPath =
-          symbol.annotations.firstOrNull { a ->
+    val infoList =
+      resolver
+        .getSymbolsWithAnnotation(Controller::class.qualifiedName!!)
+        .filterIsInstance<KSClassDeclaration>()
+        .map { symbol ->
+          val rootPath =
+            symbol.annotations.firstOrNull { a ->
 //            logger.warn("@Controller annotation 1 ${a.shortName.asString()} ${Controller::class.simpleName}")
 
-            a.shortName.asString() == Controller::class.simpleName
-          }?.arguments?.firstOrNull()?.value as String?
-        val packageName = symbol.packageName.asString()
-        val className = symbol.simpleName.asString()
+              a.shortName.asString() == Controller::class.simpleName
+            }?.arguments?.firstOrNull()?.value as String?
+          val packageName = symbol.packageName.asString()
+          val className = symbol.simpleName.asString()
 //        logger.warn("@Controller annotation package $packageName class name $className")
 
-        val methodList = symbol.getAllFunctions().map { func ->
-          func.annotations.filter {
-            it.shortName.getShortName() in listOf(
-              Get::class.simpleName,
-              Post::class.simpleName,
-              Put::class.simpleName,
-              Delete::class.simpleName,
-              Any::class.simpleName
-            )
-          }.map { methodAnnotation ->
-            val path = methodAnnotation.arguments.firstOrNull()?.value as String?
-            val method = when (methodAnnotation.shortName.getShortName()) {
-              Get::class.simpleName -> HttpMethod.GET
-              Post::class.simpleName -> HttpMethod.POST
-              Put::class.simpleName -> HttpMethod.PUT
-              Delete::class.simpleName -> HttpMethod.DELETE
-              Any::class.simpleName -> HttpMethod.ANY
-              else -> throw IllegalArgumentException("unknown method")
-            }
+          val methodList =
+            symbol.getAllFunctions().map { func ->
+              func.annotations.filter {
+                it.shortName.getShortName() in
+                  listOf(
+                    Get::class.simpleName,
+                    Post::class.simpleName,
+                    Put::class.simpleName,
+                    Delete::class.simpleName,
+                    Any::class.simpleName,
+                  )
+              }.map { methodAnnotation ->
+                val path = methodAnnotation.arguments.firstOrNull()?.value as String?
+                val method =
+                  when (methodAnnotation.shortName.getShortName()) {
+                    Get::class.simpleName -> HttpMethod.GET
+                    Post::class.simpleName -> HttpMethod.POST
+                    Put::class.simpleName -> HttpMethod.PUT
+                    Delete::class.simpleName -> HttpMethod.DELETE
+                    Any::class.simpleName -> HttpMethod.ANY
+                    else -> throw IllegalArgumentException("unknown method")
+                  }
 //            logger.warn("Method annotation function $method=>$path ${func.simpleName.getShortName()}")
 
-            MethodInfo(
-              method,
-              path ?: "",
-              func.simpleName.asString(),
-              func.modifiers.contains(Modifier.SUSPEND)
-            )
-          }
-        }.flatten().toList()
+                MethodInfo(
+                  method,
+                  path ?: "",
+                  func.simpleName.asString(),
+                  func.modifiers.contains(Modifier.SUSPEND),
+                )
+              }
+            }.flatten().toList()
 //        logger.warn("controller info $rootPath $className ${methodList.size}")
 
-        ControllerInfo(
-          rootPath ?: "/",
-          packageName,
-          className,
-          methodList
-        )
-      }.toList()
+          ControllerInfo(
+            rootPath ?: "/",
+            packageName,
+            className,
+            methodList,
+          )
+        }.toList()
 
     controllerInfoList.addAll(infoList)
 
@@ -126,25 +130,25 @@ class VertexControllerSymbolProcessor(private val environment: SymbolProcessorEn
     buildRootRouteMapFile(controllerInfoList)
   }
 
-
   private fun buildControllerGroupMap(
     className: ClassName,
     funName: String,
     ctrlInfoList: List<ControllerInfo>,
   ) {
-    val fileSpec = FileSpec.builder(className)
-      .addFunction(
-        FunSpec.builder(funName)
-          .receiver(CoroutineRouterSupportType)
-          .apply {
-            addParameter(RouterParameterType)
-            ctrlInfoList.forEach { info ->
-              val routerMapFunctionMember = ClassName(info.packageName, info.routeMapFunctionName)
-              addStatement("%T(%N)", routerMapFunctionMember, RouterParameterType)
+    val fileSpec =
+      FileSpec.builder(className)
+        .addFunction(
+          FunSpec.builder(funName)
+            .receiver(CoroutineRouterSupportType)
+            .apply {
+              addParameter(RouterParameterType)
+              ctrlInfoList.forEach { info ->
+                val routerMapFunctionMember = ClassName(info.packageName, info.routeMapFunctionName)
+                addStatement("%T(%N)", routerMapFunctionMember, RouterParameterType)
+              }
             }
-          }
-          .build()
-      ).build()
+            .build(),
+        ).build()
 
     fileSpec.writeTo(environment.codeGenerator, false)
   }
@@ -157,49 +161,53 @@ class VertexControllerSymbolProcessor(private val environment: SymbolProcessorEn
     val className = ClassName(controllerInfo.packageName, controllerInfo.className)
 
     val routeMapClassName = ClassName(controllerInfo.packageName, controllerInfo.routeMapClassName)
-    val fileSpec = FileSpec
-      .builder(routeMapClassName)
-      .addFunction(
-        FunSpec.builder(controllerInfo.routeMapFunctionName)
-          .receiver(CoroutineRouterSupportType)
-          .apply {
-            addParameter(RouterParameterType)
-            addStatement("val koin = %T.get()", GlobalContextType)
-            addStatement("val controller = koin.get<%T>()", className)
-            controllerInfo.paths.forEach { method ->
-              addCode(buildRouteStatement(className, method))
+    val fileSpec =
+      FileSpec
+        .builder(routeMapClassName)
+        .addFunction(
+          FunSpec.builder(controllerInfo.routeMapFunctionName)
+            .receiver(CoroutineRouterSupportType)
+            .apply {
+              addParameter(RouterParameterType)
+              addStatement("val koin = %T.get()", GlobalContextType)
+              addStatement("val controller = koin.get<%T>()", className)
+              controllerInfo.paths.forEach { method ->
+                addCode(buildRouteStatement(className, method))
+              }
             }
-          }
-          .build()
-      ).build()
+            .build(),
+        ).build()
 
     fileSpec.writeTo(environment.codeGenerator, false)
   }
 
-  private fun buildRouteStatement(className: ClassName, method: MethodInfo): CodeBlock {
-
+  private fun buildRouteStatement(
+    className: ClassName,
+    method: MethodInfo,
+  ): CodeBlock {
 //    logger.warn("build method $method")
     val codeBlock = CodeBlock.builder()
 
-    val methodMember = when (method.method) {
-      HttpMethod.GET -> {
-        RouterType.member("get")
-      }
+    val methodMember =
+      when (method.method) {
+        HttpMethod.GET -> {
+          RouterType.member("get")
+        }
 
-      HttpMethod.POST -> {
-        RouterType.member("post")
-      }
+        HttpMethod.POST -> {
+          RouterType.member("post")
+        }
 
-      HttpMethod.PUT -> {
-        RouterType.member("put")
-      }
+        HttpMethod.PUT -> {
+          RouterType.member("put")
+        }
 
-      HttpMethod.DELETE -> {
-        RouterType.member("delete")
-      }
+        HttpMethod.DELETE -> {
+          RouterType.member("delete")
+        }
 
-      HttpMethod.ANY -> RouterType.member("route")
-    }
+        HttpMethod.ANY -> RouterType.member("route")
+      }
 
     codeBlock.add("router.%N", methodMember)
 
@@ -213,11 +221,11 @@ class VertexControllerSymbolProcessor(private val environment: SymbolProcessorEn
 
     if (method.isSuspend) {
       codeBlock.add(
-        ".%N(requestHandler = %N::%N)", RouterType.member("coHandler"),
+        ".%N(requestHandler = %N::%N)",
+        RouterType.member("coHandler"),
         "controller",
         handlerFunction,
       )
-
     } else {
       codeBlock.add(
         ".%N(%N::%N)",

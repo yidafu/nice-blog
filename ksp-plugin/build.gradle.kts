@@ -19,7 +19,6 @@ dependencies {
   implementation("com.squareup:kotlinpoet-ksp:2.1.0")
 
   testImplementation(kotlin("test"))
-
 }
 
 tasks.test {

@@ -7,7 +7,6 @@ annotation class Get(
   val path: String = "",
 )
 
-
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.SOURCE)
 @Repeatable
