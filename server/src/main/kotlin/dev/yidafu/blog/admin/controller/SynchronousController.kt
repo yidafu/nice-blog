@@ -12,11 +12,11 @@ import dev.yidafu.blog.common.services.ConfigurationService
 import dev.yidafu.blog.common.sse.SseModel
 import dev.yidafu.blog.common.vo.AdminSynchronousVO
 import dev.yidafu.blog.common.vo.PaginationVO
+import dev.yidafu.blog.engine.md.CustomCodeHighlight
 import dev.yidafu.blog.ksp.annotation.Controller
 import dev.yidafu.blog.ksp.annotation.Get
 import dev.yidafu.blog.themes.PageNames
 import io.github.allangomes.kotlinwind.css.I300
-import io.github.allangomes.kotlinwind.css.I50
 import io.github.allangomes.kotlinwind.css.LG
 import io.github.allangomes.kotlinwind.css.kw
 import io.vertx.ext.web.RoutingContext
@@ -25,7 +25,6 @@ import kotlinx.html.div
 import kotlinx.html.stream.appendHTML
 import kotlinx.html.style
 import org.koin.core.annotation.Single
-import org.koin.java.KoinJavaComponent.getKoin
 import org.mapstruct.factory.Mappers
 import org.slf4j.LoggerFactory
 
@@ -42,7 +41,6 @@ class SynchronousController(
   private val logEndEvent = "logEnd"
 
   private val syncTaskConvertor = Mappers.getMapper(SyncTaskConvertor::class.java)
-  private val koin = getKoin()
 
   @Get(Routes.SYNC_URL)
   suspend fun syncPage(ctx: RoutingContext) {
@@ -66,7 +64,13 @@ class SynchronousController(
     val log = syncTaskService.getSyncLog(uuid)
 
     val vo = syncTaskConvertor.toVO(log)
-    ctx.render(PageNames.ADMIN_CONFIG_SYNC_LOG_DETAIL_PAGE, vo)
+
+    ctx.render(
+      PageNames.ADMIN_CONFIG_SYNC_LOG_DETAIL_PAGE,
+      vo.copy(
+        logs = CustomCodeHighlight.generateCodeHighlight(vo.logs, "log"),
+      ),
+    )
   }
 
   @Get(Routes.SYNC_OPERATE_URL)
@@ -81,10 +85,9 @@ class SynchronousController(
     log.info("start synchronous task {}", taskUuid)
     val htmlFragment =
       buildString {
-        appendHTML().div {
+        appendHTML().div("log-content") {
           style =
             kw.inline {
-              background.gray[I50]
               padding[4]
               border.rounded[LG]
               border.gray[I300]
@@ -122,7 +125,7 @@ class SynchronousController(
 //    response.headers().add("Access-Control-Allow-Origin", "*")
     var previewLog = ""
 
-    // max connection time 10 minutes
+    // max connection time 5 minutes
     repeat(60 * 10) {
       val log = syncTaskService.getSyncLog(uuid)
 
@@ -162,7 +165,7 @@ class SynchronousController(
           }
         }
       }
-      delay(1000)
+      delay(500)
     }
   }
 }

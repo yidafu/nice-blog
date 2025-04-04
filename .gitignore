@@ -193,3 +193,4 @@ server/upload/
 server/nice-blog.db
 
 *.html
+server/backup/

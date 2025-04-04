@@ -8,11 +8,6 @@ import java.io.File
 import java.net.URI
 
 interface ArticleManager {
-  suspend fun needUpdate(
-    identifier: String,
-    rawContent: String,
-  ): Boolean
-
   fun processImage(file: File): URI
 
   suspend fun saveArticle(articleDTO: CommonArticleDTO)
@@ -21,13 +16,6 @@ interface ArticleManager {
 @Scope(name = NAME)
 @Scoped
 open class DefaultArticleManager : ArticleManager {
-  override suspend fun needUpdate(
-    identifier: String,
-    rawContent: String,
-  ): Boolean {
-    return true
-  }
-
   override fun processImage(file: File): URI {
     return file.toURI()
   }

@@ -7,7 +7,6 @@ import org.intellij.markdown.ast.findChildOfType
 import org.intellij.markdown.ast.getTextInNode
 import org.intellij.markdown.html.GeneratingProvider
 import org.intellij.markdown.html.HtmlGenerator
-import org.slf4j.LoggerFactory
 import java.io.File
 
 class ImageGeneratingProvider(
@@ -15,8 +14,6 @@ class ImageGeneratingProvider(
   private val logger: Logger,
   val resolvePath: (path: String) -> File,
 ) : GeneratingProvider {
-  private val log = LoggerFactory.getLogger(ImageGeneratingProvider::class.java)
-
   override fun processNode(
     visitor: HtmlGenerator.HtmlGeneratingVisitor,
     text: String,
@@ -27,8 +24,6 @@ class ImageGeneratingProvider(
         node.findChildOfType(MarkdownElementTypes.INLINE_LINK)?.let { linKNode ->
           val linkUrl = linKNode.findChildOfType(MarkdownElementTypes.LINK_DESTINATION)?.getTextInNode(text)
           val label = linKNode.findChildOfType(MarkdownElementTypes.LINK_TEXT)?.getTextInNode(text)
-//          val link = MLink(linkUrl.toString(), label.toString())
-          logger.logSync("[Markdown] linking node => $label -- $linkUrl")
           val remoteUrl = articleManager.processImage(resolvePath(linkUrl.toString()))
           visitor.consumeHtml("<img src='$remoteUrl' alt='$label' />")
         }

@@ -64,12 +64,14 @@ class AdminLoginPage(modal: DataModal) : SimplePage(modal) {
           id = loginFrom
           action = Routes.LOGIN_URL
           method = FormMethod.post
-          formItem(FormItem(
-            FormKeys.REDIRECT_URL,
-            "",
-            vo.redirectUrl ?: "",
-            InputType.hidden,
-          ))
+          formItem(
+            FormItem(
+              FormKeys.REDIRECT_URL,
+              "",
+              vo.redirectUrl ?: "",
+              InputType.hidden,
+            ),
+          )
           getOptions().forEach { opt ->
             formItem(opt)
           }
@@ -112,7 +114,6 @@ class AdminLoginPage(modal: DataModal) : SimplePage(modal) {
         AdminTxt.password_placeholder.toText(),
         true,
       ),
-
     )
 }
 

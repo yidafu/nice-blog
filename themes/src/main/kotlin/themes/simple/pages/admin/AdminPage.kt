@@ -1,14 +1,14 @@
 package dev.yidafu.blog.themes.simple.pages.admin
 
 import dev.yidafu.blog.common.Routes
-import dev.yidafu.blog.themes.simple.components.footerComponent
 import dev.yidafu.blog.i18n.AdminTxt
 import dev.yidafu.blog.themes.DataModal
 import dev.yidafu.blog.themes.icons.*
+import dev.yidafu.blog.themes.simple.components.footerComponent
 import dev.yidafu.blog.themes.simple.pages.SimplePage
 import io.github.allangomes.kotlinwind.css.*
+import kotlinx.css.*
 import kotlinx.html.*
-
 
 fun FlowOrInteractiveOrPhrasingContent.linkItem(
   link: String,
@@ -70,6 +70,24 @@ abstract class AdminPage(modal: DataModal) : SimplePage(modal) {
     }
     script {
       src = "/public/htmx-ext-sse.js"
+    }
+    style {
+      +CssBuilder().apply {
+        ".log-content" {
+          fontFamily =
+            """
+            "Fira Code"
+             "JetBrains Mono",
+             Monaco,
+             Consolas,
+             "Ubuntu Mono",
+             monospace;
+            """.trimIndent()
+          color = Color("#66ff00")
+          overflowWrap = OverflowWrap.breakWord
+          backgroundColor = Color("#141414")
+        }
+      }.toString()
     }
   }
 
@@ -197,7 +215,8 @@ abstract class AdminPage(modal: DataModal) : SimplePage(modal) {
     }
 
     div("m-auto") {
-      style = kw.inline {
+      style =
+        kw.inline {
           max_width[256]
           padding[6]
           background.white

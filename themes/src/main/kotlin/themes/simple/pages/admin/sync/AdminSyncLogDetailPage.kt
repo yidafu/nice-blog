@@ -4,25 +4,22 @@ import dev.yidafu.blog.themes.*
 import dev.yidafu.blog.themes.syncTask
 import io.github.allangomes.kotlinwind.css.I50
 import io.github.allangomes.kotlinwind.css.kw
-import kotlinx.html.DIV
-import kotlinx.html.div
-import kotlinx.html.pre
-import kotlinx.html.style
+import kotlinx.html.*
 
 class AdminSyncLogDetailPage(modal: DataModal) : AdminSyncPage(modal) {
   override fun DIV.createContent() {
     val syncTask = modal.syncTask
-    div {
+    div("log-content") {
       style =
         kw.inline {
-          padding[2]
+          padding[4]
           border.rounded[8]
-          background.gray[I50]
+          width[180]
         }
-      pre {
-        style = "text-wrap: auto;"
-        +syncTask.logs
-      }
+
+        unsafe {
+          + syncTask.logs
+        }
     }
   }
 }

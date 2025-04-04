@@ -39,8 +39,8 @@ class SyncTaskService(
           .fetchCount(B_SYNC_TASK)
       val taskRecords =
         context.selectFrom(B_SYNC_TASK)
-          .limit(query.size)
-          .offset(query.offset)
+          .orderBy(B_SYNC_TASK.CREATED_AT.desc())
+          .limit(query.offset, query.size)
           .fetchArray()
       val list = syncTaskConvertor.recordToModal(taskRecords.toList())
 

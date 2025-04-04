@@ -46,7 +46,8 @@ class ArticleService(
       articleConvertor.recordToModal(record)
     }
 
-  suspend fun countAll() = runDB {
-    context.selectCount().from(B_ARTICLE).fetchOne(0, Long::class.java) ?: 0
-  }
+  suspend fun countAll() =
+    runDB {
+      context.selectCount().from(B_ARTICLE).fetchOne(0, Long::class.java) ?: 0
+    }
 }
