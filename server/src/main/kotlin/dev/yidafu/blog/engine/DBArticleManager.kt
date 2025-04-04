@@ -20,17 +20,29 @@ import java.io.FileInputStream
 import java.net.URI
 import java.nio.file.Files
 import java.nio.file.Paths
+import java.security.MessageDigest
 import java.util.*
 
 class DBArticleManager(
   private val context: CloseableDSLContext,
   private val logger: Logger,
 ) : ArticleManager, BaseService(context) {
-  override suspend fun needUpdate(
-    identifier: String,
-    rawContent: String,
-  ): Boolean {
-    return true
+  @OptIn(ExperimentalStdlibApi::class)
+  fun File.calculateHashSafe(algorithm: String): String {
+    return try {
+      val digest = MessageDigest.getInstance(algorithm)
+      FileInputStream(this).use { inputStream ->
+        val buffer = ByteArray(8192)
+        var bytesRead: Int
+        while (inputStream.read(buffer).also { bytesRead = it } != -1) {
+          digest.update(buffer, 0, bytesRead)
+        }
+      }
+      digest.digest().toHexString()
+    } catch (e: Exception) {
+//      e.printStackTrace()
+      UUID.randomUUID().toString()
+    }
   }
 
   override fun processImage(file: File): URI {
@@ -43,11 +55,15 @@ class DBArticleManager(
     if (!directory.exists()) {
       directory.mkdirs()
     }
-    val newFilename = UUID.randomUUID().toString() + "." + file.extension
+    val newFilename = file.calculateHashSafe("MD5") + "." + file.extension
     val newFilePath = Paths.get(directory.path, newFilename)
-//    logger.log("copy file ${file.toPath()} to $newFilePath")
-    FileInputStream(file).use { stream ->
-      Files.copy(stream, newFilePath)
+    if (!newFilePath.toFile().exists()) {
+      logger.logSync("[Image] copy ${file.absolutePath} to $newFilePath")
+      FileInputStream(file).use { stream ->
+        Files.copy(stream, newFilePath)
+      }
+    } else {
+      logger.logSync("[Image] file: $newFilePath  already exist!")
     }
     return URI.create(Routes.UPLOAD_URL.replace("*", newFilename))
   }
@@ -84,7 +100,7 @@ class DBArticleManager(
 
   private val articleConvertor = Mappers.getMapper(ArticleConvertor::class.java)
 
-  suspend fun saveArticle(article: ArticleModel): Boolean {
+  private suspend fun saveArticle(article: ArticleModel): Boolean {
     if (article.identifier == null) {
       return false
     }

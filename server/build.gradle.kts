@@ -82,6 +82,9 @@ dependencies {
   implementation("io.insert-koin:koin-core")
   implementation("io.insert-koin:koin-annotations:$koinAnnotationsVersion")
   ksp("io.insert-koin:koin-ksp-compiler:$koinAnnotationsVersion")
+  implementation("io.insert-koin:koin-test:$koinVersion")
+  implementation("io.insert-koin:koin-test-junit4:$koinVersion")
+
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
 
   implementation("org.jetbrains:markdown:0.7.3")
@@ -99,6 +102,8 @@ dependencies {
   implementation(project(":ksp-plugin"))
   ksp(project(":ksp-plugin"))
 
+  implementation("org.apache.commons:commons-compress:1.26.0")
+
   implementation("org.jooq:jooq:3.19.16")
 
   jooqCodegen("org.jooq:jooq-meta-extensions-hibernate:3.19.17")
@@ -110,6 +115,7 @@ dependencies {
   testImplementation("io.kotest:kotest-runner-junit5:5.9.0")
   testImplementation("io.kotest:kotest-assertions-core:5.9.0")
   testImplementation("io.kotest:kotest-property:5.9.0")
+  testImplementation("io.kotest.extensions:kotest-extensions-koin:1.3.0")
 }
 
 kapt {

@@ -9,4 +9,6 @@ object ConfigurationKeys {
   internal const val SOURCE_URL = "data_source.url"
   internal const val SOURCE_TOKEN = "data_source.token"
   internal const val SOURCE_BRANCH = "data_source.branch"
+
+  internal const val BACKUP_ROOT_DIR = "backup.root_dir"
 }
