@@ -12,4 +12,5 @@ object FormKeys {
   const val PASSWORD = "password"
   const val SUBMIT = "submit"
   const val PUBLIC_KEY = "public_key"
+  const val REDIRECT_URL = "redirectUrl"
 }

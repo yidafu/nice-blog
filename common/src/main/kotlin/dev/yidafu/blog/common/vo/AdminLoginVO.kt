@@ -6,4 +6,5 @@ import kotlinx.serialization.Serializable
 class AdminLoginVO(
   val publicKey: String,
   val errorMessage: String? = null,
+  val redirectUrl: String? = null,
 )

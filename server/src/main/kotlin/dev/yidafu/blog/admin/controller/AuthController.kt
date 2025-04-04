@@ -16,11 +16,14 @@ import dev.yidafu.blog.common.services.ConfigurationService
 import dev.yidafu.blog.common.services.UserService
 import dev.yidafu.blog.common.vo.AdminLoginVO
 import dev.yidafu.blog.i18n.AdminTxt
+import dev.yidafu.blog.ksp.annotation.Any
 import dev.yidafu.blog.ksp.annotation.Controller
 import dev.yidafu.blog.ksp.annotation.Get
 import dev.yidafu.blog.ksp.annotation.Post
 import dev.yidafu.blog.themes.PageNames
+import io.vertx.core.net.impl.URIDecoder
 import io.vertx.ext.web.RoutingContext
+import org.intellij.markdown.html.urlEncode
 import org.koin.core.annotation.Single
 import org.slf4j.LoggerFactory
 import java.util.*
@@ -85,11 +88,10 @@ class AuthController(
 
   @Get(Routes.LOGIN_URL)
   suspend fun loginPage(ctx: RoutingContext) {
-    log.info("render login page")
-
     val local = ctx.get<Locale>(ConstantKeys.LANGUAGE_CONTEXT)
     val publicKEy = ctx.session().get<String>(AUTH_RSA_PUBLIC_KEY)
     val errorCode = ctx.queryParam("errorCode").firstOrNull()
+    val redirectUrl = ctx.queryParam(FormKeys.REDIRECT_URL).firstOrNull()
     val errorMessage =
       errorCode?.toInt().let { code ->
         errorList.find { e -> e.code == code }
@@ -99,6 +101,7 @@ class AuthController(
       AdminLoginVO(
         publicKEy.toString(),
         errorMessage,
+        redirectUrl,
       )
     log.info("render login page")
     ctx.render(PageNames.ADMIN_LOGIN, vo)
@@ -117,6 +120,7 @@ class AuthController(
     session.remove<String>(AUTH_RSA_PRIVATE_KEY)
     session.remove<String>(AUTH_RSA_PUBLIC_KEY)
 
+    val redirectUrl = body.get(FormKeys.REDIRECT_URL)
     // check account is locked?
     cache.get(userName)?.let { count ->
       log.info("login retry count $count")
@@ -153,7 +157,7 @@ class AuthController(
 
     log.info("login user {}, password {}", userName, passwordText)
     session.put(AUTH_CURRENT_USERNAME, userModal.username)
-    ctx.redirect(Routes.ADMIN_URL)
+    ctx.redirect(if (redirectUrl?.isNotEmpty() == true) URIDecoder.decodeURIComponent(redirectUrl) else Routes.ADMIN_URL)
   }
 
   @Get(Routes.LOGOUT_URL)
@@ -169,12 +173,13 @@ class AuthController(
     ctx.redirect(Routes.LOGIN_URL + "?errorCode=${err.code}")
   }
 
-  @Get(Routes.ADMIN_URL + "/*")
+  @Any(Routes.ADMIN_URL + "/*")
   suspend fun checkLoginAction(ctx: RoutingContext) {
     val username = ctx.session().get<String>(AUTH_CURRENT_USERNAME)
     if (username == null) {
       ctx.session().destroy()
-      ctx.redirect(Routes.LOGIN_URL)
+      val redirectUrl = ctx.request().uri()
+      ctx.redirect(Routes.LOGIN_URL + "?${FormKeys.REDIRECT_URL}=${urlEncode(redirectUrl)}")
     } else {
       ctx.next()
     }
