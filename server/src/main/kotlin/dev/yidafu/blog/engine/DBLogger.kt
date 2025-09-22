@@ -1,13 +1,15 @@
 package dev.yidafu.blog.engine
 
-import dev.yidafu.blog.common.dao.tables.references.B_SYNC_TASK
+import dev.yidafu.blog.common.db.dao.SyncTaskEntity
+import dev.yidafu.blog.common.db.tables.SyncTaskTable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
-import org.jooq.CloseableDSLContext
-import org.jooq.impl.DSL.concat
+import kotlinx.coroutines.withContext
+import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import org.koin.core.annotation.Scope
 import org.koin.core.annotation.Scoped
 import org.slf4j.LoggerFactory
@@ -16,7 +18,6 @@ import org.slf4j.LoggerFactory
 @Scoped
 class DBLogger(
   config: GitConfig,
-  private val context: CloseableDSLContext,
 ) : Logger(config) {
   private val log = LoggerFactory.getLogger(DBLogger::class.java)
   private val flow = MutableSharedFlow<String>(5, 100, BufferOverflow.SUSPEND)
@@ -24,11 +25,14 @@ class DBLogger(
   init {
     CoroutineScope(Dispatchers.IO).launch {
       flow.collect {
-        val res =
-          context.update(B_SYNC_TASK).set(
-            B_SYNC_TASK.LOGS,
-            concat(B_SYNC_TASK.LOGS, it + "\n"),
-          ).where(B_SYNC_TASK.UUID.eq(taskId)).execute()
+        withContext(Dispatchers.IO) {
+          transaction {
+            val task = SyncTaskEntity.find { SyncTaskTable.uuid eq taskId }.singleOrNull()
+            if (task != null) {
+              task.logs = "${task.logs}$it\n"
+            }
+          }
+        }
       }
     }
   }

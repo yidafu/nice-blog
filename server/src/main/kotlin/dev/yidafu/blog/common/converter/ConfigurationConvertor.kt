@@ -1,17 +1,16 @@
 package dev.yidafu.blog.common.converter
 
-import dev.yidafu.blog.common.dao.tables.records.BConfigurationRecord
-import dev.yidafu.blog.common.dto.ConfigurationDTO
+import dev.yidafu.blog.common.db.dao.ConfigurationEntity
 import dev.yidafu.blog.common.modal.ConfigurationModal
 import org.mapstruct.Mapper
+import org.mapstruct.Mapping
+import org.mapstruct.Mappings
 
 @Mapper
 interface ConfigurationConvertor {
-  fun toModal(dto: ConfigurationDTO): ConfigurationModal
+  @Mappings(value = [Mapping(source = "TId", target = "id")])
+  fun toModal(data: ConfigurationEntity): ConfigurationModal
 
-  fun toModal(dotList: List<ConfigurationDTO>): List<ConfigurationModal>
-
-  fun recordToModal(recordList: List<BConfigurationRecord>): List<ConfigurationModal>
-
-  fun recordToModal(record: BConfigurationRecord?): ConfigurationModal
+  @Mappings(value = [Mapping(source = "TId", target = "id")])
+  fun toModalList(dotList: List<ConfigurationEntity>): List<ConfigurationModal>
 }

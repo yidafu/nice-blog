@@ -1,121 +1,43 @@
 package dev.yidafu.blog
 
 import dev.yidafu.blog.admin.AdminVerticle
-import dev.yidafu.blog.admin.controller.AdminControllerModule
-import dev.yidafu.blog.admin.manager.SynchronousManager
-import dev.yidafu.blog.admin.services.AdminServiceModule
-import dev.yidafu.blog.common.TemplateManagerLoader
-import dev.yidafu.blog.common.controller.CommonControllerModule
-import dev.yidafu.blog.common.dao.DefaultSchema
-import dev.yidafu.blog.common.services.CommonServiceModule
-import dev.yidafu.blog.engine.*
+import dev.yidafu.blog.common.db.ExposedDatabase
+import dev.yidafu.blog.common.services.ExposedBaseService
 import dev.yidafu.blog.fe.FrontendVerticle
-import dev.yidafu.blog.fe.controller.FeControllerModule
-import dev.yidafu.blog.fe.service.FeServiceModule
-import io.vertx.kotlin.coroutines.CoroutineRouterSupport
-import io.vertx.kotlin.coroutines.CoroutineVerticle
-import org.jooq.CloseableDSLContext
-import org.jooq.DDLExportConfiguration
-import org.jooq.DDLFlag
-import org.jooq.impl.DSL
-import org.koin.core.context.startKoin
+import io.vertx.core.AbstractVerticle
+import io.vertx.core.Promise
+import org.koin.core.context.GlobalContext.startKoin
 import org.koin.dsl.module
-import org.koin.ksp.generated.module
 import org.slf4j.LoggerFactory
 
-class MainVerticle : CoroutineVerticle(), CoroutineRouterSupport {
+class MainVerticle : AbstractVerticle() {
   private val log = LoggerFactory.getLogger(MainVerticle::class.java)
-  private val developmentIdList = mutableListOf<String>()
-  private lateinit var dslContext: CloseableDSLContext
 
-  private fun readResource(filename: String): List<String> {
-    return MainVerticle::class.java.classLoader
-      .getResourceAsStream(filename)
-      ?.bufferedReader()?.lines()?.toList() ?: emptyList()
-  }
+  override fun start(startPromise: Promise<Void>) {
+    // 初始化Koin
+    val module =
+      module {
+        // 初始化Exposed数据库
+        single { ExposedBaseService::class.java }
 
-  override suspend fun start() {
-    val jooqContext: CloseableDSLContext =
-      DSL.using(
-        "jdbc:sqlite:./nice-blog.db",
-        "",
-        "",
-      )
-
-    val rs = jooqContext.resultQuery("SELECT sqlite_version()").fetchOne()
-    println("Sqlite Version: " + rs?.get(0))
-
-    dslContext = jooqContext
-    val dbConfig =
-      DDLExportConfiguration()
-        .flags(DDLFlag.TABLE, DDLFlag.PRIMARY_KEY, DDLFlag.UNIQUE, DDLFlag.INDEX, DDLFlag.COMMENT)
-        .createTableIfNotExists(true)
-        .createSchemaIfNotExists(true)
-        .createSequenceIfNotExists(true)
-
-    jooqContext.ddl(DefaultSchema.DEFAULT_SCHEMA, dbConfig)
-      .queries()
-      .forEach { query -> query.execute() }
-
-    log.info("execute setup sql")
-    readResource("META-INF/sql/setup.sql")
-      .filterNot { it.isBlank() }
-      .filterNot { it.startsWith("--") }
-      .forEach {
-        try {
-          jooqContext.execute(it)
-        } catch (e: Exception) {
-          // catch `duplicate column name: FORCE_SYNC` error
-          if (e.message?.contains("duplicate column name") == true) {
-            log.warn("ignore sql duplicate column error")
-          } else {
-            log.warn("execute sql error", e)
-          }
-        }
+        // 扫描所有服务类并注入
+//        scan("dev.yidafu.blog")
       }
 
-    val koin =
-      startKoin {
-        printLogger()
-
-        val jooqModule =
-          module {
-            factory<CloseableDSLContext> { jooqContext }
-            single<SynchronousManager> {
-              SynchronousManager(get(), get())
-            }
-          }
-
-        modules(
-          jooqModule,
-          CommonServiceModule().module,
-          FeServiceModule().module,
-          AdminServiceModule().module,
-          CommonControllerModule().module,
-          FeControllerModule().module,
-          AdminControllerModule().module,
-          EngineModule().module,
-        )
-      }
-    TemplateManagerLoader.load()
-
-    log.info("start FrontendVerticle")
-    vertx.deployVerticle(FrontendVerticle(koin.koin)).andThen { res ->
-      log.info("start AdminVerticle")
-      developmentIdList.add(res.result())
+    startKoin {
+      modules(module)
     }
 
-    log.info("start AdminVerticle")
-    vertx.deployVerticle(AdminVerticle(koin.koin)).andThen { res ->
-      developmentIdList.add(res.result())
-    }
-  }
+    // 初始化Exposed数据库
+    ExposedDatabase.init()
+    ExposedDatabase.createTables()
 
-  override suspend fun stop() {
-    super.stop()
-    dslContext.close()
-    developmentIdList.forEach { id ->
-      vertx.undeploy(id)
-    }
+    log.info("Database initialized with Exposed")
+
+    // 部署其他Verticle
+    vertx.deployVerticle(FrontendVerticle::class.java.name)
+    vertx.deployVerticle(AdminVerticle::class.java.name)
+
+    startPromise.complete()
   }
 }

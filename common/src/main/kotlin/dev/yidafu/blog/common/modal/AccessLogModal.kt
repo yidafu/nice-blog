@@ -2,8 +2,8 @@ package dev.yidafu.blog.common.modal
 
 import dev.yidafu.blog.common.json.LocalDateTimeSerializer
 import jakarta.persistence.*
+import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.Serializable
-import java.time.LocalDateTime
 
 @Entity
 @Table(

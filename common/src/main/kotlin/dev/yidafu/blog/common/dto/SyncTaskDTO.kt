@@ -1,10 +1,10 @@
 package dev.yidafu.blog.common.dto
 
 import dev.yidafu.blog.common.modal.SyncTaskStatus
-import java.time.LocalDateTime
+import kotlinx.datetime.LocalDateTime
 
 data class SyncTaskDTO(
-  val id: Long,
+  val id: Int,
   val callbackUrl: String,
   val uuid: String,
   val status: SyncTaskStatus,

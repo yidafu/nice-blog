@@ -1,0 +1,162 @@
+# 集中管理项目中所有依赖的版本号
+
+[versions]
+# Kotlin
+kotlin = "2.1.20"
+kapt = "2.1.20"
+
+# Root dependencies
+analyzePlugin = "1.9.1"
+proguardGradle = "7.6.1"
+toolchainsPlugin = "0.8.0"
+
+# 核心依赖版本
+kotlinxSerialization = "1.8.0"  # 统一使用最新版本
+kotlinxCoroutines = "1.8.1"
+kotlinxHtml = "0.8.0"
+kotlinCss = "1.0.0-pre.832"
+kotlinwindCss = "0.0.3"
+kotlinxDatetime = "0.7.1"
+
+# 框架和工具依赖
+vertx = "4.5.10"
+exposed = "1.0.0-rc-1"
+koin = "4.0.0"
+koinAnnotations = "2.0.0-Beta1"
+slf4j = "2.0.16"
+logback = "1.5.6"
+mapstruct = "1.6.0"
+quartz = "2.5.0"
+jetbrainsMarkdown = "0.7.3"
+
+# 数据库相关
+vertxJdbcClient = "4.5.10"
+h2Database = "2.2.224"
+
+# 第三方库
+ksvg = "2.2.0"
+autoServiceKsp = "1.2.0"
+autoServiceAnnotations = "1.1.1"
+jakartaPersistence = "3.2.0"
+kgit = "1.1.0"
+kaml = "0.66.0"
+jupyterNotebooksParser = "0.2.0-dev-10"
+highlights = "1.0.0"
+cryptography = "0.4.0"
+
+# 测试框架
+junitJupiter = "5.9.1"
+kotest = "5.9.0"
+
+# Gradle插件
+shadowJar = "7.1.2"
+kspplugin = "2.1.20-1.0.32"
+ktlint = "12.2.0"
+graalvm = "0.10.5"
+i18n4k = "0.11.0"
+
+[libraries]
+# Kotlin 基础
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test" }
+
+# 序列化相关
+kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinxSerialization" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
+kotlinx-serialization-core-jvm = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core-jvm", version.ref = "kotlinxSerialization" }
+kotlinx-serialization-json-jvm = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json-jvm", version.ref = "kotlinxSerialization" }
+
+# 协程相关
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
+kotlinx-coroutines-core-jvm = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm", version.ref = "kotlinxCoroutines" }
+
+# Web UI相关
+kotlinx-html = { module = "org.jetbrains.kotlinx:kotlinx-html", version.ref = "kotlinxHtml" }
+kotlinx-html-jvm = { module = "org.jetbrains.kotlinx:kotlinx-html-jvm", version.ref = "kotlinxHtml" }
+kotlin-css = { module = "org.jetbrains.kotlin-wrappers:kotlin-css", version.ref = "kotlinCss" }
+kotlin-css-jvm = { module = "org.jetbrains.kotlin-wrappers:kotlin-css-jvm", version.ref = "kotlinCss" }
+kotlinwind-css = { module = "io.github.allangomes:kotlinwind-css", version.ref = "kotlinwindCss" }
+
+# 时间日期
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
+
+# Vert.x 框架
+vertx-web = { module = "io.vertx:vertx-web", version.ref = "vertx" }
+vertx-core = { module = "io.vertx:vertx-core", version.ref = "vertx" }
+vertx-jdbc-client = { module = "io.vertx:vertx-jdbc-client", version.ref = "vertxJdbcClient" }
+vertx-lang-kotlin-coroutines = { module = "io.vertx:vertx-lang-kotlin-coroutines", version.ref = "vertx" }
+vertx-junit5 = { module = "io.vertx:vertx-junit5", version.ref = "vertx" }
+
+# 数据库框架
+h2 = { module = "com.h2database:h2", version.ref = "h2Database" }
+exposed-core = { module = "org.jetbrains.exposed:exposed-core", version.ref = "exposed" }
+exposed-jdbc = { module = "org.jetbrains.exposed:exposed-jdbc", version.ref = "exposed" }
+exposed-dao = { module = "org.jetbrains.exposed:exposed-dao", version.ref = "exposed" }
+exposed-kotlin-datetime = { module = "org.jetbrains.exposed:exposed-kotlin-datetime", version.ref = "exposed" }
+
+# 依赖注入
+koin-core = { module = "io.insert-koin:koin-core" }
+koin-annotations = { module = "io.insert-koin:koin-annotations", version.ref = "koinAnnotations" }
+koin-ksp-compiler = { module = "io.insert-koin:koin-ksp-compiler", version.ref = "koinAnnotations" }
+
+# 日志
+slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
+logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+
+# 对象映射
+mapstruct = { module = "org.mapstruct:mapstruct", version.ref = "mapstruct" }
+mapstruct-processor = { module = "org.mapstruct:mapstruct-processor", version.ref = "mapstruct" }
+
+# 任务调度
+quartz = { module = "org.quartz-scheduler:quartz", version.ref = "quartz" }
+
+# Markdown处理
+jetbrains-markdown = { module = "org.jetbrains:markdown", version.ref = "jetbrainsMarkdown" }
+
+# SVG处理
+ksvg = { module = "com.github.nwillc:ksvg", version.ref = "ksvg" }
+
+# 国际化
+i18n4k-core-jvm = { module = "de.comahe.i18n4k:i18n4k-core-jvm", version.ref = "i18n4k" }
+
+# AutoService相关
+auto-service-ksp = { module = "dev.zacsweers.autoservice:auto-service-ksp", version.ref = "autoServiceKsp" }
+auto-service-annotations = { module = "com.google.auto.service:auto-service-annotations", version.ref = "autoServiceAnnotations" }
+
+# JPA相关
+jakarta-persistence-api = { module = "jakarta.persistence:jakarta.persistence-api", version.ref = "jakartaPersistence" }
+
+# Git操作
+kgit = { module = "com.github.sya-ri:kgit", version.ref = "kgit" }
+
+# YAML解析
+kaml = { module = "com.charleskorn.kaml:kaml", version.ref = "kaml" }
+
+# Jupyter Notebook解析
+jupyter-notebooks-parser = { module = "org.jetbrains.kotlinx:jupyter-notebooks-parser", version.ref = "jupyterNotebooksParser" }
+
+# 代码高亮
+highlights = { module = "dev.snipme:highlights", version.ref = "highlights" }
+
+# 加密
+cryptography-core-jvm = { module = "dev.whyoleg.cryptography:cryptography-core-jvm", version.ref = "cryptography" }
+cryptography-provider-jdk = { module = "dev.whyoleg.cryptography:cryptography-provider-jdk", version.ref = "cryptography" }
+
+# 测试框架
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junitJupiter" }
+kotest-runner-junit5 = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }
+kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
+kotest-property = { module = "io.kotest:kotest-property", version.ref = "kotest" }
+
+# KSP插件相关
+symbol-processing-api = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "kspplugin" }
+
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kapt" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadowJar" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "kspplugin" }
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
+graalvm-native = { id = "org.graalvm.buildtools.native", version.ref = "graalvm" }
+i18n4k = { id = "de.comahe.i18n4k", version.ref = "i18n4k" }

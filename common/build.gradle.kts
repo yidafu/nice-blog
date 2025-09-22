@@ -1,36 +1,37 @@
 plugins {
-  kotlin("jvm") version "2.0.21"
-  kotlin("plugin.serialization") version "2.0.21"
-  id("org.jlleitschuh.gradle.ktlint") version "12.2.0"
-  id("com.google.devtools.ksp") version "2.0.21-1.0.27"
+  alias(libs.plugins.kotlin.jvm)
+  alias(libs.plugins.kotlin.serialization)
+  alias(libs.plugins.ktlint)
+  alias(libs.plugins.ksp)
 }
 
 group = "dev.yidafu.blog"
 version = "0.1.0"
 
 dependencies {
-  testImplementation(kotlin("test"))
-  implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.8.0")
-  implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
+  testImplementation(libs.kotlin.test)
+  implementation(libs.kotlinx.serialization.core)
+  implementation(libs.kotlinx.serialization.json)
 
-  implementation("org.jetbrains.kotlinx:kotlinx-html:0.8.0")
-  implementation("org.jetbrains.kotlin-wrappers:kotlin-css:1.0.0-pre.832")
+  implementation(libs.kotlinx.html)
+  implementation(libs.kotlin.css)
 
-  implementation("io.github.allangomes:kotlinwind-css:0.0.3")
-  implementation("com.github.nwillc:ksvg:2.2.0")
-  implementation("jakarta.persistence:jakarta.persistence-api:3.2.0")
+//  implementation(libs.kotlinwind.css)
+//  implementation(libs.ksvg)
+  implementation(libs.jakarta.persistence.api)
 
-  implementation("de.comahe.i18n4k:i18n4k-core-jvm:0.9.0")
-  ksp("dev.zacsweers.autoservice:auto-service-ksp:1.2.0")
-  implementation("dev.zacsweers.autoservice:auto-service-ksp:1.2.0")
-  implementation("com.google.auto.service:auto-service-annotations:1.1.1")
+//  implementation(libs.i18n4k.core.jvm)
+//  ksp(libs.auto.service.ksp)
+//  implementation(libs.auto.service.ksp)
+//  implementation(libs.auto.service.annotations)
+  implementation(libs.kotlinx.datetime)
 }
 
 tasks.test {
   useJUnitPlatform()
 }
 kotlin {
-  jvmToolchain(21)
+  jvmToolchain(17)
 }
 
 ksp {

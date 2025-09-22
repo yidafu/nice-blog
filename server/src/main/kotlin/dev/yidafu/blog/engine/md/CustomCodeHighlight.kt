@@ -4,6 +4,8 @@ import dev.snipme.highlights.Highlights
 import dev.snipme.highlights.model.*
 import kotlinx.html.*
 import kotlinx.html.stream.createHTML
+import java.util.Locale
+import java.util.Locale.getDefault
 
 object CustomCodeHighlight {
   private fun formatCode(code: String): String {
@@ -35,7 +37,7 @@ object CustomCodeHighlight {
   }
 
   private fun toSyntaxLanguage(language: String): SyntaxLanguage =
-    when (language.toLowerCase()) {
+    when (language.lowercase(getDefault())) {
       "js", "javascript" -> SyntaxLanguage.JAVASCRIPT
       "ts", "typescript" -> SyntaxLanguage.TYPESCRIPT
       "c" -> SyntaxLanguage.C

@@ -2,12 +2,12 @@ package dev.yidafu.blog.common.vo
 
 import dev.yidafu.blog.common.json.LocalDateTimeSerializer
 import dev.yidafu.blog.common.modal.SyncTaskStatus
+import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.Serializable
-import java.time.LocalDateTime
 
 @Serializable
-data class SyncTaskVO(
-  val id: Long,
+data class AdminSyncTaskVO(
+  val id: Int,
   val callbackUrl: String,
   val uuid: String,
   val status: SyncTaskStatus,

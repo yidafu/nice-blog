@@ -1,71 +1,83 @@
 package dev.yidafu.blog.admin.services
 
 import dev.yidafu.blog.common.Routes
-import dev.yidafu.blog.common.converter.SyncTaskConvertor
-import dev.yidafu.blog.common.dao.tables.references.B_SYNC_TASK
-import dev.yidafu.blog.common.modal.SyncTaskModel
+import dev.yidafu.blog.common.db.dao.SyncTaskEntity
+import dev.yidafu.blog.common.db.tables.SyncTaskTable
 import dev.yidafu.blog.common.modal.SyncTaskStatus
 import dev.yidafu.blog.common.query.PageQuery
-import dev.yidafu.blog.common.services.BaseService
-import org.jooq.CloseableDSLContext
+import dev.yidafu.blog.common.services.ExposedBaseService
+import org.jetbrains.exposed.v1.core.SortOrder
+import org.jetbrains.exposed.v1.core.eq
 import org.koin.core.annotation.Single
-import org.mapstruct.factory.Mappers
 
 @Single
-class SyncTaskService(
-  private val context: CloseableDSLContext,
-) : BaseService(context) {
-  private val syncTaskConvertor = Mappers.getMapper(SyncTaskConvertor::class.java)
-
-  suspend fun createSyncTask(uuid: String): Boolean {
-    val taskRecord = context.newRecord(B_SYNC_TASK)
-    taskRecord.uuid = uuid
-    taskRecord.status = SyncTaskStatus.Created.ordinal
-    taskRecord.callbackUrl = Routes.SYNC_API_LOG_URL.replace(":uuid", uuid)
-
-    return taskRecord.store() > 0
-  }
-
-  suspend fun getSyncLog(uuid: String): SyncTaskModel =
+class SyncTaskService : ExposedBaseService() {
+  /**
+   * 创建同步任务
+   */
+  suspend fun createSyncTask(uuid: String): Boolean =
     runDB {
-      val taskRecord = context.selectFrom(B_SYNC_TASK).where(B_SYNC_TASK.UUID.eq(uuid)).fetchOne()
-      syncTaskConvertor.recordToModal(taskRecord)
+      SyncTaskEntity.new {
+        this.uuid = uuid
+        this.status = SyncTaskStatus.Created
+        this.callbackUrl = Routes.SYNC_API_LOG_URL.replace(":uuid", uuid)
+        this.logs = "Task created"
+        this.forceSync = false
+      }
+      true
     }
 
-  suspend fun getSyncLogs(query: PageQuery): Pair<Int, List<SyncTaskModel>> =
+  /**
+   * 获取同步日志
+   */
+  suspend fun getSyncLog(uuid: String): SyncTaskEntity =
     runDB {
-      val logCount =
-        context
-          .fetchCount(B_SYNC_TASK)
+      SyncTaskEntity.find { SyncTaskTable.uuid eq uuid }
+        .single()
+    }
+
+  /**
+   * 分页获取同步日志
+   */
+  suspend fun getSyncLogs(query: PageQuery): Pair<Int, List<SyncTaskEntity>> =
+    runDB {
+      val logCount = SyncTaskEntity.all().count().toInt()
       val taskRecords =
-        context.selectFrom(B_SYNC_TASK)
+        SyncTaskEntity.all()
           .limit(query.size)
-          .offset(query.offset)
-          .fetchArray()
-      val list = syncTaskConvertor.recordToModal(taskRecords.toList())
+          .offset(query.offset.toLong())
+          .orderBy(SyncTaskTable.updatedAt to SortOrder.DESC).toList()
 
-      logCount to list
+      logCount to taskRecords
     }
 
-  private fun getCountByStatus(status: SyncTaskStatus): Int {
-    return context.fetchCount(
-      B_SYNC_TASK.where(
-        B_SYNC_TASK.STATUS
-          .eq(status.ordinal),
-      ),
-    )
-  }
+  /**
+   * 根据状态获取任务数量
+   */
+  private suspend fun getCountByStatus(status: SyncTaskStatus): Int =
+    runDB {
+      SyncTaskEntity.find { SyncTaskTable.status eq status }
+        .count().toInt()
+    }
 
+  /**
+   * 获取运行中的任务数量
+   */
   suspend fun getRunningTaskCount(): Int = getCountByStatus(SyncTaskStatus.Running)
 
+  /**
+   * 获取已创建的任务数量
+   */
   suspend fun getCreatedTaskCount(): Int = getCountByStatus(SyncTaskStatus.Created)
 
-  suspend fun findLatestRunningTask(): SyncTaskModel {
-    val record =
-      context.selectFrom(B_SYNC_TASK)
-        .where(B_SYNC_TASK.STATUS.eq(SyncTaskStatus.Created.ordinal))
-        .fetchOne()
-
-    return syncTaskConvertor.recordToModal(record)
-  }
+  /**
+   * 查找最新的创建状态任务
+   */
+  suspend fun findLatestRunningTask(): SyncTaskEntity =
+    runDB {
+      SyncTaskEntity.find { SyncTaskTable.status eq SyncTaskStatus.Created }
+        .orderBy(SyncTaskTable.createdAt to SortOrder.ASC)
+        .limit(1)
+        .single()
+    }
 }

@@ -65,7 +65,7 @@ class SynchronousController(
     val uuid = ctx.queryParam("uuid")[0]
     val log = syncTaskService.getSyncLog(uuid)
 
-    val vo = syncTaskConvertor.toVO(log)
+    val vo = syncTaskConvertor.toDTO(log)
     ctx.render(PageNames.ADMIN_CONFIG_SYNC_LOG_DETAIL_PAGE, vo)
   }
 

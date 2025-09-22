@@ -1,26 +1,20 @@
 package dev.yidafu.blog.common.converter
 
-import dev.yidafu.blog.common.dao.tables.records.BArticleRecord
-import dev.yidafu.blog.common.modal.ArticleModel
+import dev.yidafu.blog.common.db.dao.ArticleEntity
 import dev.yidafu.blog.common.vo.AdminArticleDetailVO
 import dev.yidafu.blog.common.vo.ArticleVO
 import org.mapstruct.Mapper
-import org.mapstruct.MappingTarget
+import org.mapstruct.Mapping
+import org.mapstruct.Mappings
 
 @Mapper
 interface ArticleConvertor {
-  fun toVO(modal: ArticleModel): ArticleVO
+  @Mappings(value = [Mapping(source = "TId", target = "id")])
+  fun toVO(modal: ArticleEntity): ArticleVO
 
-  fun toVO(modalList: List<ArticleModel>): List<ArticleVO>
+  @Mappings(value = [Mapping(source = "TId", target = "id")])
+  fun toVO(modalList: List<ArticleEntity>): List<ArticleVO>
 
-  fun toAdminVo(modal: ArticleModel): AdminArticleDetailVO
-
-  fun recordToModal(record: BArticleRecord?): ArticleModel?
-
-  fun recordToModal(records: List<BArticleRecord>): List<ArticleModel>
-
-  fun mapToRecord(
-    articleModel: ArticleModel?,
-    @MappingTarget record: BArticleRecord?,
-  )
+  @Mappings(value = [Mapping(source = "TId", target = "id")])
+  fun toAdminVo(modal: ArticleEntity): AdminArticleDetailVO
 }

@@ -30,4 +30,6 @@ object Routes {
   const val ADMIN_ARTICLE_DETAIL_2 = "/admin/articles/:id/detail"
   const val ADMIN_ARTICLE_HISTORY = "/admin/articles/:id/history"
   const val ADMIN_ARTICLE_STATISTIC = "/admin/articles/:id/statistic"
+
+  const val ADMIN_BACKUP_URL = "/admin/backup"
 }

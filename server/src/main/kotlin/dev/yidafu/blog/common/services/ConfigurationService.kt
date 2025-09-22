@@ -1,60 +1,70 @@
 package dev.yidafu.blog.common.services
 
 import dev.yidafu.blog.common.converter.ConfigurationConvertor
-import dev.yidafu.blog.common.dao.tables.records.BConfigurationRecord
-import dev.yidafu.blog.common.dao.tables.references.B_CONFIGURATION
+import dev.yidafu.blog.common.db.dao.ConfigurationEntity
+import dev.yidafu.blog.common.db.tables.ConfigurationTable
 import dev.yidafu.blog.common.dto.ConfigurationDTO
 import dev.yidafu.blog.common.modal.ConfigurationModal
-import org.jooq.CloseableDSLContext
+import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.core.inList
 import org.koin.core.annotation.Single
 import org.mapstruct.factory.Mappers
 import org.slf4j.LoggerFactory
 
 @Single
-class ConfigurationService(
-  private val context: CloseableDSLContext,
-) : BaseService(context) {
+class ConfigurationService : ExposedBaseService() {
   private val log = LoggerFactory.getLogger(ConfigurationService::class.java)
   private val configConvertor = Mappers.getMapper(ConfigurationConvertor::class.java)
 
+  /**
+   * 获取所有配置项
+   */
   suspend fun getAll(): List<ConfigurationModal> =
     runDB {
-      val configList: Array<BConfigurationRecord> =
-        context.selectFrom(B_CONFIGURATION).fetchArray()
-
-      configConvertor.recordToModal(configList.toList())
+      configConvertor.toModalList(ConfigurationEntity.all().toList())
     }
 
+  /**
+   * 根据键获取配置项
+   */
   suspend fun getByKey(key: String): ConfigurationModal =
     runDB {
-      val record: BConfigurationRecord? =
-        context.selectFrom(B_CONFIGURATION).where(
-          B_CONFIGURATION.CONFIG_KEY.eq(key),
-        ).fetchOne()
-
-      configConvertor.recordToModal(record)
+      ConfigurationEntity.find { ConfigurationTable.configKey eq key }
+        .singleOrNull()?.let {
+          configConvertor.toModal(it)
+        }
+        ?: throw NoSuchElementException("Configuration with key $key not found")
     }
 
+  /**
+   * 根据多个键获取配置项列表
+   */
   suspend fun getByKeys(keys: List<String>): List<ConfigurationModal> =
     runDB {
-      val list: Array<BConfigurationRecord> =
-        context.selectFrom(B_CONFIGURATION).where(
-          B_CONFIGURATION.CONFIG_KEY.`in`(keys),
-        ).fetchArray()
-
-      configConvertor.recordToModal(list.toList())
+      val list = ConfigurationEntity.find { ConfigurationTable.configKey inList keys }.toList()
+      configConvertor.toModalList(list)
     }
 
+  /**
+   * 更新配置项
+   * TODO: 批量更新
+   */
   suspend fun updateConfig(configs: List<ConfigurationDTO>): Boolean =
     runDB {
-      context.batch(
-        configs.map { config ->
-          context.update(B_CONFIGURATION)
-            .set(B_CONFIGURATION.CONFIG_VALUE, config.configValue)
-            .where(B_CONFIGURATION.CONFIG_KEY.eq(config.configKey))
-        },
-      ).execute()
+      configs.forEach { config ->
+        val existing = ConfigurationEntity.find { ConfigurationTable.configKey eq config.configKey }.singleOrNull()
 
+        if (existing != null) {
+          // 更新现有配置
+          existing.configValue = config.configValue
+        } else {
+          // 插入新配置
+          ConfigurationEntity.new {
+            configKey = config.configKey
+            configValue = config.configValue
+          }
+        }
+      }
       true
     }
 }
