@@ -1,13 +1,11 @@
 package dev.yidafu.blog.common.services
 
-import kotlinx.coroutines.*
-import org.jooq.CloseableDSLContext
+import dev.yidafu.blog.common.db.ExposedDatabase
 
-open class BaseService(private val closeableDSLContext: CloseableDSLContext) {
-  private val scope = CoroutineScope(Dispatchers.IO)
+/**
+ * 基础服务类
+ * 现在使用Exposed替代jOOQ
+ */
+open class BaseService : ExposedBaseService() {
 
-  suspend fun <T> runDB(block: (context: CloseableDSLContext) -> T): T =
-    scope.async {
-      block(closeableDSLContext)
-    }.await()
 }

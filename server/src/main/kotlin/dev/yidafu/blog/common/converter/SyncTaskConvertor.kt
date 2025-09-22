@@ -1,18 +1,19 @@
 package dev.yidafu.blog.common.converter
 
-import dev.yidafu.blog.common.dao.tables.records.BSyncTaskRecord
+import dev.yidafu.blog.common.db.dao.SyncTaskEntity
 import dev.yidafu.blog.common.dto.SyncTaskDTO
-import dev.yidafu.blog.common.modal.SyncTaskModel
-import dev.yidafu.blog.common.vo.SyncTaskVO
+import dev.yidafu.blog.common.vo.AdminSyncTaskVO
 import org.mapstruct.Mapper
+import org.mapstruct.Mapping
+import org.mapstruct.Mappings
 
 @Mapper
 interface SyncTaskConvertor {
-  fun recordToModal(record: BSyncTaskRecord?): SyncTaskModel
+  @Mappings(value = [Mapping(source = "TId", target = "id")])
+  fun toDTO(modal: SyncTaskEntity): SyncTaskDTO
 
-  fun recordToModal(recordList: List<BSyncTaskRecord>): List<SyncTaskModel>
-
-  fun toVO(modal: SyncTaskModel): SyncTaskDTO
-
-  fun toVOList(modal: List<SyncTaskModel>): List<SyncTaskVO>
+  @Mappings(value = [Mapping(source = "TId", target = "id")])
+  fun toVO(modal: SyncTaskEntity): AdminSyncTaskVO
+//  @Mappings(value = [Mapping(source = "TId", target = "id")])
+  fun toVOList(modal: List<SyncTaskEntity>): List<AdminSyncTaskVO>
 }

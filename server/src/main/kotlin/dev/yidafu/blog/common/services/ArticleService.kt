@@ -1,53 +1,64 @@
 package dev.yidafu.blog.common.services
 
 import dev.yidafu.blog.common.converter.ArticleConvertor
-import dev.yidafu.blog.common.dao.tables.records.BArticleRecord
-import dev.yidafu.blog.common.dao.tables.references.B_ARTICLE
-import dev.yidafu.blog.common.modal.ArticleModel
+import dev.yidafu.blog.common.db.dao.ArticleEntity
+import dev.yidafu.blog.common.db.tables.ArticleTable
 import dev.yidafu.blog.common.query.PageQuery
-import org.jooq.CloseableDSLContext
+import org.jetbrains.exposed.v1.core.SortOrder
+import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import org.koin.core.annotation.Single
 import org.mapstruct.factory.Mappers
 
 @Single
-class ArticleService(
-  private val context: CloseableDSLContext,
-) : BaseService(context) {
-  private val articleConvertor = Mappers.getMapper(ArticleConvertor::class.java)
+class ArticleService : ExposedBaseService() {
+  val convertor = Mappers.getMapper(ArticleConvertor::class.java)
 
-  fun getListByPage(query: PageQuery): Pair<Int, List<ArticleModel>> {
-    val count = context.fetchCount(B_ARTICLE)
-    val articleRecords =
-      context.selectFrom(B_ARTICLE)
-        .limit(query.size)
-        .offset(query.offset)
-        .fetchArray()
-    return count to articleConvertor.recordToModal(articleRecords.toList())
+  /**
+   * 分页获取文章列表
+   */
+  fun getListByPage(query: PageQuery): Pair<Int, List<ArticleEntity>> {
+    return transaction {
+      val count = ArticleEntity.all().count().toInt()
+      val articles =
+        ArticleEntity.all()
+          .offset(query.offset.toLong())
+          .limit(query.size).toList()
+      count to articles
+    }
   }
 
-  suspend fun getAll(): List<ArticleModel> =
+  /**
+   * 获取所有文章
+   */
+  suspend fun getAll(): List<ArticleEntity> =
     runDB {
-      val articles: Array<BArticleRecord> =
-        context.selectFrom(B_ARTICLE)
-          .orderBy(B_ARTICLE.UPDATED_AT.desc())
-          .fetchArray()
-      articleConvertor.recordToModal(articles.toList())
+      ArticleEntity.all()
+        .orderBy(ArticleTable.updatedAt to SortOrder.DESC).toList()
     }
 
-  suspend fun getOneByIdentifier(identifier: String): ArticleModel? =
+  /**
+   * 根据标识符获取单个文章
+   */
+  suspend fun getOneByIdentifier(identifier: String): ArticleEntity? =
     runDB {
-      val article = context.selectFrom(B_ARTICLE).where(B_ARTICLE.IDENTIFIER.eq(identifier)).fetchOne()
-      articleConvertor.recordToModal(article)
+      ArticleEntity.find { ArticleTable.identifier eq identifier }
+        .singleOrNull()
     }
 
-  suspend fun getById(id: Int): ArticleModel? =
+  /**
+   * 根据ID获取文章
+   */
+  suspend fun getById(id: Int): ArticleEntity? =
     runDB {
-      val record = context.selectFrom(B_ARTICLE).where(B_ARTICLE.ID.eq(id.toLong())).fetchOne()
-      articleConvertor.recordToModal(record)
+      ArticleEntity.findById(id)
     }
 
+  /**
+   * 获取文章总数
+   */
   suspend fun countAll() =
     runDB {
-      context.selectCount().from(B_ARTICLE).fetchOne(0, Long::class.java) ?: 0
+      ArticleEntity.all().count()
     }
 }

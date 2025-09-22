@@ -1,14 +1,21 @@
 package dev.yidafu.blog.engine
 
-import dev.yidafu.blog.common.dao.tables.references.B_SYNC_TASK
+import dev.yidafu.blog.common.db.dao.SyncTaskEntity
+import dev.yidafu.blog.common.db.tables.SyncTaskTable
 import dev.yidafu.blog.common.modal.SyncTaskStatus
-import org.jooq.CloseableDSLContext
+import dev.yidafu.blog.common.services.ExposedBaseService
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toKotlinLocalDateTime
+import kotlinx.datetime.toLocalDateTime
+import org.jetbrains.exposed.v1.core.eq
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 class DBSynchronousListener(
-  private val context: CloseableDSLContext,
   private val config: GitConfig,
   private val logger: Logger,
-) : SynchronousListener {
+) : SynchronousListener, ExposedBaseService() {
   override fun onStart() {
     logger.logSync("start synchronous task ==> ${config.uuid}")
     changeStatus(config.uuid, SyncTaskStatus.Running)
@@ -25,14 +32,19 @@ class DBSynchronousListener(
     changeStatus(config.uuid, SyncTaskStatus.Failed)
   }
 
+  @OptIn(ExperimentalTime::class)
   private fun changeStatus(
     uuid: String,
     status: SyncTaskStatus,
-  ): Boolean {
-    context.update(B_SYNC_TASK).set(
-      B_SYNC_TASK.STATUS,
-      status.ordinal,
-    ).where(B_SYNC_TASK.UUID.eq(uuid)).execute()
-    return true
-  }
+  ): Boolean =
+    runDBBlocking {
+      val task = SyncTaskEntity.find { SyncTaskTable.uuid eq uuid }.singleOrNull()
+      if (task != null) {
+        task.status = status
+        task.updatedAt = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+        true
+      } else {
+        false
+      }
+    }
 }

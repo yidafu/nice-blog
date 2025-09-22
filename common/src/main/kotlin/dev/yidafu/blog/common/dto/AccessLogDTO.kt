@@ -1,6 +1,6 @@
 package dev.yidafu.blog.common.dto
 
-import java.time.LocalDateTime
+import kotlinx.datetime.LocalDateTime
 
 class AccessLogDTO(
   val id: Long? = null,

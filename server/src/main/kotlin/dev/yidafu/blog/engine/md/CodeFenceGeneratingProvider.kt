@@ -12,7 +12,6 @@ class CodeFenceGeneratingProvider : GeneratingProvider {
     text: String,
     node: ASTNode,
   ) {
-
     var childrenToConsider = node.children
     if (childrenToConsider.last().type == MarkdownTokenTypes.CODE_FENCE_END) {
       childrenToConsider = childrenToConsider.subList(0, childrenToConsider.size - 1)

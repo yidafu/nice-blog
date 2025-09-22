@@ -4,7 +4,10 @@ import de.comahe.i18n4k.Locale
 import dev.yidafu.blog.common.modal.SyncTaskStatus
 import dev.yidafu.blog.common.vo.*
 import kotlinx.serialization.json.*
-import java.time.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 class DataModal(
   protected val dataStore: JsonObject = JsonObject(emptyMap()),
@@ -82,23 +85,24 @@ inline val DataModal.synchronousConfig: AdminSynchronousVO
     } ?: AdminSynchronousVO("")
   }
 
-internal val DataModal.syncLogPage: PaginationVO<SyncTaskVO>
+internal val DataModal.syncLogPage: PaginationVO<AdminSyncTaskVO>
   get() {
     return getValue(DataModal.VO_DATA)?.let {
-      Json.decodeFromJsonElement<PaginationVO<SyncTaskVO>>(it)
+      Json.decodeFromJsonElement<PaginationVO<AdminSyncTaskVO>>(it)
     } ?: PaginationVO()
   }
 
-internal val DataModal.syncTask: SyncTaskVO
+@OptIn(ExperimentalTime::class)
+internal val DataModal.syncTask: AdminSyncTaskVO
   get() {
     return getValue(DataModal.VO_DATA)?.let {
-      Json.decodeFromJsonElement<SyncTaskVO>(it)
-    } ?: SyncTaskVO(
-      id = 0L,
+      Json.decodeFromJsonElement<AdminSyncTaskVO>(it)
+    } ?: AdminSyncTaskVO(
+      id = 0,
       callbackUrl = "",
       uuid = "",
       status = SyncTaskStatus.Failed,
-      createdAt = LocalDateTime.now(),
+      createdAt = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
       logs = "",
     )
   }

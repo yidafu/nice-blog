@@ -1,7 +1,7 @@
 package dev.yidafu.blog.common.dto
 
 import dev.yidafu.blog.common.modal.ArticleSourceType
-import java.time.LocalDateTime
+import kotlinx.datetime.LocalDateTime
 
 data class CommonArticleDTO(
   val filename: String,

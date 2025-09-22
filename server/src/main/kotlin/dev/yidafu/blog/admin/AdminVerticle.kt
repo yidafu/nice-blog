@@ -8,6 +8,7 @@ import dev.yidafu.blog.common.ConstantKeys
 import dev.yidafu.blog.common.Routes
 import dev.yidafu.blog.common.routes.mountPublicRoutes
 import dev.yidafu.blog.common.services.ConfigurationService
+import dev.yidafu.blog.common.services.ExposedBaseService
 import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.BodyHandler
@@ -17,7 +18,7 @@ import io.vertx.ext.web.sstore.LocalSessionStore
 import io.vertx.kotlin.coroutines.CoroutineRouterSupport
 import io.vertx.kotlin.coroutines.CoroutineVerticle
 import io.vertx.kotlin.coroutines.coAwait
-import org.koin.core.Koin
+import org.koin.core.context.GlobalContext.get
 import org.quartz.CronScheduleBuilder.cronSchedule
 import org.quartz.JobBuilder
 import org.quartz.TriggerBuilder
@@ -26,21 +27,24 @@ import org.quartz.impl.StdSchedulerFactory
 import org.slf4j.LoggerFactory
 import dev.yidafu.blog.common.controller.createRoutes as createCommonRouter
 
-class AdminVerticle(private val koin: Koin) : CoroutineVerticle(), CoroutineRouterSupport {
+class AdminVerticle : CoroutineVerticle(), CoroutineRouterSupport {
   private val log = LoggerFactory.getLogger(AdminVerticle::class.java)
-
   private val scheduler = StdSchedulerFactory.getDefaultScheduler()
 
   override suspend fun start() {
     super.start()
 
     try {
+      // 初始化Exposed数据库
+      val exposedBaseService = get().get<ExposedBaseService>()
+      exposedBaseService.initDb()
+
       val server = vertx.createHttpServer()
       val router = Router.router(vertx)
       mountPublicRoutes(router)
 
       router.route().handler(LoggerHandler.create())
-      val authCtrl = koin.get<AuthController>()
+      val authCtrl = get().get<AuthController>()
       val sessionHandler =
         SessionHandler.create(LocalSessionStore.create(vertx))
           .setCookieHttpOnlyFlag(true)
@@ -73,7 +77,7 @@ class AdminVerticle(private val koin: Koin) : CoroutineVerticle(), CoroutineRout
    * execute schedule job
    */
   private suspend fun startSyncScheduler() {
-    val configService = koin.get<ConfigurationService>()
+    val configService = get().get<ConfigurationService>()
     val cronExpr = configService.getByKey(ConfigurationKeys.SYNC_CRON_EXPR).configValue
 
     log.info("create schedule job with $cronExpr")

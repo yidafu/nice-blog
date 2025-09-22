@@ -3,7 +3,7 @@ package dev.yidafu.blog.common.modal
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Table
-import java.time.LocalDateTime
+import kotlinx.datetime.LocalDateTime
 
 @Entity
 @Table(name = "b_user_token")

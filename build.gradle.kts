@@ -1,6 +1,5 @@
 plugins {
   id( "ca.cutterslade.analyze") version "1.9.1"
-
 }
 
 buildscript {

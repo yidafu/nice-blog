@@ -1,7 +1,8 @@
 package dev.yidafu.blog.engine.ext
 
+import dev.yidafu.blog.common.ext.toKotlinDateTime
+import kotlinx.datetime.LocalDateTime
 import java.nio.file.Path
-import java.time.LocalDateTime
 import java.util.*
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.getLastModifiedTime
@@ -14,7 +15,7 @@ fun Path.getGitModifyTime(): LocalDateTime {
   val workingDirectory = parent.toFile()
   val timeStr = "git log -1 --pretty=format:\"%ad\" --date iso -- ${toSafePath()}".runCommand(workingDirectory)
   if (timeStr.isBlank()) {
-    return LocalDateTime.ofInstant(getLastModifiedTime().toInstant(), TimeZone.getDefault().toZoneId())
+    return getLastModifiedTime().toKotlinDateTime()
   }
 
   return LocalDateTime.parse(timeStr)
@@ -25,7 +26,7 @@ fun Path.getGitCreateTime(): LocalDateTime {
   val cmd = "git log --pretty=format:'%ad' --date iso -- ${toSafePath()} | tail -1"
   val timeStr = cmd.runCommand(workingDirectory)
   if (timeStr.isBlank()) {
-    return LocalDateTime.ofInstant(getLastModifiedTime().toInstant(), TimeZone.getDefault().toZoneId())
+    return getLastModifiedTime().toKotlinDateTime()
   }
 
   return LocalDateTime.parse(timeStr)

@@ -3,6 +3,7 @@ package dev.yidafu.blog.engine.processor
 import com.charleskorn.kaml.Yaml
 import dev.yidafu.blog.common.dto.CommonArticleDTO
 import dev.yidafu.blog.common.dto.FrontMatterDTO
+import dev.yidafu.blog.common.ext.toKotlinDateTime
 import dev.yidafu.blog.common.modal.ArticleSourceType
 import dev.yidafu.blog.engine.*
 import dev.yidafu.blog.engine.ext.findChildrenOfType
@@ -10,6 +11,7 @@ import dev.yidafu.blog.engine.ext.indexOf
 import dev.yidafu.blog.engine.ext.slice
 import dev.yidafu.blog.engine.md.CodeFenceGeneratingProvider
 import dev.yidafu.blog.engine.md.ImageGeneratingProvider
+import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.decodeFromString
 import org.intellij.markdown.IElementType
 import org.intellij.markdown.MarkdownElementTypes
@@ -27,7 +29,6 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.attribute.BasicFileAttributes
-import java.time.LocalDateTime
 import java.time.ZoneId
 import kotlin.io.path.extension
 import kotlin.io.path.name
@@ -71,8 +72,8 @@ class MarkdownProcessor(val articleManager: ArticleManager, private val logger: 
     val flavour = GFMFlavorExtendDescriptor(articleManager, logger, markdownFile)
     val parser = MarkdownParser(flavour)
 
-    val createDate = LocalDateTime.ofInstant(attrs.creationTime().toInstant(), ZoneId.systemDefault())
-    val updateDate = LocalDateTime.ofInstant(attrs.lastModifiedTime().toInstant(), ZoneId.systemDefault())
+    val createDate = attrs.creationTime().toKotlinDateTime()
+    val updateDate = attrs.lastModifiedTime().toKotlinDateTime()
 
     val frontMatterDTO = parseFrontMatter(markdownFile, text, parser.buildMarkdownTreeFromString(text))
 

@@ -1,18 +1,32 @@
 package dev.yidafu.blog.common.json
 
+import dev.yidafu.blog.common.ext.formatString
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.format.char
 import kotlinx.serialization.Serializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+
+val format =
+  LocalDateTime.Format {
+    year()
+    char('-')
+    monthNumber()
+    char('-')
+    dayOfMonth()
+    char(' ')
+    hour()
+    char(':')
+    minute()
+    char(':')
+    second()
+  }
 
 @Serializer(forClass = LocalDateTime::class)
 class LocalDateTimeSerializer {
-  private val formatter = DateTimeFormatter.ofPattern("yyyy:MM:dd HH:mm:ss")
-
   override val descriptor: SerialDescriptor
     get() = PrimitiveSerialDescriptor("LocalDateTime", PrimitiveKind.STRING)
 
@@ -20,10 +34,10 @@ class LocalDateTimeSerializer {
     encoder: Encoder,
     value: LocalDateTime,
   ) {
-    encoder.encodeString(value.format(formatter))
+    encoder.encodeString(value.formatString())
   }
 
   override fun deserialize(decoder: Decoder): LocalDateTime {
-    return LocalDateTime.parse(decoder.decodeString(), formatter)
+    return LocalDateTime.parse(decoder.decodeString(), format)
   }
 }

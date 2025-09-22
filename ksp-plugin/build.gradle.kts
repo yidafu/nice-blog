@@ -1,8 +1,8 @@
 plugins {
-  kotlin("jvm") version "2.0.21"
+  alias(libs.plugins.kotlin.jvm)
 
-  id("com.google.devtools.ksp") version "2.0.21-1.0.27"
-  id("org.jlleitschuh.gradle.ktlint") version "12.2.0"
+  alias(libs.plugins.ksp)
+  alias(libs.plugins.ktlint)
 }
 
 group = "dev.yidafu.blog"
@@ -15,15 +15,15 @@ repositories {
 dependencies {
 //  implementation("com.google.dagger:dagger-compiler:2.51.1")
 //  ksp("com.google.dagger:dagger-compiler:2.51.1")
-  implementation("com.google.devtools.ksp:symbol-processing-api:2.0.21-1.0.27")
-  implementation("com.squareup:kotlinpoet-ksp:2.1.0")
+  implementation(libs.symbol.processing.api)
+  implementation("com.squareup:kotlinpoet-ksp:2.2.0")
 
-  testImplementation(kotlin("test"))
+  testImplementation(libs.kotlin.test)
 }
 
 tasks.test {
   useJUnitPlatform()
 }
 kotlin {
-  jvmToolchain(21)
+  jvmToolchain(17)
 }

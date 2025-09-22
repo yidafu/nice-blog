@@ -17,7 +17,6 @@ class DashboardController(
   private val articleService: ArticleService,
   private val accessLogService: AccessLogService,
 ) {
-
   @Get(Routes.ADMIN_DASHBOARD_URL)
   suspend fun dashboardPage(ctx: RoutingContext) {
     val articleCount = articleService.countAll()
