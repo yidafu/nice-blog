@@ -17,6 +17,8 @@ dependencies {
 //  ksp("com.google.dagger:dagger-compiler:2.51.1")
   implementation(libs.symbol.processing.api)
   implementation("com.squareup:kotlinpoet-ksp:2.2.0")
+  implementation("com.squareup:kotlinpoet-jvm:2.2.0")
+  implementation("org.jetbrains:annotations:13.0")
 
   testImplementation(libs.kotlin.test)
 }
