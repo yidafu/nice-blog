@@ -5,20 +5,21 @@ import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
+import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.MemberName
 import com.squareup.kotlinpoet.MemberName.Companion.member
 import com.squareup.kotlinpoet.ksp.writeTo
 import dev.yidafu.blog.ksp.ControllerRouteInfo
-import dev.yidafu.blog.ksp.GlobalContextType
 import dev.yidafu.blog.ksp.HttpMethod
 import dev.yidafu.blog.ksp.KtorApplication
+import dev.yidafu.blog.ksp.KtorApplicationDependencies
+import dev.yidafu.blog.ksp.KtorApplicationResolve
 import dev.yidafu.blog.ksp.KtorApplicationRouteAny
 import dev.yidafu.blog.ksp.KtorApplicationRouteDelete
 import dev.yidafu.blog.ksp.KtorApplicationRouteGet
 import dev.yidafu.blog.ksp.KtorApplicationRoutePost
 import dev.yidafu.blog.ksp.KtorApplicationRoutePut
 import dev.yidafu.blog.ksp.KtorApplicationRouting
-import dev.yidafu.blog.ksp.KtorRouting
 import dev.yidafu.blog.ksp.KtorRoutingContextCall
 import dev.yidafu.blog.ksp.MethodInfo
 import dev.yidafu.blog.ksp.toVariableName
@@ -53,13 +54,14 @@ class RouteMapGenerator(
         .addFunction(
           FunSpec.builder(funName)
             .receiver(KtorApplication)
+            .addModifiers(KModifier.SUSPEND, KModifier.PUBLIC, KModifier.INLINE)
             .apply {
-              addCode("%M {\n", KtorApplicationRouting)
+//              addCode("%M {\n", KtorApplicationRouting)
               ctrlInfoList.forEach { info ->
                 val routerMapFunctionMember = ClassName(info.packageName, info.routeMapFunctionName)
                 addStatement("  %T()", routerMapFunctionMember)
               }
-              addCode("}")
+//              addCode("}")
             }
             .build(),
         ).build()
@@ -80,16 +82,23 @@ class RouteMapGenerator(
         .builder(routeMapClassName)
         .addFunction(
           FunSpec.builder(controllerInfo.routeMapFunctionName)
-            .receiver(KtorRouting)
+            .receiver(KtorApplication)
+            .addModifiers(KModifier.SUSPEND, KModifier.PUBLIC, KModifier.INLINE)
             .apply {
-              addStatement("val koin = %T.get()", GlobalContextType)
-              addStatement("// TODO: 待确认这里有没有性能问题")
-              addStatement("val %N = koin.get<%T>()", className.toVariableName(), className)
+              addStatement(
+                "val %N = %M.%M<%T>()",
+                className.toVariableName(),
+                KtorApplicationDependencies,
+                KtorApplicationResolve,
+                className,
+              )
+              addCode("%M {\n", KtorApplicationRouting)
               controllerInfo.paths.forEach { method ->
                 addCode(
                   buildRouteStatement(className, method),
                 )
               }
+              addCode("}")
             }
             .build(),
         ).build()

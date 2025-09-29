@@ -17,20 +17,24 @@ class DependencyGenerator(
     val fileSpec =
       FileSpec.builder(RootDIClass)
         .addFunction(
-          FunSpec.builder("inject")
+          FunSpec.builder(NiceDIFunctionName)
             .receiver(KtorApplication)
-            .addModifiers(KModifier.PUBLIC)
+            .addModifiers(KModifier.PUBLIC, KModifier.INLINE)
             .apply {
               addCode("%M {\n", KtorApplicationDependencies)
               componentInfoList.forEach { info ->
                 if (info is ServiceInfo) {
                   val injectClass: ComponentInfo = info.parentInterface ?: info
-                  addStatement(
-                    "  %M<%T> { %T() }",
+                  addCode(
+                    "  %M<%T> {\n    %T(",
                     KtorApplicationProvide,
                     ClassName(injectClass.packageName, injectClass.className),
                     ClassName(info.packageName, info.className),
                   )
+                  info.injectComponent.forEach { _ ->
+                    addCode("\n    this@%M.resolve(),", KtorApplicationDependencies)
+                  }
+                  addCode("\n    )\n  }\n\n")
                 } else if (info is ControllerInfo) {
                   val ctrlClass = ClassName(info.packageName, info.className)
 
