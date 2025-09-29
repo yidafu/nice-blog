@@ -41,3 +41,4 @@
 -keepattributes *Annotation*,Signature,SourceFile,LineNumberTable
 -keep class java.io.Serializable { *; }
 -keep class java.lang.Comparable { *; }
+-keep class java.lang.** { *; }

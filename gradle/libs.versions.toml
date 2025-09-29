@@ -2,43 +2,34 @@
 
 [versions]
 # Kotlin
+exposed = "1.0.0-rc-1"
+h2 = "2.3.232"
 kotlin = "2.1.20"
+kotlinx-browser = "0.3"
+kotlinx-html = "0.12.0"
+ktor = "3.3.0"
+
 kapt = "2.1.20"
 
-# Root dependencies
-analyzePlugin = "1.9.1"
-proguardGradle = "7.6.1"
-toolchainsPlugin = "0.8.0"
 
 # 核心依赖版本
 kotlinxSerialization = "1.8.0"  # 统一使用最新版本
 kotlinxCoroutines = "1.8.1"
-kotlinxHtml = "0.8.0"
-kotlinCss = "1.0.0-pre.832"
 kotlinwindCss = "0.0.3"
 kotlinxDatetime = "0.7.1"
 
-# 框架和工具依赖
-vertx = "4.5.10"
-exposed = "1.0.0-rc-1"
-koin = "4.0.0"
-koinAnnotations = "2.0.0-Beta1"
 slf4j = "2.0.16"
 logback = "1.5.6"
 mapstruct = "1.6.0"
 quartz = "2.5.0"
 jetbrainsMarkdown = "0.7.3"
 
-# 数据库相关
-vertxJdbcClient = "4.5.10"
-h2Database = "2.2.224"
 
 # 第三方库
 ksvg = "2.2.0"
 autoServiceKsp = "1.2.0"
 autoServiceAnnotations = "1.1.1"
 jakartaPersistence = "3.2.0"
-kgit = "1.1.0"
 kaml = "0.66.0"
 jupyterNotebooksParser = "0.2.0-dev-10"
 highlights = "1.0.0"
@@ -49,13 +40,50 @@ junitJupiter = "5.9.1"
 kotest = "5.9.0"
 
 # Gradle插件
-shadowJar = "7.1.2"
 kspplugin = "2.1.20-1.0.32"
 ktlint = "12.2.0"
-graalvm = "0.10.5"
 i18n4k = "0.11.0"
 
+
 [libraries]
+ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negotiation", version.ref = "ktor" }
+ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
+ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktor-server-html-builder = { module = "io.ktor:ktor-server-html-builder", version.ref = "ktor" }
+kotlinx-html = { module = "org.jetbrains.kotlinx:kotlinx-html", version.ref = "kotlinx-html" }
+ktor-server-call-logging = { module = "io.ktor:ktor-server-call-logging", version.ref = "ktor" }
+ktor-server-rate-limiting = { module = "io.github.flaxoos:ktor-server-rate-limiting", version = "2.2.1" }
+#koin-ktor = { module = "io.insert-koin:koin-ktor", version.ref = "koin" }
+#koin-logger-slf4j = { module = "io.insert-koin:koin-logger-slf4j", version.ref = "koin" }
+exposed-core = { module = "org.jetbrains.exposed:exposed-core", version.ref = "exposed" }
+exposed-jdbc = { module = "org.jetbrains.exposed:exposed-jdbc", version.ref = "exposed" }
+exposed-dao = { module = "org.jetbrains.exposed:exposed-dao", version.ref = "exposed" }
+exposed-kotlin-datetime = { module = "org.jetbrains.exposed:exposed-kotlin-datetime", version.ref = "exposed" }
+
+h2 = { module = "com.h2database:h2", version.ref = "h2" }
+ktor-server-htmx = { module = "io.ktor:ktor-server-htmx", version.ref = "ktor" }
+ktor-htmx-html = { module = "io.ktor:ktor-htmx-html", version.ref = "ktor" }
+kotlinx-browser = { module = "org.jetbrains.kotlinx:kotlinx-browser", version.ref = "kotlinx-browser" }
+kotlin-css = { module = "org.jetbrains.kotlin-wrappers:kotlin-css-jvm", version = "2025.6.4" }
+#khealth = { module = "dev.hayden:khealth", version = "3.0.2" }
+ktor-server-call-id = { module = "io.ktor:ktor-server-call-id", version.ref = "ktor" }
+ktor-server-host-common = { module = "io.ktor:ktor-server-host-common", version.ref = "ktor" }
+ktor-server-status-pages = { module = "io.ktor:ktor-server-status-pages", version.ref = "ktor" }
+ktor-server-request-validation = { module = "io.ktor:ktor-server-request-validation", version.ref = "ktor" }
+ktor-server-sessions = { module = "io.ktor:ktor-server-sessions", version.ref = "ktor" }
+ktor-server-auth = { module = "io.ktor:ktor-server-auth", version.ref = "ktor" }
+ktor-simple-cache = { module = "com.ucasoft.ktor:ktor-simple-cache", version = "0.55.3" }
+ktor-server-openapi = { module = "io.ktor:ktor-server-openapi", version.ref = "ktor" }
+ktor-server-http-redirect = { module = "io.ktor:ktor-server-http-redirect", version.ref = "ktor" }
+ktor-server-default-headers = { module = "io.ktor:ktor-server-default-headers", version.ref = "ktor" }
+ktor-server-conditional-headers = { module = "io.ktor:ktor-server-conditional-headers", version.ref = "ktor" }
+ktor-server-compression = { module = "io.ktor:ktor-server-compression", version.ref = "ktor" }
+ktor-server-caching-headers = { module = "io.ktor:ktor-server-caching-headers", version.ref = "ktor" }
+ktor-server-cio = { module = "io.ktor:ktor-server-cio", version.ref = "ktor" }
+ktor-server-di = { module = "io.ktor:ktor-server-di", version.ref = "ktor" }
+ktor-server-config-yaml = { module = "io.ktor:ktor-server-config-yaml", version.ref = "ktor" }
+ktor-server-test-host = { module = "io.ktor:ktor-server-test-host", version.ref = "ktor" }
+kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 # Kotlin 基础
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test" }
@@ -70,38 +98,16 @@ kotlinx-serialization-json-jvm = { module = "org.jetbrains.kotlinx:kotlinx-seria
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
 kotlinx-coroutines-core-jvm = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm", version.ref = "kotlinxCoroutines" }
 
-# Web UI相关
-kotlinx-html = { module = "org.jetbrains.kotlinx:kotlinx-html", version.ref = "kotlinxHtml" }
-kotlinx-html-jvm = { module = "org.jetbrains.kotlinx:kotlinx-html-jvm", version.ref = "kotlinxHtml" }
-kotlin-css = { module = "org.jetbrains.kotlin-wrappers:kotlin-css", version.ref = "kotlinCss" }
-kotlin-css-jvm = { module = "org.jetbrains.kotlin-wrappers:kotlin-css-jvm", version.ref = "kotlinCss" }
 kotlinwind-css = { module = "io.github.allangomes:kotlinwind-css", version.ref = "kotlinwindCss" }
 
 # 时间日期
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
-
-# Vert.x 框架
-vertx-web = { module = "io.vertx:vertx-web", version.ref = "vertx" }
-vertx-core = { module = "io.vertx:vertx-core", version.ref = "vertx" }
-vertx-jdbc-client = { module = "io.vertx:vertx-jdbc-client", version.ref = "vertxJdbcClient" }
-vertx-lang-kotlin-coroutines = { module = "io.vertx:vertx-lang-kotlin-coroutines", version.ref = "vertx" }
-vertx-junit5 = { module = "io.vertx:vertx-junit5", version.ref = "vertx" }
-
-# 数据库框架
-h2 = { module = "com.h2database:h2", version.ref = "h2Database" }
-exposed-core = { module = "org.jetbrains.exposed:exposed-core", version.ref = "exposed" }
-exposed-jdbc = { module = "org.jetbrains.exposed:exposed-jdbc", version.ref = "exposed" }
-exposed-dao = { module = "org.jetbrains.exposed:exposed-dao", version.ref = "exposed" }
-exposed-kotlin-datetime = { module = "org.jetbrains.exposed:exposed-kotlin-datetime", version.ref = "exposed" }
-
-# 依赖注入
-koin-core = { module = "io.insert-koin:koin-core" }
-koin-annotations = { module = "io.insert-koin:koin-annotations", version.ref = "koinAnnotations" }
-koin-ksp-compiler = { module = "io.insert-koin:koin-ksp-compiler", version.ref = "koinAnnotations" }
+kotlinx-datetime-jvm = { module = "org.jetbrains.kotlinx:kotlinx-datetime-jvm", version.ref = "kotlinxDatetime" }
 
 # 日志
 slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
-logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+#logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "logback" }
 
 # 对象映射
 mapstruct = { module = "org.mapstruct:mapstruct", version.ref = "mapstruct" }
@@ -125,9 +131,6 @@ auto-service-annotations = { module = "com.google.auto.service:auto-service-anno
 
 # JPA相关
 jakarta-persistence-api = { module = "jakarta.persistence:jakarta.persistence-api", version.ref = "jakartaPersistence" }
-
-# Git操作
-kgit = { module = "com.github.sya-ri:kgit", version.ref = "kgit" }
 
 # YAML解析
 kaml = { module = "com.charleskorn.kaml:kaml", version.ref = "kaml" }
@@ -155,8 +158,7 @@ symbol-processing-api = { module = "com.google.devtools.ksp:symbol-processing-ap
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kapt" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadowJar" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "kspplugin" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
-graalvm-native = { id = "org.graalvm.buildtools.native", version.ref = "graalvm" }
 i18n4k = { id = "de.comahe.i18n4k", version.ref = "i18n4k" }
+ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
