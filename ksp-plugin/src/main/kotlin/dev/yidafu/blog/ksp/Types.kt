@@ -23,3 +23,6 @@ val RootDIClass = ClassName("dev.yidafu.blog", "RootDI")
 val KtorPluginDI = ClassName("io.ktor.server.plugins.di", "DI")
 val KtorApplicationDependencies = MemberName(KtorPluginDI.packageName, "dependencies")
 val KtorApplicationProvide = MemberName(KtorPluginDI.packageName, "provide")
+val KtorApplicationResolve = MemberName(KtorPluginDI.packageName, "resolve")
+
+const val NiceDIFunctionName = "injectAllDependencies"
