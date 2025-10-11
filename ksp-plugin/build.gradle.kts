@@ -19,7 +19,7 @@ dependencies {
   implementation("com.squareup:kotlinpoet-ksp:2.2.0")
   implementation("com.squareup:kotlinpoet-jvm:2.2.0")
   implementation("org.jetbrains:annotations:13.0")
-
+  implementation(project(":common"))
   testImplementation(libs.kotlin.test)
 }
 
