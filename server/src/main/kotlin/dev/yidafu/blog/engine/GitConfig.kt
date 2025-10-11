@@ -1,13 +1,10 @@
 package dev.yidafu.blog.engine
 
-import dev.yidafu.blog.engine.TaskScope.Companion.NAME
-import org.koin.core.annotation.Scope
-import org.koin.core.annotation.Scoped
+import dev.yidafu.blog.common.annotation.Service
 import java.io.File
 import java.net.URL
 
-@Scope(name = NAME)
-@Scoped
+@Service
 data class GitConfig(
   var url: String = "",
   var branch: String = "",

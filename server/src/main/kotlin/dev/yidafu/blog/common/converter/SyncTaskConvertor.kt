@@ -14,6 +14,7 @@ interface SyncTaskConvertor {
 
   @Mappings(value = [Mapping(source = "TId", target = "id")])
   fun toVO(modal: SyncTaskEntity): AdminSyncTaskVO
+
 //  @Mappings(value = [Mapping(source = "TId", target = "id")])
   fun toVOList(modal: List<SyncTaskEntity>): List<AdminSyncTaskVO>
 }

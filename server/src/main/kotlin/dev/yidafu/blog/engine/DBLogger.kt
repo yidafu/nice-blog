@@ -2,6 +2,7 @@ package dev.yidafu.blog.engine
 
 import dev.yidafu.blog.common.db.dao.SyncTaskEntity
 import dev.yidafu.blog.common.db.tables.SyncTaskTable
+import dev.yidafu.blog.common.annotation.Service
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.BufferOverflow
@@ -10,15 +11,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
-import org.koin.core.annotation.Scope
-import org.koin.core.annotation.Scoped
 import org.slf4j.LoggerFactory
 
-@Scope(name = TaskScope.NAME)
-@Scoped
+@Service("dbLogger")
 class DBLogger(
   config: GitConfig,
-) : Logger(config) {
+) : BaseLogger(config) {
   private val log = LoggerFactory.getLogger(DBLogger::class.java)
   private val flow = MutableSharedFlow<String>(5, 100, BufferOverflow.SUSPEND)
 

@@ -11,23 +11,24 @@ import dev.yidafu.blog.common.ConstantKeys
 import dev.yidafu.blog.common.ConstantKeys.AUTH_CURRENT_USERNAME
 import dev.yidafu.blog.common.ConstantKeys.AUTH_RSA_PRIVATE_KEY
 import dev.yidafu.blog.common.ConstantKeys.AUTH_RSA_PUBLIC_KEY
-import dev.yidafu.blog.common.ext.render
 import dev.yidafu.blog.common.services.ConfigurationService
 import dev.yidafu.blog.common.services.UserService
 import dev.yidafu.blog.common.vo.AdminLoginVO
 import dev.yidafu.blog.i18n.AdminTxt
-import dev.yidafu.blog.ksp.annotation.Controller
-import dev.yidafu.blog.ksp.annotation.Get
-import dev.yidafu.blog.ksp.annotation.Post
+import dev.yidafu.blog.common.annotation.Controller
+import dev.yidafu.blog.common.annotation.Get
+import dev.yidafu.blog.common.annotation.Post
 import dev.yidafu.blog.themes.PageNames
-import io.vertx.ext.web.RoutingContext
-import org.koin.core.annotation.Single
+import io.ktor.server.application.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
+import io.ktor.server.sessions.*
+import io.ktor.util.AttributeKey
 import org.slf4j.LoggerFactory
 import java.util.*
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
-@Single
 @Controller
 class AuthController(
   private val configService: ConfigurationService,
@@ -75,23 +76,24 @@ class AuthController(
       LoginError(3, AdminTxt.account_locked),
     )
 
-  suspend fun genRsaKeyPair(ctx: RoutingContext) {
-    val session = ctx.session()
+  suspend fun genRsaKeyPair(call: ApplicationCall) {
     val (publicKey, privateKey) = keyPair.value()
-    session.put(AUTH_RSA_PUBLIC_KEY, publicKey)
-    session.put(AUTH_RSA_PRIVATE_KEY, privateKey)
-    ctx.next()
+    call.sessions.set(AUTH_RSA_PUBLIC_KEY, publicKey)
+    call.sessions.set(AUTH_RSA_PRIVATE_KEY, privateKey)
+    // Ktor中不需要显式调用next()，拦截器会自动继续
   }
 
   @Get(Routes.LOGIN_URL)
-  suspend fun loginPage(ctx: RoutingContext) {
+  suspend fun loginPage(call: ApplicationCall) {
     log.info("render login page")
-
-    val local = ctx.get<Locale>(ConstantKeys.LANGUAGE_CONTEXT)
-    val publicKEy = ctx.session().get<String>(AUTH_RSA_PUBLIC_KEY)
-    val errorCode = ctx.queryParam("errorCode").firstOrNull()
+    val local =
+      call.attributes.getOrNull<Locale>(
+        AttributeKey<Locale>(ConstantKeys.LANGUAGE_CONTEXT),
+      ) ?: Locale.getDefault()
+    val publicKEy = call.sessions.get(AUTH_RSA_PUBLIC_KEY) ?: ""
+    val errorCode = call.request.queryParameters["errorCode"]
     val errorMessage =
-      errorCode?.toInt().let { code ->
+      errorCode?.toIntOrNull()?.let { code ->
         errorList.find { e -> e.code == code }
       }?.message?.toString(local)
 
@@ -101,27 +103,25 @@ class AuthController(
         errorMessage,
       )
     log.info("render login page")
-    ctx.render(PageNames.ADMIN_LOGIN, vo)
+    call.respondText("Rendering page: ${PageNames.ADMIN_LOGIN} with data: $vo")
   }
 
   @Post(Routes.LOGIN_URL)
   @OptIn(ExperimentalEncodingApi::class)
-  suspend fun loginAction(ctx: RoutingContext) {
-    val req = ctx.request()
-    val body = req.formAttributes()
-    val userName = body.get(FormKeys.USER_NAME)
+  suspend fun loginAction(call: ApplicationCall) {
+    val body = call.receiveParameters()
+    val userName = requireNotNull(body[FormKeys.USER_NAME])
     // get private key from session
-    val session = ctx.session()
-    val privateKey = session.get<String>(AUTH_RSA_PRIVATE_KEY)
+    val privateKey = call.sessions.get(AUTH_RSA_PRIVATE_KEY) as String? ?: return redirectLoginErrorPage(call, errorList[0])
     // clear old rsa key
-    session.remove<String>(AUTH_RSA_PRIVATE_KEY)
-    session.remove<String>(AUTH_RSA_PUBLIC_KEY)
+    call.sessions.clear(AUTH_RSA_PRIVATE_KEY)
+    call.sessions.clear(AUTH_RSA_PUBLIC_KEY)
 
     // check account is locked?
     cache.get(userName)?.let { count ->
       log.info("login retry count $count")
       if (count == MAX_RETRY_COUNT) {
-        redirectLoginErrorPage(ctx, errorList[2])
+        redirectLoginErrorPage(call, errorList[2])
         return
       }
     }
@@ -129,12 +129,12 @@ class AuthController(
     val userModal = userService.getUserByUsername(userName)
     if (userModal == null) {
       log.info("user {} not found", userName)
-      redirectLoginErrorPage(ctx, errorList[0])
+      redirectLoginErrorPage(call, errorList[0])
       return
     }
 
     // verify password
-    val password = body.get(FormKeys.PASSWORD)
+    val password = requireNotNull(body[FormKeys.PASSWORD])
     val passwordText =
       CryptographyProvider.Default.get(RSA.OAEP)
         .privateKeyDecoder(SHA256)
@@ -148,35 +148,35 @@ class AuthController(
     log.info("encodePasswordText $encodePasswordText, password = ${userModal.password}")
     if (userModal.password != encodePasswordText) {
       log.info("user {} login fail", userName)
-      return redirectLoginErrorPage(ctx, errorList[1])
+      return redirectLoginErrorPage(call, errorList[1])
     }
 
     log.info("login user {}, password {}", userName, passwordText)
-    session.put(AUTH_CURRENT_USERNAME, userModal.username)
-    ctx.redirect(Routes.ADMIN_URL)
+    call.sessions.set(AUTH_CURRENT_USERNAME, userModal.username)
+    call.respondRedirect(Routes.ADMIN_URL)
   }
 
   @Get(Routes.LOGOUT_URL)
-  fun logoutAction(ctx: RoutingContext) {
-    ctx.session().destroy()
-    ctx.redirect(Routes.LOGIN_URL)
+  suspend fun logoutAction(call: ApplicationCall) {
+    call.sessions.clear(AUTH_CURRENT_USERNAME)
+    call.respondRedirect(Routes.LOGIN_URL)
   }
 
-  private fun redirectLoginErrorPage(
-    ctx: RoutingContext,
+  private suspend fun redirectLoginErrorPage(
+    call: ApplicationCall,
     err: LoginError,
   ) {
-    ctx.redirect(Routes.LOGIN_URL + "?errorCode=${err.code}")
+    call.respondRedirect(Routes.LOGIN_URL + "?errorCode=${err.code}")
   }
 
   @Get(Routes.ADMIN_URL + "/*")
-  suspend fun checkLoginAction(ctx: RoutingContext) {
-    val username = ctx.session().get<String>(AUTH_CURRENT_USERNAME)
+  suspend fun checkLoginAction(call: ApplicationCall) {
+    val username = call.sessions.get(AUTH_CURRENT_USERNAME)
     if (username == null) {
-      ctx.session().destroy()
-      ctx.redirect(Routes.LOGIN_URL)
+      call.sessions.clear(AUTH_CURRENT_USERNAME)
+      call.respondRedirect(Routes.LOGIN_URL)
     } else {
-      ctx.next()
+      // Ktor中不需要显式调用next()，拦截器会自动继续
     }
   }
 }

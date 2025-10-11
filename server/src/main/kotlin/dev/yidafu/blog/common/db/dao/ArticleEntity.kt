@@ -8,6 +8,7 @@ import org.jetbrains.exposed.v1.dao.IntEntityClass
 
 class ArticleEntity(id: EntityID<Int>) : IntEntity(id) {
   companion object : IntEntityClass<ArticleEntity>(ArticleTable)
+
   private var entityId by SyncTaskTable.id
   var tId: Int = entityId.value
   var title by ArticleTable.title

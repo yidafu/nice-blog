@@ -1,9 +1,7 @@
 package dev.yidafu.blog.engine
 
 import dev.yidafu.blog.common.dto.CommonArticleDTO
-import dev.yidafu.blog.engine.TaskScope.Companion.NAME
-import org.koin.core.annotation.Scope
-import org.koin.core.annotation.Scoped
+import dev.yidafu.blog.common.annotation.Service
 import java.io.File
 import java.net.URI
 
@@ -18,8 +16,7 @@ interface ArticleManager {
   suspend fun saveArticle(articleDTO: CommonArticleDTO)
 }
 
-@Scope(name = NAME)
-@Scoped
+@Service("default")
 open class DefaultArticleManager : ArticleManager {
   override suspend fun needUpdate(
     identifier: String,

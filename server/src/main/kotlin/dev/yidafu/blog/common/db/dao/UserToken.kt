@@ -9,7 +9,6 @@ import org.jetbrains.exposed.v1.dao.IntEntityClass
 class UserToken(id: EntityID<Int>) : IntEntity(id) {
   companion object : IntEntityClass<UserToken>(UserTokenTable)
 
-
   private var entityId by SyncTaskTable.id
   var tId: Int = entityId.value
 

@@ -4,7 +4,6 @@ import dev.snipme.highlights.Highlights
 import dev.snipme.highlights.model.*
 import kotlinx.html.*
 import kotlinx.html.stream.createHTML
-import java.util.Locale
 import java.util.Locale.getDefault
 
 object CustomCodeHighlight {

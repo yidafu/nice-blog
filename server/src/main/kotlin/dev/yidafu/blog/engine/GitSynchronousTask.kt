@@ -1,22 +1,19 @@
 package dev.yidafu.blog.engine
 
-import com.github.syari.kgit.KGit
+// import com.github.syari.kgit.KGit
 import dev.yidafu.blog.common.dto.CommonArticleDTO
-import dev.yidafu.blog.engine.TaskScope.Companion.NAME
+import dev.yidafu.blog.common.annotation.Service
+import io.ktor.server.plugins.di.annotations.Named
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
-import org.eclipse.jgit.lib.TextProgressMonitor
-import org.koin.core.annotation.Scope
-import org.koin.core.annotation.Scoped
+// import org.eclipse.jgit.lib.TextProgressMonitor
 import java.io.File
 import java.io.Writer
 import java.net.URI
 
-@Scope(name = NAME)
-@Scoped
-class LogWriter(val logger: Logger) : Writer() {
+class LogWriter(val logger: BaseLogger) : Writer() {
   override fun close() {
   }
 
@@ -42,13 +39,12 @@ class LogWriter(val logger: Logger) : Writer() {
   }
 }
 
-@Scope(name = NAME)
-@Scoped
+@Service
 open class GitSynchronousTask(
   config: GitConfig,
-  olistener: SynchronousListener,
-  articleManager: ArticleManager,
-  logger: Logger,
+  @Named("dbListener") olistener: SynchronousListener,
+  @Named("dbArticle") articleManager: ArticleManager,
+  @Named("dbLogger")  logger: BaseLogger,
   private val writer: LogWriter,
 ) : BaseGitSynchronousTask(config, olistener, logger, articleManager) {
   override suspend fun updateImage(img: File): URI {
@@ -62,32 +58,64 @@ open class GitSynchronousTask(
   }
 
   override suspend fun fetchRepository(): File {
-    val monitor = TextProgressMonitor(writer)
     val directory = gitConfig.getLocalRepoFile()
-    val git =
-      if (!directory.exists()) {
-        logger.log("repository is not exist, clone repository into ${directory.toPath()}")
-        KGit.cloneRepository {
-          setURI(gitUrl)
-          setTimeout(60)
-          setDirectory(directory)
-          setProgressMonitor(monitor)
-        }
-      } else {
-        logger.log("open local repository in ${directory.absolutePath}")
-        KGit.open(directory)
+    val branch = gitBranch
+
+    if (!directory.exists()) {
+      logger.log("repository is not exist, clone repository into ${directory.toPath()}")
+      // 创建父目录
+      directory.parentFile?.mkdirs()
+
+      // 使用git命令克隆仓库
+      val cloneProcess =
+        ProcessBuilder(
+          "git",
+          "clone",
+          gitUrl,
+          directory.absolutePath,
+        ).redirectErrorStream(true).start()
+
+      // 读取命令输出并记录日志
+      cloneProcess.inputStream.bufferedReader().useLines {
+        it.forEach { line -> logger.log(line) }
       }
 
-    val branch = gitBranch
-    logger.log("pull origin $branch")
-    val res =
-      git.pull {
-        remoteBranchName = gitConfig.branch
-        setProgressMonitor(monitor)
+      // 等待命令完成
+      val exitCode = cloneProcess.waitFor()
+      if (exitCode != 0) {
+        throw RuntimeException("Failed to clone repository. Exit code: $exitCode")
       }
-    logger.log("pull result $res")
-    // close Git resource
-    git.close()
+    } else {
+      logger.log("open local repository in ${directory.absolutePath}")
+
+      // 使用git命令拉取更新
+      logger.log("pull origin $branch")
+      val pullProcess =
+        ProcessBuilder(
+          "git",
+          "pull",
+          "origin",
+          branch,
+        ).directory(directory).redirectErrorStream(true).start()
+
+      // 读取命令输出并记录日志
+      val output = StringBuilder()
+      pullProcess.inputStream.bufferedReader().useLines {
+        it.forEach { line ->
+          output.append(line).append("\n")
+          logger.log(line)
+        }
+      }
+
+      // 等待命令完成
+      val exitCode = pullProcess.waitFor()
+      if (exitCode != 0) {
+        throw RuntimeException("Failed to pull repository. Exit code: $exitCode\nOutput: $output")
+      }
+
+      logger.log("pull completed successfully")
+    }
+
     return directory
   }
 

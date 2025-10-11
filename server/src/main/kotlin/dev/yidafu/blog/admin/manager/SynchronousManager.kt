@@ -5,25 +5,26 @@ import dev.yidafu.blog.common.ConfigurationKeys
 import dev.yidafu.blog.common.ext.getByKey
 import dev.yidafu.blog.common.services.ConfigurationService
 import dev.yidafu.blog.engine.*
+import dev.yidafu.blog.common.annotation.Service
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.koin.core.annotation.Single
-import org.koin.core.qualifier.StringQualifier
-import org.koin.java.KoinJavaComponent.getKoin
 import org.slf4j.LoggerFactory
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
-@Single
-class SynchronousManager(
+interface SynchronousManager {
+  suspend fun startSync(forceSync: Boolean): String
+}
+
+@Service
+class SynchronousManagerImpl(
   private val configService: ConfigurationService,
   private val syncTaskService: SyncTaskService,
-) {
+) : SynchronousManager {
   private val log = LoggerFactory.getLogger(SynchronousManager::class.java)
-  private val koin = getKoin()
 
   @OptIn(ExperimentalUuidApi::class)
-  suspend fun startSync(forceSync: Boolean): String {
+  override suspend fun startSync(forceSync: Boolean): String {
     val taskUuid = Uuid.random().toHexString()
     log.info("start synchronous task {}", taskUuid)
 
@@ -49,23 +50,25 @@ class SynchronousManager(
         ),
       )
     val gitUrl = configs.getByKey(ConfigurationKeys.SOURCE_URL) ?: throw IllegalStateException("Git url can't be null")
-    val gitBranch =
-      configs.getByKey(ConfigurationKeys.SOURCE_BRANCH) ?: throw IllegalStateException("Git url can't be null")
+    val gitBranch = configs.getByKey(ConfigurationKeys.SOURCE_BRANCH) ?: throw IllegalStateException("Git branch can't be null")
+
     withContext(Dispatchers.IO) {
-      val taskScope = koin.createScope(taskUuid, StringQualifier(TaskScope.NAME), TaskScope::class)
+      // 直接创建所需的对象，不使用Koin
       val config = GitConfig(gitUrl, gitBranch, uuid = taskUuid, forceSync = forceSync)
-      taskScope.declare(config)
-      taskScope.declare<Logger>(DBLogger(config))
-      taskScope.declare<SynchronousListener>(DBSynchronousListener(taskScope.get(), taskScope.get()))
-      taskScope.declare<ArticleManager>(DBArticleManager(taskScope.get(), taskScope.get()))
-      val syncTask: BaseGitSynchronousTask = taskScope.get<BaseGitSynchronousTask>()
+      val logger = DBLogger(config)
+      val articleManager = DBArticleManager(logger, config)
+      val listener = DBSynchronousListener(config, logger)
+      val writer = LogWriter(logger)
+
+      // 创建并执行同步任务
+      val syncTask = GitSynchronousTask(config, listener, articleManager, logger, writer)
       syncTask.sync()
-      taskScope.close()
-      // when current task end, check weather there are 'created' tasks. running blocking sync task
+
+      // 检查是否有其他任务需要执行
       if (syncTaskService.getRunningTaskCount() > 0) {
         val task = syncTaskService.findLatestRunningTask()
-        task.uuid?.let { uuid ->
-          executeTask(uuid, task.forceSync ?: false)
+        task.uuid?.let {
+          executeTask(it, task.forceSync ?: false)
         }
       }
     }

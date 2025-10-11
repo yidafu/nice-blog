@@ -8,8 +8,9 @@ import dev.yidafu.blog.common.db.tables.ArticleTable
 import dev.yidafu.blog.common.dto.CommonArticleDTO
 import dev.yidafu.blog.common.modal.ArticleStatus
 import dev.yidafu.blog.common.services.ExposedBaseService
+import dev.yidafu.blog.common.annotation.Service
+import io.ktor.server.plugins.di.annotations.Named
 import org.jetbrains.exposed.v1.core.eq
-import org.koin.core.annotation.Single
 import java.io.File
 import java.io.FileInputStream
 import java.net.URI
@@ -17,9 +18,9 @@ import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.UUID
 
-@Single
+@Service("dbArticle")
 class DBArticleManager(
-  private val logger: Logger,
+  private @Named("dbLogger") val logger: Logger,
   private val config: GitConfig,
 ) : ExposedBaseService(), ArticleManager {
   override suspend fun needUpdate(
@@ -59,19 +60,20 @@ class DBArticleManager(
           .replace(".ipynb", ".html")
 
       val existingArticle = findArticleByName(identifier)
-      val article = existingArticle?.
-      apply { // 更新现有文章
-        title = articleDTO.frontMatter?.title ?: ""
-        summary = articleDTO.frontMatter?.description
-        cover = articleDTO.frontMatter?.cover
-        this.identifier = identifier
-        html = articleDTO.html
-        series = ""
-        content = articleDTO.rawContext
-        status = ArticleStatus.Candidate
-        sourceType = articleDTO.sourceType
-        hash = ""
-      }
+      val article =
+        existingArticle
+          ?.apply { // 更新现有文章
+            title = articleDTO.frontMatter?.title ?: ""
+            summary = articleDTO.frontMatter?.description
+            cover = articleDTO.frontMatter?.cover
+            this.identifier = identifier
+            html = articleDTO.html
+            series = ""
+            content = articleDTO.rawContext
+            status = ArticleStatus.Candidate
+            sourceType = articleDTO.sourceType
+            hash = ""
+          }
           ?: // 创建新文章
           ArticleEntity.new {
             title = articleDTO.frontMatter?.title ?: ""
@@ -96,7 +98,7 @@ class DBArticleManager(
     }
   }
 
-  private  fun findArticleByName(name: String): ArticleEntity? {
+  private fun findArticleByName(name: String): ArticleEntity? {
     return ArticleEntity.find {
       (ArticleTable.identifier eq name)
     }.singleOrNull()

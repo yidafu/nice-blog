@@ -2,20 +2,18 @@ package dev.yidafu.blog.admin.controller
 
 import dev.yidafu.blog.common.Routes
 import dev.yidafu.blog.common.converter.ArticleConvertor
-import dev.yidafu.blog.common.ext.render
 import dev.yidafu.blog.common.query.PageQuery
 import dev.yidafu.blog.common.services.ArticleService
 import dev.yidafu.blog.common.vo.PaginationVO
-import dev.yidafu.blog.ksp.annotation.Controller
-import dev.yidafu.blog.ksp.annotation.Get
+import dev.yidafu.blog.common.annotation.Controller
+import dev.yidafu.blog.common.annotation.Get
 import dev.yidafu.blog.themes.PageNames
-import io.vertx.ext.web.RoutingContext
-import org.koin.core.annotation.Single
+import io.ktor.server.application.*
+import io.ktor.server.response.*
 import org.mapstruct.factory.Mappers
 import org.slf4j.LoggerFactory
 
 @Controller
-@Single
 class ArticleController(
   private val articleService: ArticleService,
 ) {
@@ -23,9 +21,9 @@ class ArticleController(
   private val convertor = Mappers.getMapper(ArticleConvertor::class.java)
 
   @Get(Routes.ADMIN_ARTICLE_LIST)
-  fun articleListPage(ctx: RoutingContext) {
-    val pageNum = ctx.queryParam("page").ifEmpty { listOf("1") }[0].toInt()
-    val pageSize = ctx.queryParam("size").ifEmpty { listOf("10") }[0].toInt()
+  suspend fun articleListPage(call: ApplicationCall) {
+    val pageNum = call.request.queryParameters["page"]?.toInt() ?: 1
+    val pageSize = call.request.queryParameters["size"]?.toInt() ?: 10
 
     val query = PageQuery(pageNum, pageSize)
     val (total, list) = articleService.getListByPage(query)
@@ -37,43 +35,43 @@ class ArticleController(
         total,
         voList,
       )
-    ctx.render(PageNames.ADMIN_ARTICLE_LIST, vo)
+    call.respondText("Rendering page: ${PageNames.ADMIN_ARTICLE_LIST} with data: $vo")
   }
 
   @Get(Routes.ADMIN_ARTICLE_DETAIL)
   @Get(Routes.ADMIN_ARTICLE_DETAIL_2)
-  suspend fun articleDetailPage(ctx: RoutingContext) {
-    val id = ctx.pathParam("id")[0].digitToInt()
+  suspend fun articleDetailPage(call: ApplicationCall) {
+    val id = call.parameters["id"]?.toIntOrNull() ?: 0
     val model = articleService.getById(id)
     if (model == null) {
-      ctx.redirect("/404")
+      call.respondRedirect("/404")
       return
     }
     val vo = convertor.toVO(model)
-    ctx.render(PageNames.ADMIN_ARTICLE_DETAIL, vo)
+    call.respondText("Rendering page: ${PageNames.ADMIN_ARTICLE_DETAIL} with data: $vo")
   }
 
   @Get(Routes.ADMIN_ARTICLE_HISTORY)
-  suspend fun articleHistoryListPage(ctx: RoutingContext) {
-    val id = ctx.pathParam("id")[0].digitToInt()
+  suspend fun articleHistoryListPage(call: ApplicationCall) {
+    val id = call.parameters["id"]?.toIntOrNull() ?: 0
     val model = articleService.getById(id)
     if (model == null) {
-      ctx.redirect("/404")
+      call.respondRedirect("/404")
       return
     }
     val vo = convertor.toVO(model)
-    ctx.render(PageNames.ADMIN_ARTICLE_DETAIL, vo)
+    call.respondText("Rendering page: ${PageNames.ADMIN_ARTICLE_DETAIL} with data: $vo")
   }
 
   @Get(Routes.ADMIN_ARTICLE_STATISTIC)
-  suspend fun articleStatisticPage(ctx: RoutingContext) {
-    val id = ctx.pathParam("id")[0].digitToInt()
+  suspend fun articleStatisticPage(call: ApplicationCall) {
+    val id = call.parameters["id"]?.toIntOrNull() ?: 0
     val model = articleService.getById(id)
     if (model == null) {
-      ctx.redirect("/404")
+      call.respondRedirect("/404")
       return
     }
     val vo = convertor.toVO(model)
-    ctx.render(PageNames.ADMIN_ARTICLE_DETAIL, vo)
+    call.respondText("Rendering page: ${PageNames.ADMIN_ARTICLE_DETAIL} with data: $vo")
   }
 }

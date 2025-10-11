@@ -1,26 +1,24 @@
 package dev.yidafu.blog.admin.controller
 
 import dev.yidafu.blog.common.ConfigurationKeys
-import dev.yidafu.blog.common.ConstantKeys
 import dev.yidafu.blog.common.FormKeys
 import dev.yidafu.blog.common.Routes
 import dev.yidafu.blog.common.dto.ConfigurationDTO
 import dev.yidafu.blog.common.ext.getByKey
-import dev.yidafu.blog.common.ext.render
 import dev.yidafu.blog.common.services.ConfigurationService
 import dev.yidafu.blog.common.vo.AdminAppearanceVO
 import dev.yidafu.blog.common.vo.AdminDataSourceVO
 import dev.yidafu.blog.common.vo.AdminSynchronousVO
-import dev.yidafu.blog.ksp.annotation.Controller
-import dev.yidafu.blog.ksp.annotation.Get
-import dev.yidafu.blog.ksp.annotation.Post
+import dev.yidafu.blog.common.annotation.Controller
+import dev.yidafu.blog.common.annotation.Get
+import dev.yidafu.blog.common.annotation.Post
 import dev.yidafu.blog.themes.PageNames
-import io.vertx.core.http.HttpHeaders
-import io.vertx.ext.web.RoutingContext
-import org.koin.core.annotation.Single
+import io.ktor.http.*
+import io.ktor.server.application.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
 import org.slf4j.LoggerFactory
 
-@Single
 @Controller
 class ConfigurationController(
   private val configService: ConfigurationService,
@@ -28,20 +26,19 @@ class ConfigurationController(
   private val log = LoggerFactory.getLogger(ConfigurationController::class.java)
 
   @Get(Routes.CONFIG_APPEARANCE_URL)
-  suspend fun appearancePage(ctx: RoutingContext) {
+  suspend fun appearancePage(call: ApplicationCall) {
     val vo = AdminAppearanceVO()
-    ctx.render(PageNames.ADMIN_CONFIG_APPEARANCE_PAGE, vo)
+    call.respondText("Rendering page: ${PageNames.ADMIN_CONFIG_APPEARANCE_PAGE} with data: $vo")
   }
 
   /**
    * 通用更新配置
    */
   @Post(Routes.CONFIGURATION_URL)
-  suspend fun updateConfigAction(ctx: RoutingContext) {
+  suspend fun updateConfigAction(call: ApplicationCall) {
     log.info("updateAppearancePage")
-    val req = ctx.request()
-    val body = req.formAttributes()
-    val referer = req.getHeader(HttpHeaders.REFERER) ?: Routes.CONFIGURATION_URL
+    val body = call.receiveParameters()
+    val referer = call.request.header(HttpHeaders.Referrer) ?: Routes.CONFIGURATION_URL
 
     val dtoList =
       listOf(
@@ -53,32 +50,32 @@ class ConfigurationController(
         FormKeys.SOURCE_TOKEN to ConfigurationKeys.SOURCE_TOKEN,
         FormKeys.SOURCE_BRANCH to ConfigurationKeys.SOURCE_BRANCH,
       ).mapNotNull { keyPair ->
-        body.get(keyPair.first)?.let { value ->
+        body[keyPair.first]?.let { value ->
           ConfigurationDTO(keyPair.second, value)
         }
       }
     dtoList.find { it.configKey == ConfigurationKeys.SYNC_CRON_EXPR }?.let { config ->
       log.info("send update cron expression event => ${config.configValue}")
-      ctx.vertx().eventBus().send(ConstantKeys.UPDATE_CRON_EXPR, config.configValue)
+//      vertx.eventBus().send(ConstantKeys.UPDATE_CRON_EXPR, config.configValue)
     }
 
     log.info("start update config ${dtoList.joinToString(",")}}")
     configService.updateConfig(dtoList)
-    ctx.redirect(referer)
+    call.respondRedirect(referer)
   }
 
   @Get(Routes.CONFIG_SYNC_URL)
-  suspend fun synchronousPage(ctx: RoutingContext) {
+  suspend fun synchronousPage(call: ApplicationCall) {
     val config = configService.getByKey(ConfigurationKeys.SYNC_CRON_EXPR)
     val vo =
       AdminSynchronousVO(
         config.configValue,
       )
-    ctx.render(PageNames.ADMIN_CONFIG_SYNC_PAGE, vo)
+    call.respondText("Rendering page: ${PageNames.ADMIN_CONFIG_SYNC_PAGE} with data: $vo")
   }
 
   @Get(Routes.CONFIG_DATA_SOURCE_URL)
-  suspend fun dataSourcePage(ctx: RoutingContext) {
+  suspend fun dataSourcePage(call: ApplicationCall) {
     val configs =
       configService.getByKeys(
         listOf(
@@ -97,6 +94,6 @@ class ConfigurationController(
         configs.getByKey(ConfigurationKeys.SOURCE_BRANCH) ?: "",
       )
 
-    ctx.render(PageNames.ADMIN_CONFIG_DATA_SOURCE_PAGE, vo)
+    call.respondText("Rendering page: ${PageNames.ADMIN_CONFIG_DATA_SOURCE_PAGE} with data: $vo")
   }
 }
