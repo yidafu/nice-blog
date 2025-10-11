@@ -1,5 +1,7 @@
 package dev.yidafu.blog.fe
 
+import dev.yidafu.blog.common.db.ExposedDatabase
+import dev.yidafu.blog.generated.fe.controller.createHomeControllerRoute
 import dev.yidafu.blog.generated.injectAllDependencies
 import io.github.flaxoos.ktor.server.plugins.ratelimiter.RateLimiting
 import io.github.flaxoos.ktor.server.plugins.ratelimiter.implementations.TokenBucket
@@ -14,14 +16,17 @@ import kotlin.time.Duration.Companion.seconds
 
 suspend fun Application.frontendModule() {
   injectAllDependencies()
-
   val logger = LoggerFactory.getLogger("admin")
+
+  ExposedDatabase.init()
+
+  ExposedDatabase.createTables()
 
   install(StatusPages) {
     exception<Throwable> { call, cause ->
       call.respondText(
         text = "Internal Server Error: ${cause.message}",
-        status = io.ktor.http.HttpStatusCode.InternalServerError,
+        status = HttpStatusCode.InternalServerError,
       )
     }
   }
@@ -46,6 +51,6 @@ suspend fun Application.frontendModule() {
       }
     }
   }
-//  createRoutes2()
-//  createRoutes3()
+
+  createHomeControllerRoute()
 }
