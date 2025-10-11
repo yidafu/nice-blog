@@ -20,7 +20,6 @@ class AccessLogServiceImpl : AccessLogService, BaseService() {
 
   override fun saveLog(dto: AccessLogDTO): Boolean {
     return try {
-      runDBBlocking {
         AccessLogEntity.new {
           ip = dto.ip
           ua = dto.ua
@@ -29,7 +28,6 @@ class AccessLogServiceImpl : AccessLogService, BaseService() {
           accessTime = LocalDateTime.now()
         }
         true
-      }
     } catch (e: Exception) {
       log.warn("保存访问日志失败 {}", dto, e)
       false

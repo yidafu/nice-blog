@@ -31,7 +31,7 @@ class HomeController(
   private val log = LoggerFactory.getLogger(HomeController::class.java)
   private val articleConvertor = Mappers.getMapper(ArticleConvertor::class.java)
 
-  @Any("/*")
+//  @Any("/*")
   fun anyAccessLog(call: ApplicationCall) {
     val url = call.request.uri
     val referer = call.request.header(HttpHeaders.Referrer) ?: ""
@@ -69,11 +69,17 @@ class HomeController(
   @Get(Routes.ROOT_URL)
   @Get(Routes.ARTICLE_LIST)
   suspend fun indexPage(call: ApplicationCall) {
+    try {
+      val page = call.parameters["page"]?.toInt() ?: 1
     val list = articleService.getAll()
     val voList = articleConvertor.toVO(list)
 
     // 在Ktor中渲染页面
     call.respondText("Rendering page: ${PageNames.ARTICLE_LIST} with data: $voList")
+    } catch (e: Exception) {
+      log.error("查询文章列表失败", e)
+      call.respondRedirect("/403")
+    }
   }
 
   @Get(Routes.ARTICLE_DETAIL)
