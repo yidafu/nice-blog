@@ -22,6 +22,7 @@ import dev.yidafu.blog.ksp.KtorApplicationRoutePut
 import dev.yidafu.blog.ksp.KtorApplicationRouting
 import dev.yidafu.blog.ksp.KtorRoutingContextCall
 import dev.yidafu.blog.ksp.MethodInfo
+import dev.yidafu.blog.ksp.toGeneratedClassName
 import dev.yidafu.blog.ksp.toVariableName
 import kotlin.collections.forEach
 
@@ -35,7 +36,7 @@ class RouteMapGenerator(
       .toList()
       .forEachIndexed { idx, (packageName, infoList) ->
         buildControllerGroupMap(
-          ClassName(packageName, "CreateRoutes${idx + 1}"),
+          ClassName(packageName.toGeneratedClassName(), "CreateRoutes${idx + 1}"),
           "createRoutes${idx + 1}",
           infoList,
         )
@@ -58,7 +59,7 @@ class RouteMapGenerator(
             .apply {
 //              addCode("%M {\n", KtorApplicationRouting)
               ctrlInfoList.forEach { info ->
-                val routerMapFunctionMember = ClassName(info.packageName, info.routeMapFunctionName)
+                val routerMapFunctionMember = ClassName(info.packageName.toGeneratedClassName(), info.routeMapFunctionName)
                 addStatement("  %T()", routerMapFunctionMember)
               }
 //              addCode("}")
@@ -70,13 +71,16 @@ class RouteMapGenerator(
   }
 
   private fun buildRootRouteMapFile(infoList: List<ControllerRouteInfo>) {
-    buildControllerGroupMap(KtorApplication, "createRoute", infoList)
+//    buildControllerGroupMap(KtorApplication, "createRoute", infoList)
   }
 
   fun buildControllerRouteMapFile(controllerInfo: ControllerRouteInfo) {
     val className = ClassName(controllerInfo.packageName, controllerInfo.className)
 
-    val routeMapClassName = ClassName(controllerInfo.packageName, controllerInfo.routeMapClassName)
+    val routeMapClassName = ClassName(
+      controllerInfo.packageName.toGeneratedClassName(),
+      controllerInfo.routeMapClassName
+    )
     val fileSpec =
       FileSpec
         .builder(routeMapClassName)

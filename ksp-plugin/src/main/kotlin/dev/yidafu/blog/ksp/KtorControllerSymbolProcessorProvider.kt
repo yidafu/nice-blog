@@ -9,8 +9,8 @@ import com.google.devtools.ksp.symbol.ClassKind
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.Modifier
-import dev.yidafu.blog.ksp.annotation.*
-import dev.yidafu.blog.ksp.annotation.Any
+import dev.yidafu.blog.common.annotation.*
+import dev.yidafu.blog.common.annotation.Any
 import dev.yidafu.blog.ksp.dev.yidafu.blog.ksp.RouteMapGenerator
 
 fun KSClassDeclaration.resolveInjectParameters(logger: KSPLogger): List<ComponentInfo> {
@@ -41,9 +41,10 @@ class KtorControllerSymbolProcessor(private val environment: SymbolProcessorEnvi
 
   private val controllerInfoList = mutableListOf<ControllerRouteInfo>()
   private val componentInfoList = mutableListOf<ComponentInfo>()
-
+  init {
+    environment.logger.warn("KSP options: ${environment.options}")
+  }
   override fun process(resolver: Resolver): List<KSAnnotated> {
-    val serviceInfoList =
       resolver.getSymbolsWithAnnotation(Service::class.qualifiedName!!)
         .filterIsInstance<KSClassDeclaration>()
         .forEach { symbol ->
@@ -78,11 +79,10 @@ class KtorControllerSymbolProcessor(private val environment: SymbolProcessorEnvi
           }
         }
 
-    val infoList =
       resolver
         .getSymbolsWithAnnotation(Controller::class.qualifiedName!!)
         .filterIsInstance<KSClassDeclaration>()
-        .map { symbol ->
+        .forEach { symbol ->
 
           val ctrlAnnotaion =
             symbol.annotations.firstOrNull { a ->
@@ -139,15 +139,16 @@ class KtorControllerSymbolProcessor(private val environment: SymbolProcessorEnvi
             }.flatten().toList()
 //        logger.warn("controller info $rootPath $className ${methodList.size}")
 
-          ControllerRouteInfo(
-            rootPath ?: "/",
-            packageName,
-            className,
-            methodList,
-          )
-        }.toList()
+          controllerInfoList.add(
 
-    controllerInfoList.addAll(infoList)
+            ControllerRouteInfo(
+              rootPath ?: "/",
+              packageName,
+              className,
+              methodList,
+            )
+          )
+        }
 
     return emptyList()
   }

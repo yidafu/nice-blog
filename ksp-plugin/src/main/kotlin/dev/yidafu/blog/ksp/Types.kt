@@ -6,7 +6,7 @@ import com.squareup.kotlinpoet.MemberName
 val GlobalContextType = ClassName("org.koin.core.context", "GlobalContext")
 
 val KtorApplication = ClassName("io.ktor.server.application", "Application")
-
+val GeneratedPackage = "generated"
 val KtorApplicationRoute = ClassName("io.ktor.server.routing", "Route")
 val KtorApplicationRouting = MemberName(KtorApplicationRoute.packageName, "routing")
 val KtorApplicationRouteGet = MemberName(KtorApplicationRoute.packageName, "get")
@@ -18,11 +18,16 @@ val KtorRouting = ClassName("io.ktor.server.routing", "Routing")
 val KtorRoutingContextCall = MemberName(KtorRoutingContext, "call")
 val KtorApplicationRouteAny = MemberName("dev.yidafu.blog.common.ext", "any")
 
-val RootDIClass = ClassName("dev.yidafu.blog", "RootDI")
+val RootDIClass = ClassName("dev.yidafu.blog.${GeneratedPackage}", "RootDI")
 
 val KtorPluginDI = ClassName("io.ktor.server.plugins.di", "DI")
 val KtorApplicationDependencies = MemberName(KtorPluginDI.packageName, "dependencies")
+val KtorApplicationKey = MemberName(KtorPluginDI.packageName, "key")
 val KtorApplicationProvide = MemberName(KtorPluginDI.packageName, "provide")
 val KtorApplicationResolve = MemberName(KtorPluginDI.packageName, "resolve")
 
 const val NiceDIFunctionName = "injectAllDependencies"
+
+fun String.toGeneratedClassName(): String {
+  return this.replace("dev.yidafu.blog", "dev.yidafu.blog.$GeneratedPackage")
+}
