@@ -1,4 +1,6 @@
+import com.google.devtools.ksp.gradle.KspExtension
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
+
 plugins {
   alias(libs.plugins.kotlin.jvm)
   application
@@ -25,7 +27,6 @@ dependencies {
   implementation(project(":common"))
   implementation(project(":themes"))
 
-  compileOnly(project(":ksp-plugin"))
   ksp(project(":ksp-plugin"))
 
   implementation(libs.ktor.server.content.negotiation)
@@ -56,7 +57,6 @@ dependencies {
   implementation(libs.ktor.server.compression)
   implementation(libs.ktor.server.caching.headers)
   implementation(libs.ktor.server.cio)
-//    implementation(libs.logback.classic)
   implementation(libs.ktor.server.config.yaml)
   testImplementation(libs.ktor.server.test.host)
   testImplementation(libs.kotlin.test.junit)
@@ -72,13 +72,11 @@ dependencies {
   implementation(libs.kotlinwind.css)
 
   implementation(libs.mapstruct)
-//  kapt(libs.mapstruct.processor)
 
   implementation(libs.quartz)
   implementation(libs.jetbrains.markdown)
   implementation(libs.cryptography.core.jvm)
   implementation(libs.cryptography.provider.jdk)
-//  implementation(libs.kgit)
   implementation(libs.kaml)
   implementation(libs.jupyter.notebooks.parser)
   implementation(libs.highlights)
@@ -118,4 +116,28 @@ tasks.withType<Test> {
 }
 
 configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
+}
+
+// ksp 不支持修改输出目录，改为手动移动
+tasks.register("copyKspOutput") {
+  dependsOn("kspKotlin")
+  doLast {
+    copy {
+      from("build/generated/ksp/main/kotlin/dev/yidafu/blog/generated")
+      into("src/main/kotlin/dev/yidafu/blog/generated")
+    }
+    delete("build/generated/ksp/main/kotlin")
+  }
+}
+
+tasks.named("compileKotlin") {
+  dependsOn("copyKspOutput")
+}
+
+// 清理任务
+tasks.register("cleanGenerated") {
+  delete("src/main/kotlin/dev/yidafu/blog/generated")
+}
+tasks.named("clean") {
+  dependsOn("cleanGenerated")
 }

@@ -1,5 +1,7 @@
 package dev.yidafu.blog.engine
 
+import dev.yidafu.blog.common.annotation.Service
+import io.ktor.server.plugins.di.annotations.Named
 import org.intellij.markdown.MarkdownElementTypes
 import org.intellij.markdown.ast.ASTNode
 import org.intellij.markdown.ast.CompositeASTNode
@@ -10,9 +12,10 @@ import org.intellij.markdown.html.HtmlGenerator
 import org.slf4j.LoggerFactory
 import java.io.File
 
+@Service("imageGeneratingProvider")
 class ImageGeneratingProvider(
-  private val articleManager: ArticleManager,
-  private val logger: Logger,
+  @Named("dbArticle")  private val articleManager: ArticleManager,
+  @Named("dbLogger")  private val logger: BaseLogger,
   val resolvePath: (path: String) -> File,
 ) : GeneratingProvider {
   private val log = LoggerFactory.getLogger(ImageGeneratingProvider::class.java)

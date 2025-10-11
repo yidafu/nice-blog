@@ -26,6 +26,7 @@ abstract class ExposedBaseService {
       block()
     }
   }
+
   /**
    * 初始化数据库连接
    */

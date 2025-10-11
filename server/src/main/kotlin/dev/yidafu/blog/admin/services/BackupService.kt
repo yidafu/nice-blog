@@ -1,15 +1,18 @@
 package dev.yidafu.blog.admin.services
 
 import dev.yidafu.blog.common.services.BaseService
+import dev.yidafu.blog.common.annotation.Service
 import org.jetbrains.exposed.v1.jdbc.Database
-import org.jetbrains.exposed.v1.jdbc.Database.Companion.connect
-import org.koin.core.annotation.Single
 
-@Single
-class BackupService : BaseService() {
+interface BackupService {
+  suspend fun createBackup()
+}
+
+@Service
+class BackupServiceImpl : BackupService, BaseService() {
   val batchSize = 1000
 
-  suspend fun createBackup() =
+  override suspend fun createBackup() =
     runDB {
       val exportSql = mutableListOf<String>()
 

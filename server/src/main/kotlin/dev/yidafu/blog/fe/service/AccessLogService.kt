@@ -4,16 +4,21 @@ import dev.yidafu.blog.common.db.dao.AccessLogEntity
 import dev.yidafu.blog.common.dto.AccessLogDTO
 import dev.yidafu.blog.common.ext.now
 import dev.yidafu.blog.common.services.BaseService
+import dev.yidafu.blog.common.annotation.Service
 import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.toKotlinLocalDateTime
-import org.koin.core.annotation.Single
 import org.slf4j.LoggerFactory
 
-@Single
-class AccessLogService : BaseService() {
+interface AccessLogService {
+  fun saveLog(dto: AccessLogDTO): Boolean
+
+  suspend fun countAll(): Long
+}
+
+@Service
+class AccessLogServiceImpl : AccessLogService, BaseService() {
   private val log = LoggerFactory.getLogger(AccessLogService::class.java)
 
-  fun saveLog(dto: AccessLogDTO): Boolean {
+  override fun saveLog(dto: AccessLogDTO): Boolean {
     return try {
       runDBBlocking {
         AccessLogEntity.new {
@@ -21,7 +26,7 @@ class AccessLogService : BaseService() {
           ua = dto.ua
           referrerUrl = dto.referrerUrl
           sourceUrl = dto.sourceUrl
-          accessTime =LocalDateTime.now()
+          accessTime = LocalDateTime.now()
         }
         true
       }
@@ -31,7 +36,7 @@ class AccessLogService : BaseService() {
     }
   }
 
-  suspend fun countAll(): Long =
+  override suspend fun countAll(): Long =
     runDB {
       AccessLogEntity.all().count()
     }

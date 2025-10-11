@@ -20,7 +20,7 @@ import kotlin.io.path.name
 
 class NotebookProcessor(
   private val articleManager: ArticleManager,
-  private val logger: Logger,
+  private val logger: BaseLogger,
 ) : IProcessor {
   private val jsMagic = listOf("%js", "%javascript", "%ts", "%typescript", "%jsx", "%tsx")
 

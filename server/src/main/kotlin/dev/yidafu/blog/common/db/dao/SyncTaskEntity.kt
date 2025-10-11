@@ -8,7 +8,6 @@ import org.jetbrains.exposed.v1.dao.IntEntityClass
 class SyncTaskEntity(id: EntityID<Int>) : IntEntity(id) {
   companion object : IntEntityClass<SyncTaskEntity>(SyncTaskTable)
 
-
   private var entityId by SyncTaskTable.id
   var tId: Int = entityId.value
 

@@ -6,16 +6,30 @@ import dev.yidafu.blog.common.db.tables.SyncTaskTable
 import dev.yidafu.blog.common.modal.SyncTaskStatus
 import dev.yidafu.blog.common.query.PageQuery
 import dev.yidafu.blog.common.services.ExposedBaseService
+import dev.yidafu.blog.common.annotation.Service
 import org.jetbrains.exposed.v1.core.SortOrder
 import org.jetbrains.exposed.v1.core.eq
-import org.koin.core.annotation.Single
 
-@Single
-class SyncTaskService : ExposedBaseService() {
+interface SyncTaskService {
+  suspend fun createSyncTask(uuid: String): Boolean
+
+  suspend fun getSyncLog(uuid: String): SyncTaskEntity
+
+  suspend fun getSyncLogs(query: PageQuery): Pair<Int, List<SyncTaskEntity>>
+
+  suspend fun getRunningTaskCount(): Int
+
+  suspend fun getCreatedTaskCount(): Int
+
+  suspend fun findLatestRunningTask(): SyncTaskEntity
+}
+
+@Service
+class SyncTaskServiceImpl : SyncTaskService, ExposedBaseService() {
   /**
    * 创建同步任务
    */
-  suspend fun createSyncTask(uuid: String): Boolean =
+  override suspend fun createSyncTask(uuid: String): Boolean =
     runDB {
       SyncTaskEntity.new {
         this.uuid = uuid
@@ -30,7 +44,7 @@ class SyncTaskService : ExposedBaseService() {
   /**
    * 获取同步日志
    */
-  suspend fun getSyncLog(uuid: String): SyncTaskEntity =
+  override suspend fun getSyncLog(uuid: String): SyncTaskEntity =
     runDB {
       SyncTaskEntity.find { SyncTaskTable.uuid eq uuid }
         .single()
@@ -39,7 +53,7 @@ class SyncTaskService : ExposedBaseService() {
   /**
    * 分页获取同步日志
    */
-  suspend fun getSyncLogs(query: PageQuery): Pair<Int, List<SyncTaskEntity>> =
+  override suspend fun getSyncLogs(query: PageQuery): Pair<Int, List<SyncTaskEntity>> =
     runDB {
       val logCount = SyncTaskEntity.all().count().toInt()
       val taskRecords =
@@ -63,17 +77,17 @@ class SyncTaskService : ExposedBaseService() {
   /**
    * 获取运行中的任务数量
    */
-  suspend fun getRunningTaskCount(): Int = getCountByStatus(SyncTaskStatus.Running)
+  override suspend fun getRunningTaskCount(): Int = getCountByStatus(SyncTaskStatus.Running)
 
   /**
    * 获取已创建的任务数量
    */
-  suspend fun getCreatedTaskCount(): Int = getCountByStatus(SyncTaskStatus.Created)
+  override suspend fun getCreatedTaskCount(): Int = getCountByStatus(SyncTaskStatus.Created)
 
   /**
    * 查找最新的创建状态任务
    */
-  suspend fun findLatestRunningTask(): SyncTaskEntity =
+  override suspend fun findLatestRunningTask(): SyncTaskEntity =
     runDB {
       SyncTaskEntity.find { SyncTaskTable.status eq SyncTaskStatus.Created }
         .orderBy(SyncTaskTable.createdAt to SortOrder.ASC)

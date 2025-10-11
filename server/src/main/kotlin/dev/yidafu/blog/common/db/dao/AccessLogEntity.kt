@@ -9,7 +9,6 @@ import org.jetbrains.exposed.v1.dao.IntEntityClass
 class AccessLogEntity(id: EntityID<Int>) : IntEntity(id) {
   companion object : IntEntityClass<AccessLogEntity>(AccessLogTable)
 
-
   private var entityId by SyncTaskTable.id
   var tId: Int = entityId.value
   var uid by AccessLogTable.uid

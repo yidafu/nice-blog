@@ -4,17 +4,37 @@ import dev.yidafu.blog.common.dto.CommonArticleDTO
 import dev.yidafu.blog.engine.processor.IProcessor
 import dev.yidafu.blog.engine.processor.MarkdownProcessor
 import dev.yidafu.blog.engine.processor.NotebookProcessor
+import io.ktor.server.plugins.di.annotations.Named
 import java.io.File
+import java.net.URI
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.attribute.BasicFileAttributes
 
+interface SynchronousTask {
+  suspend fun updateImage(img: File): URI
+
+  /**
+   * clone or update local repository
+   */
+  suspend fun fetchRepository(): File
+
+  /**
+   * persistent articles to db/cache etc.
+   */
+  suspend fun persistentPost(dto: CommonArticleDTO)
+
+  fun cleanup()
+
+  suspend fun sync()
+}
+
 abstract class BaseGitSynchronousTask(
   protected val gitConfig: GitConfig,
-  protected val listener: SynchronousListener,
-  protected val logger: Logger,
-  protected val articleManager: ArticleManager,
-) {
+  @Named("dbListener") protected val listener: SynchronousListener,
+  @Named("dbLogger") protected val logger: BaseLogger,
+  @Named("dbArticle")  protected val articleManager: ArticleManager,
+) : SynchronousTask {
   protected val gitUrl: String
     get() = gitConfig.url.ifBlank { throw IllegalArgumentException("git url is blank") }
   protected val gitBranch: String
@@ -27,24 +47,7 @@ abstract class BaseGitSynchronousTask(
       MarkdownProcessor(articleManager, logger),
     )
 
-  /**
-   * clone or update local repository
-   */
-  abstract suspend fun fetchRepository(): File
-
-  /**
-   * upload local image to server
-   */
-  abstract suspend fun updateImage(img: File): java.net.URI
-
-  /**
-   * persistent articles to db/cache etc.
-   */
-  abstract suspend fun persistentPost(dto: CommonArticleDTO)
-
-  abstract fun cleanup()
-
-  suspend fun sync() {
+  override suspend fun sync() {
     // execute sync task in io thread
     listener.onStart()
     try {

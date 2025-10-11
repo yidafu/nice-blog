@@ -4,17 +4,18 @@ import dev.yidafu.blog.common.db.dao.SyncTaskEntity
 import dev.yidafu.blog.common.db.tables.SyncTaskTable
 import dev.yidafu.blog.common.modal.SyncTaskStatus
 import dev.yidafu.blog.common.services.ExposedBaseService
-import kotlinx.datetime.LocalDateTime
+import dev.yidafu.blog.common.annotation.Service
+import io.ktor.server.plugins.di.annotations.Named
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toKotlinLocalDateTime
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.exposed.v1.core.eq
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
+@Service("dbListener")
 class DBSynchronousListener(
   private val config: GitConfig,
-  private val logger: Logger,
+  @Named("dbLogger") private val logger: BaseLogger,
 ) : SynchronousListener, ExposedBaseService() {
   override fun onStart() {
     logger.logSync("start synchronous task ==> ${config.uuid}")

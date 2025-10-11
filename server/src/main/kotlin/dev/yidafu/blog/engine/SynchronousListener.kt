@@ -1,8 +1,6 @@
 package dev.yidafu.blog.engine
 
-import dev.yidafu.blog.engine.TaskScope.Companion.NAME
-import org.koin.core.annotation.Scope
-import org.koin.core.annotation.Scoped
+import dev.yidafu.blog.common.annotation.Service
 import org.slf4j.LoggerFactory
 
 interface SynchronousListener {
@@ -13,8 +11,7 @@ interface SynchronousListener {
   fun onFailed(e: Exception)
 }
 
-@Scope(name = NAME)
-@Scoped
+@Service("defaultListener")
 class DefaultSynchronousListener : SynchronousListener {
   private val log = LoggerFactory.getLogger(SynchronousListener::class.java)
 

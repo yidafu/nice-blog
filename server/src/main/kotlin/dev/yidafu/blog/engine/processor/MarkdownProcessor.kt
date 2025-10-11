@@ -11,7 +11,7 @@ import dev.yidafu.blog.engine.ext.indexOf
 import dev.yidafu.blog.engine.ext.slice
 import dev.yidafu.blog.engine.md.CodeFenceGeneratingProvider
 import dev.yidafu.blog.engine.md.ImageGeneratingProvider
-import kotlinx.datetime.LocalDateTime
+import io.ktor.server.plugins.di.annotations.Named
 import kotlinx.serialization.decodeFromString
 import org.intellij.markdown.IElementType
 import org.intellij.markdown.MarkdownElementTypes
@@ -29,7 +29,6 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.attribute.BasicFileAttributes
-import java.time.ZoneId
 import kotlin.io.path.extension
 import kotlin.io.path.name
 import kotlin.io.path.nameWithoutExtension
@@ -37,8 +36,8 @@ import kotlin.io.path.nameWithoutExtension
 data class MLink(val url: String, val alt: String)
 
 class GFMFlavorExtendDescriptor(
-  private val articleManager: ArticleManager,
-  private val logger: Logger,
+  @Named("dbArticle") private val articleManager: ArticleManager,
+  @Named("dbLogger")   private val logger: BaseLogger,
   private val mdFile: File,
 ) : GFMFlavourDescriptor() {
   override fun createHtmlGeneratingProviders(
@@ -56,7 +55,7 @@ class GFMFlavorExtendDescriptor(
   }
 }
 
-class MarkdownProcessor(val articleManager: ArticleManager, private val logger: Logger) : IProcessor {
+class MarkdownProcessor(val articleManager: ArticleManager, private val logger: BaseLogger) : IProcessor {
   override fun filter(path: Path): Boolean {
     return path.extension == "md" &&
       path.nameWithoutExtension != "README"
