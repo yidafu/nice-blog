@@ -37,7 +37,9 @@ open class ComponentInfo(
   val packageName: String,
   val className: String,
   val injectComponent: List<ComponentInfo>,
-)
+) {
+  val fullName = "$packageName.$className"
+}
 
 class ControllerInfo(
   packageName: String,
@@ -48,7 +50,7 @@ class ControllerInfo(
 class ServiceInfo(
   packageName: String,
   className: String,
-  val parentInterface: InterfaceInfo?,
+  val parentInterface: ComponentInfo?,
   val serviceName: String = "",
   injectComponent: List<ComponentInfo>,
 ) : ComponentInfo(packageName, className, injectComponent)
