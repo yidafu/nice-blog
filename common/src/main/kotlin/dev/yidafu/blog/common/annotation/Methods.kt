@@ -1,4 +1,4 @@
-package dev.yidafu.blog.ksp.annotation
+package dev.yidafu.blog.common.annotation
 
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.SOURCE)
