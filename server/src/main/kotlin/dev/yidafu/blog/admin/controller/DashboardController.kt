@@ -1,14 +1,13 @@
 package dev.yidafu.blog.admin.controller
 
 import dev.yidafu.blog.common.Routes
+import dev.yidafu.blog.common.ext.render
 import dev.yidafu.blog.common.services.ArticleService
-import dev.yidafu.blog.common.vo.DashboardVO
 import dev.yidafu.blog.fe.service.AccessLogService
 import dev.yidafu.blog.common.annotation.Controller
 import dev.yidafu.blog.common.annotation.Get
 import dev.yidafu.blog.themes.PageNames
 import io.ktor.server.application.*
-import io.ktor.server.response.*
 
 @Controller
 class DashboardController(
@@ -19,8 +18,13 @@ class DashboardController(
   suspend fun dashboardPage(call: ApplicationCall) {
     val articleCount = articleService.countAll()
     val accessCount = accessLogService.countAll()
-    // dashboard should
-    val vo = DashboardVO(articleCount, accessCount)
-    call.respondText("Rendering page: ${PageNames.ADMIN_DASHBOARD} with data: $vo")
+
+    call.render(
+      PageNames.ADMIN_DASHBOARD,
+      mapOf(
+        "articleCount" to articleCount,
+        "accessCount" to accessCount,
+      ),
+    )
   }
 }

@@ -1,7 +1,6 @@
 package dev.yidafu.blog.common.db.dao
 
 import dev.yidafu.blog.common.db.tables.ArticleTable
-import dev.yidafu.blog.common.db.tables.SyncTaskTable
 import org.jetbrains.exposed.v1.core.dao.id.EntityID
 import org.jetbrains.exposed.v1.dao.IntEntity
 import org.jetbrains.exposed.v1.dao.IntEntityClass
@@ -9,8 +8,9 @@ import org.jetbrains.exposed.v1.dao.IntEntityClass
 class ArticleEntity(id: EntityID<Int>) : IntEntity(id) {
   companion object : IntEntityClass<ArticleEntity>(ArticleTable)
 
-  private var entityId by SyncTaskTable.id
-  var tId: Int = entityId.value
+  val tId: Int
+    get() = id.value
+
   var title by ArticleTable.title
   var cover by ArticleTable.cover
   var identifier by ArticleTable.identifier

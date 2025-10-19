@@ -4,6 +4,7 @@ import dev.yidafu.blog.admin.manager.SynchronousManager
 import dev.yidafu.blog.admin.services.SyncTaskService
 import dev.yidafu.blog.common.Routes
 import dev.yidafu.blog.common.converter.SyncTaskConvertor
+import dev.yidafu.blog.common.ext.render
 import dev.yidafu.blog.common.modal.SyncTaskStatus
 import dev.yidafu.blog.common.query.PageQuery
 import dev.yidafu.blog.common.services.ArticleService
@@ -48,7 +49,7 @@ class SynchronousController(
     val (total, list) = syncTaskService.getSyncLogs(PageQuery(pageNum, pageSize))
 
     val vo = PaginationVO(pageNum, pageSize, total, syncTaskConvertor.toVOList(list))
-    call.respondText("Rendering page: ${PageNames.ADMIN_CONFIG_SYNC_LOG_LIST_PAGE} with data: $vo")
+    call.render(PageNames.ADMIN_CONFIG_SYNC_LOG_LIST_PAGE, mapOf("pagination" to vo))
   }
 
   @Get(Routes.SYNC_LOG_DETAIL_URL)
@@ -56,13 +57,13 @@ class SynchronousController(
     val uuid = call.request.queryParameters["uuid"] ?: return
     val log = syncTaskService.getSyncLog(uuid)
 
-    val vo = syncTaskConvertor.toDTO(log)
-    call.respondText("Rendering page: ${PageNames.ADMIN_CONFIG_SYNC_LOG_DETAIL_PAGE} with data: $vo")
+    val vo = syncTaskConvertor.toVO(log)
+    call.render(PageNames.ADMIN_CONFIG_SYNC_LOG_DETAIL_PAGE, mapOf("task" to vo))
   }
 
   @Get(Routes.SYNC_OPERATE_URL)
   suspend fun syncOperatePage(call: ApplicationCall) {
-    call.respondText("Rendering page: ${PageNames.ADMIN_CONFIG_SYNC_LOG_OPERATE_PAGE} with data: ${AdminSynchronousVO("")}")
+    call.render(PageNames.ADMIN_CONFIG_SYNC_LOG_OPERATE_PAGE, mapOf<String, String>())
   }
 
   @Get(Routes.SYNC_API_START_URL)
@@ -93,66 +94,60 @@ class SynchronousController(
   }
 
   /**
-   * https://github.com/auryn31/sse-vertx
+   * SSE 实时日志推送
+   * https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events
    */
   @Get(Routes.SYNC_API_LOG_URL)
   suspend fun getSyncLog(call: ApplicationCall) {
     val uuid = call.parameters["uuid"] ?: return
+
     call.response.headers.append("Content-Type", "text/event-stream;charset=UTF-8")
     call.response.headers.append("Connection", "keep-alive")
     call.response.headers.append("Cache-Control", "no-cache")
+    call.response.headers.append("X-Accel-Buffering", "no")
+
     var previewLog = ""
 
-    // max connection time 10 minutes
-    repeat(60 * 10) {
-      val log = syncTaskService.getSyncLog(uuid)
+    call.respondTextWriter {
+      // max connection time 10 minutes
+      repeat(60 * 10) {
+        val log = syncTaskService.getSyncLog(uuid)
 
-      if (log.id != null) {
-        if (log.status == SyncTaskStatus.Finished || log.status == SyncTaskStatus.Failed) {
-          (log.logs ?: "").split('\n').forEach { str ->
-//            call.respondTextWriter { writer ->
-//
-//              writer.write(
-//                SseModel(
-//                  data = str,
-//                  event = logAppendEvent,
-//                ).toString()
-//              )
-//              writer.flush()
-//            }
-          }
-//          call.respondTextWriter().use { writer ->
-//            writer.write(
-//              SseModel(
-//                data = "=== LOG END ===",
-//                event = logEndEvent,
-//              ).toString()
-//            )
-//            writer.flush()
-//          }
-          return
-        } else {
-          val currentLog = log.logs
-          if (currentLog != null) {
-            val appendText = if (previewLog.isEmpty()) currentLog else currentLog.substring(previewLog.length)
-            previewLog = currentLog
-            if (appendText.isNotEmpty()) {
-              appendText.split('\n').forEach { str ->
-//                call.respondTextWriter().use { writer ->
-//                  writer.write(
-//                    SseModel(
-//                      data = str,
-//                      event = logAppendEvent,
-//                    ).toString()
-//                  )
-//                  writer.flush()
-//                }
+        if (log.id != null) {
+          if (log.status == SyncTaskStatus.Finished || log.status == SyncTaskStatus.Failed) {
+            // 发送最终日志
+            (log.logs ?: "").split('\n').forEach { str ->
+              if (str.isNotEmpty()) {
+                write("event: $logAppendEvent\n")
+                write("data: $str\n\n")
+                flush()
+              }
+            }
+
+            // 发送结束事件
+            write("event: $logEndEvent\n")
+            write("data: === LOG END ===\n\n")
+            flush()
+            return@respondTextWriter
+          } else {
+            val currentLog = log.logs
+            if (currentLog != null) {
+              val appendText = if (previewLog.isEmpty()) currentLog else currentLog.substring(previewLog.length)
+              previewLog = currentLog
+              if (appendText.isNotEmpty()) {
+                appendText.split('\n').forEach { str ->
+                  if (str.isNotEmpty()) {
+                    write("event: $logAppendEvent\n")
+                    write("data: $str\n\n")
+                    flush()
+                  }
+                }
               }
             }
           }
         }
+        delay(1000)
       }
-      delay(1000)
     }
   }
 }

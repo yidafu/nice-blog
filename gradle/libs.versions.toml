@@ -15,7 +15,6 @@ kapt = "2.1.20"
 # 核心依赖版本
 kotlinxSerialization = "1.8.0"  # 统一使用最新版本
 kotlinxCoroutines = "1.8.1"
-kotlinwindCss = "0.0.3"
 kotlinxDatetime = "0.7.1"
 
 slf4j = "2.0.16"
@@ -34,6 +33,7 @@ kaml = "0.66.0"
 jupyterNotebooksParser = "0.2.0-dev-10"
 highlights = "1.0.0"
 cryptography = "0.4.0"
+feishu2html = "1.0.2"
 
 # 测试框架
 junitJupiter = "5.9.1"
@@ -98,8 +98,6 @@ kotlinx-serialization-json-jvm = { module = "org.jetbrains.kotlinx:kotlinx-seria
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
 kotlinx-coroutines-core-jvm = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm", version.ref = "kotlinxCoroutines" }
 
-kotlinwind-css = { module = "io.github.allangomes:kotlinwind-css", version.ref = "kotlinwindCss" }
-
 # 时间日期
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
 kotlinx-datetime-jvm = { module = "org.jetbrains.kotlinx:kotlinx-datetime-jvm", version.ref = "kotlinxDatetime" }
@@ -144,6 +142,9 @@ highlights = { module = "dev.snipme:highlights", version.ref = "highlights" }
 # 加密
 cryptography-core-jvm = { module = "dev.whyoleg.cryptography:cryptography-core-jvm", version.ref = "cryptography" }
 cryptography-provider-jdk = { module = "dev.whyoleg.cryptography:cryptography-provider-jdk", version.ref = "cryptography" }
+
+# 飞书文档
+feishu2html = { module = "dev.yidafu.feishu2html:feishu2html", version.ref = "feishu2html" }
 
 # 测试框架
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junitJupiter" }

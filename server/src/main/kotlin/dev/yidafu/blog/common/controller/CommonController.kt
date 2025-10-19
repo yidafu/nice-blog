@@ -22,53 +22,7 @@ class CommonController(
 ) {
   private val log = LoggerFactory.getLogger(CommonController::class.java)
 
-  @Any
-  suspend fun initConfiguration(call: ApplicationCall) {
-    val configs = configurationService.getAll()
-    val siteTitle = configs.find { it.configKey == ConfigurationKeys.SITE_TITLE }?.configValue ?: ""
-    val githubUrl = configs.find { it.configKey == ConfigurationKeys.GITHUB_URL }?.configValue ?: ""
-
-    val bo = ConfigurationBO(siteTitle, githubUrl)
-    log.info("config bo $bo")
-    call.attributes.put(AttributeKey<ConfigurationBO>(ConstantKeys.GLOBAL_CONFIGURATION), bo)
-    // Ktor中不需要显式调用next()，拦截器会自动继续
-  }
-
-  @Any
-  suspend fun localHandler(call: ApplicationCall) {
-    val language = call.request.queryParameters["lang"]
-
-    if (!language.isNullOrBlank()) {
-      call.response.cookies.append(
-        Cookie(
-          name = ConstantKeys.LANGUAGE_COOKIE_KEY,
-          value = language,
-          path = "/",
-          maxAge = 30.days.inWholeSeconds.toInt(),
-          httpOnly = true,
-        ),
-      )
-      val uri = call.request.uri.replace("lang=$language", "").removeSuffix("?")
-      call.respondRedirect(uri)
-      return
-    }
-
-    val cookieLang = call.request.cookies[ConstantKeys.LANGUAGE_COOKIE_KEY]
-
-    val cLang =
-      if (cookieLang.isNullOrEmpty()) {
-        call.request.header(HttpHeaders.AcceptLanguage)
-      } else {
-        cookieLang
-      }
-    val finalLanguage = cLang ?: ConstantKeys.DEFAULT_LANGUAGE
-    log.info("current language $finalLanguage")
-    call.attributes.put(
-      AttributeKey(ConstantKeys.LANGUAGE_CONTEXT),
-      Locale.forLanguageTag(finalLanguage),
-    )
-    // Ktor中不需要显式调用next()，拦截器会自动继续
-  }
+  // initConfiguration 和 localHandler 已移至 GlobalInterceptors.kt
 
   fun uploadStaticFiles(call: ApplicationCall) {
   }

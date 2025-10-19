@@ -1,8 +1,14 @@
 package dev.yidafu.blog.engine
 
 // import com.github.syari.kgit.KGit
+import dev.yidafu.blog.common.ConfigurationKeys
 import dev.yidafu.blog.common.dto.CommonArticleDTO
 import dev.yidafu.blog.common.annotation.Service
+import dev.yidafu.blog.common.services.ConfigurationService
+import dev.yidafu.blog.engine.processor.FeishuProcessor
+import dev.yidafu.blog.engine.processor.IProcessor
+import dev.yidafu.blog.engine.processor.MarkdownProcessor
+import dev.yidafu.blog.engine.processor.NotebookProcessor
 import io.ktor.server.plugins.di.annotations.Named
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -46,7 +52,44 @@ open class GitSynchronousTask(
   @Named("dbArticle") articleManager: ArticleManager,
   @Named("dbLogger")  logger: BaseLogger,
   private val writer: LogWriter,
-) : BaseGitSynchronousTask(config, olistener, logger, articleManager) {
+  private val configService: ConfigurationService,
+) : BaseGitSynchronousTask(
+    config,
+    olistener,
+    logger,
+    articleManager,
+    createProcessors(articleManager, logger, configService)
+  ) {
+
+  companion object {
+    private fun createProcessors(
+      articleManager: ArticleManager,
+      logger: BaseLogger,
+      configService: ConfigurationService
+    ): List<IProcessor> {
+      val processors = mutableListOf<IProcessor>(
+        NotebookProcessor(articleManager, logger),
+        MarkdownProcessor(articleManager, logger),
+      )
+
+      // 如果配置了飞书，添加飞书处理器
+      runBlocking {
+        try {
+          val appId = configService.getByKey(ConfigurationKeys.FEISHU_APP_ID).configValue
+          val appSecret = configService.getByKey(ConfigurationKeys.FEISHU_APP_SECRET).configValue
+
+          if (appId.isNotBlank() && appSecret.isNotBlank()) {
+            processors.add(FeishuProcessor(articleManager, logger, appId, appSecret))
+            logger.log("[Feishu] Feishu processor enabled")
+          }
+        } catch (e: Exception) {
+          logger.log("[Feishu] Failed to initialize Feishu processor: ${e.message}")
+        }
+      }
+
+      return processors
+    }
+  }
   override suspend fun updateImage(img: File): URI {
     logger.log("[Image] upload image: ${img.path}")
     val url = articleManager.processImage(img)
@@ -76,7 +119,8 @@ open class GitSynchronousTask(
         ).redirectErrorStream(true).start()
 
       // 读取命令输出并记录日志
-      cloneProcess.inputStream.bufferedReader().useLines {
+      cloneProcess.inputStream
+        .bufferedReader().useLines {
         it.forEach { line -> logger.log(line) }
       }
 

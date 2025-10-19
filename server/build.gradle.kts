@@ -1,3 +1,4 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.google.devtools.ksp.gradle.KspExtension
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 
@@ -8,6 +9,7 @@ plugins {
   alias(libs.plugins.kotlin.serialization)
   alias(libs.plugins.ktlint)
   alias(libs.plugins.ktor)
+  alias(libs.plugins.kotlin.kapt)
 }
 
 group = "dev.yidafu.blog"
@@ -36,13 +38,10 @@ dependencies {
   implementation(libs.kotlinx.html)
   implementation(libs.ktor.server.call.logging)
   implementation(libs.ktor.server.rate.limiting)
-//    implementation(libs.koin.ktor)
-//    implementation(libs.koin.logger.slf4j)
   implementation(libs.h2)
   implementation(libs.ktor.server.htmx)
   implementation(libs.ktor.htmx.html)
   implementation(libs.kotlin.css)
-//    implementation(libs.khealth)
   implementation(libs.ktor.server.call.id)
   implementation(libs.ktor.server.host.common)
   implementation(libs.ktor.server.status.pages)
@@ -50,7 +49,6 @@ dependencies {
   implementation(libs.ktor.server.sessions)
   implementation(libs.ktor.server.auth)
   implementation(libs.ktor.simple.cache)
-  implementation(libs.ktor.server.openapi)
   implementation(libs.ktor.server.http.redirect)
   implementation(libs.ktor.server.default.headers)
   implementation(libs.ktor.server.conditional.headers)
@@ -69,10 +67,9 @@ dependencies {
   implementation(libs.slf4j.simple)
 
   implementation(libs.i18n4k.core.jvm)
-  implementation(libs.kotlinwind.css)
 
   implementation(libs.mapstruct)
-
+  kapt(libs.mapstruct.processor)
   implementation(libs.quartz)
   implementation(libs.jetbrains.markdown)
   implementation(libs.cryptography.core.jvm)
@@ -80,6 +77,7 @@ dependencies {
   implementation(libs.kaml)
   implementation(libs.jupyter.notebooks.parser)
   implementation(libs.highlights)
+  implementation(libs.feishu2html)
   implementation(libs.exposed.core)
   implementation(libs.exposed.jdbc)
   implementation(libs.exposed.dao) // Optional
@@ -92,14 +90,14 @@ dependencies {
   testImplementation(libs.junit.jupiter)
 }
 
-// kapt {
-//   arguments {
-//     // Set Mapstruct Configuration options here
-//     // https://kotlinlang.org/docs/reference/kapt.html#annotation-processor-arguments
-//     // https://mapstruct.org/documentation/stable/reference/html/#configuration-options
-//     arg("mapstruct.verbose", "true")
-//   }
-// }
+ kapt {
+   arguments {
+     // Set Mapstruct Configuration options here
+     // https://kotlinlang.org/docs/reference/kapt.html#annotation-processor-arguments
+     // https://mapstruct.org/documentation/stable/reference/html/#configuration-options
+     arg("mapstruct.verbose", "true")
+   }
+ }
 
 kotlin {
   jvmToolchain(17)
@@ -140,4 +138,8 @@ tasks.register("cleanGenerated") {
 }
 tasks.named("clean") {
   dependsOn("cleanGenerated")
+}
+
+tasks.withType<ShadowJar> {
+  minimize()
 }

@@ -1,6 +1,6 @@
 package dev.yidafu.blog.common
 
-internal object ConstantKeys {
+object ConstantKeys {
   const val LANGUAGE_QUERY_KEY = "lang"
   const val LANGUAGE_COOKIE_KEY = "local-lang"
   const val DEFAULT_LANGUAGE = "en"

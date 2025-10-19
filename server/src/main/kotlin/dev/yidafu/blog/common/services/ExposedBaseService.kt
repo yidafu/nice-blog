@@ -12,10 +12,13 @@ abstract class ExposedBaseService {
   /**
    * 在协程环境中执行数据库操作
    */
-  protected suspend fun <T> runDB(block: suspend () -> T): T {
+  protected suspend fun <T> runDB(block: () -> T): T {
     return withContext(Dispatchers.IO) {
-      block()
+      transaction {
+        block()
+      }
     }
+
   }
 
   /**

@@ -5,6 +5,7 @@ import dev.yidafu.blog.common.FormKeys
 import dev.yidafu.blog.common.Routes
 import dev.yidafu.blog.common.dto.ConfigurationDTO
 import dev.yidafu.blog.common.ext.getByKey
+import dev.yidafu.blog.common.ext.render
 import dev.yidafu.blog.common.services.ConfigurationService
 import dev.yidafu.blog.common.vo.AdminAppearanceVO
 import dev.yidafu.blog.common.vo.AdminDataSourceVO
@@ -28,7 +29,7 @@ class ConfigurationController(
   @Get(Routes.CONFIG_APPEARANCE_URL)
   suspend fun appearancePage(call: ApplicationCall) {
     val vo = AdminAppearanceVO()
-    call.respondText("Rendering page: ${PageNames.ADMIN_CONFIG_APPEARANCE_PAGE} with data: $vo")
+    call.render(PageNames.ADMIN_CONFIG_APPEARANCE_PAGE, mapOf("config" to vo))
   }
 
   /**
@@ -49,6 +50,8 @@ class ConfigurationController(
         FormKeys.SOURCE_URL to ConfigurationKeys.SOURCE_URL,
         FormKeys.SOURCE_TOKEN to ConfigurationKeys.SOURCE_TOKEN,
         FormKeys.SOURCE_BRANCH to ConfigurationKeys.SOURCE_BRANCH,
+        FormKeys.FEISHU_APP_ID to ConfigurationKeys.FEISHU_APP_ID,
+        FormKeys.FEISHU_APP_SECRET to ConfigurationKeys.FEISHU_APP_SECRET,
       ).mapNotNull { keyPair ->
         body[keyPair.first]?.let { value ->
           ConfigurationDTO(keyPair.second, value)
@@ -71,7 +74,7 @@ class ConfigurationController(
       AdminSynchronousVO(
         config.configValue,
       )
-    call.respondText("Rendering page: ${PageNames.ADMIN_CONFIG_SYNC_PAGE} with data: $vo")
+    call.render(PageNames.ADMIN_CONFIG_SYNC_PAGE, mapOf("config" to vo))
   }
 
   @Get(Routes.CONFIG_DATA_SOURCE_URL)
@@ -83,6 +86,8 @@ class ConfigurationController(
           ConfigurationKeys.SOURCE_URL,
           ConfigurationKeys.SOURCE_TOKEN,
           ConfigurationKeys.SOURCE_BRANCH,
+          ConfigurationKeys.FEISHU_APP_ID,
+          ConfigurationKeys.FEISHU_APP_SECRET,
         ),
       )
 
@@ -92,8 +97,10 @@ class ConfigurationController(
         configs.getByKey(ConfigurationKeys.SOURCE_URL) ?: "",
         configs.getByKey(ConfigurationKeys.SOURCE_TOKEN) ?: "",
         configs.getByKey(ConfigurationKeys.SOURCE_BRANCH) ?: "",
+        configs.getByKey(ConfigurationKeys.FEISHU_APP_ID) ?: "",
+        configs.getByKey(ConfigurationKeys.FEISHU_APP_SECRET) ?: "",
       )
 
-    call.respondText("Rendering page: ${PageNames.ADMIN_CONFIG_DATA_SOURCE_PAGE} with data: $vo")
+    call.render(PageNames.ADMIN_CONFIG_DATA_SOURCE_PAGE, mapOf("config" to vo))
   }
 }

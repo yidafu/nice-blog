@@ -2,6 +2,7 @@ package dev.yidafu.blog.admin.controller
 
 import dev.yidafu.blog.common.Routes
 import dev.yidafu.blog.common.converter.ArticleConvertor
+import dev.yidafu.blog.common.ext.render
 import dev.yidafu.blog.common.query.PageQuery
 import dev.yidafu.blog.common.services.ArticleService
 import dev.yidafu.blog.common.vo.PaginationVO
@@ -35,7 +36,7 @@ class ArticleController(
         total,
         voList,
       )
-    call.respondText("Rendering page: ${PageNames.ADMIN_ARTICLE_LIST} with data: $vo")
+    call.render(PageNames.ADMIN_ARTICLE_LIST, mapOf("pagination" to vo))
   }
 
   @Get(Routes.ADMIN_ARTICLE_DETAIL)
@@ -48,7 +49,7 @@ class ArticleController(
       return
     }
     val vo = convertor.toVO(model)
-    call.respondText("Rendering page: ${PageNames.ADMIN_ARTICLE_DETAIL} with data: $vo")
+    call.render(PageNames.ADMIN_ARTICLE_DETAIL, mapOf("article" to vo))
   }
 
   @Get(Routes.ADMIN_ARTICLE_HISTORY)

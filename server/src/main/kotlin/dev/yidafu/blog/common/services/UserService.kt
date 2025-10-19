@@ -10,11 +10,11 @@ interface UserService {
 }
 
 @Service
-class UserServiceImpl : ExposedBaseService() {
+class UserServiceImpl : UserService, ExposedBaseService() {
   /**
    * 根据用户名获取用户
    */
-  internal suspend fun getUserByUsername(username: String): UserEntity? =
+  override suspend fun getUserByUsername(username: String): UserEntity? =
     runDB {
       UserEntity.find { UserTable.username eq username }
         .singleOrNull()

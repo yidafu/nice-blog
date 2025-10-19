@@ -1,6 +1,5 @@
 package dev.yidafu.blog.common.db.dao
 
-import dev.yidafu.blog.common.db.tables.SyncTaskTable
 import dev.yidafu.blog.common.db.tables.UserTokenTable
 import org.jetbrains.exposed.v1.core.dao.id.EntityID
 import org.jetbrains.exposed.v1.dao.IntEntity
@@ -9,8 +8,8 @@ import org.jetbrains.exposed.v1.dao.IntEntityClass
 class UserToken(id: EntityID<Int>) : IntEntity(id) {
   companion object : IntEntityClass<UserToken>(UserTokenTable)
 
-  private var entityId by SyncTaskTable.id
-  var tId: Int = entityId.value
+  val tId: Int
+    get() = id.value
 
   var name by UserTokenTable.name
   var token by UserTokenTable.token

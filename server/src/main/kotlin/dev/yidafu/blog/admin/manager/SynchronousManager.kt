@@ -61,7 +61,7 @@ class SynchronousManagerImpl(
       val writer = LogWriter(logger)
 
       // 创建并执行同步任务
-      val syncTask = GitSynchronousTask(config, listener, articleManager, logger, writer)
+      val syncTask = GitSynchronousTask(config, listener, articleManager, logger, writer, configService)
       syncTask.sync()
 
       // 检查是否有其他任务需要执行

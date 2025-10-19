@@ -34,18 +34,13 @@ abstract class BaseGitSynchronousTask(
   @Named("dbListener") protected val listener: SynchronousListener,
   @Named("dbLogger") protected val logger: BaseLogger,
   @Named("dbArticle")  protected val articleManager: ArticleManager,
+  protected val processors: List<IProcessor>,
 ) : SynchronousTask {
   protected val gitUrl: String
     get() = gitConfig.url.ifBlank { throw IllegalArgumentException("git url is blank") }
   protected val gitBranch: String
     get() = gitConfig.branch.ifEmpty { "main" }
   protected val taskId: String = gitConfig.uuid
-
-  private val processors: List<IProcessor> =
-    listOf(
-      NotebookProcessor(articleManager, logger),
-      MarkdownProcessor(articleManager, logger),
-    )
 
   override suspend fun sync() {
     // execute sync task in io thread

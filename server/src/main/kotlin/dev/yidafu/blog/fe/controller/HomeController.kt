@@ -6,6 +6,7 @@ import dev.yidafu.blog.common.ShortUUID
 import dev.yidafu.blog.common.converter.ArticleConvertor
 import dev.yidafu.blog.common.dto.AccessLogDTO
 import dev.yidafu.blog.common.ext.now
+import dev.yidafu.blog.common.ext.render
 import dev.yidafu.blog.common.services.ArticleService
 import dev.yidafu.blog.fe.service.AccessLogService
 import dev.yidafu.blog.common.annotation.Any
@@ -71,11 +72,11 @@ class HomeController(
   suspend fun indexPage(call: ApplicationCall) {
     try {
       val page = call.parameters["page"]?.toInt() ?: 1
-    val list = articleService.getAll()
-    val voList = articleConvertor.toVO(list)
+      val list = articleService.getAll()
+      val voList = articleConvertor.toVO(list)
 
-    // 在Ktor中渲染页面
-    call.respondText("Rendering page: ${PageNames.ARTICLE_LIST} with data: $voList")
+      // 使用新的 render 方法渲染页面
+      call.render(PageNames.ARTICLE_LIST, mapOf("articles" to voList))
     } catch (e: Exception) {
       log.error("查询文章列表失败", e)
       call.respondRedirect("/403")
@@ -88,7 +89,7 @@ class HomeController(
     val article = articleService.getOneByIdentifier(id)
     article?.let {
       val vo = articleConvertor.toVO(it)
-      call.respondText("Rendering page: ${PageNames.ARTICLE_DETAIL} with data: $vo")
+      call.render(PageNames.ARTICLE_DETAIL, mapOf("article" to vo))
     } ?: run {
       call.respondRedirect("/404")
     }

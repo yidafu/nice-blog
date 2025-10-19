@@ -11,12 +11,15 @@ import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.SchemaUtils
 import org.jetbrains.exposed.v1.jdbc.transactions.TransactionManager
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
+import org.slf4j.LoggerFactory
 import java.sql.Connection
 
 /**
  * Exposed数据库配置类
  */
 object ExposedDatabase {
+  private val logger = LoggerFactory.getLogger(ExposedDatabase::class.java)
+
   /**
    * 初始化数据库连接
    */
@@ -74,5 +77,43 @@ object ExposedDatabase {
       )
     // 确保表被加载
     tables.forEach { table -> table.tableName }
+  }
+
+  /**
+   * 执行初始化 SQL 文件
+   */
+  fun executeSqlFile(sqlFilePath: String) {
+    try {
+      // 从 resources 读取 SQL 文件
+      val sqlContent =
+        this::class.java.classLoader.getResourceAsStream(sqlFilePath)?.bufferedReader()?.readText()
+          ?: run {
+            logger.warn("SQL file not found: $sqlFilePath")
+            return
+          }
+
+      logger.info("Executing SQL file: $sqlFilePath")
+
+      // 在事务中执行 SQL
+      transaction {
+        // 分割 SQL 语句（以分号分隔）
+        val statements = sqlContent.split(";").map { it.trim() }.filter { it.isNotBlank() }
+
+        statements.forEach { sql ->
+          try {
+            // 执行每条 SQL 语句
+            exec(sql)
+            logger.debug("Executed SQL: ${sql.take(100)}...")
+          } catch (e: Exception) {
+            logger.error("Error executing SQL: ${sql.take(100)}...", e)
+            // 继续执行其他语句
+          }
+        }
+      }
+
+      logger.info("SQL file executed successfully: $sqlFilePath")
+    } catch (e: Exception) {
+      logger.error("Error reading or executing SQL file: $sqlFilePath", e)
+    }
   }
 }
