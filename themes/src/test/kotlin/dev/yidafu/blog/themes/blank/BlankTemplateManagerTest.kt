@@ -1,8 +1,8 @@
 
-package dev.yidafu.blog.themes.blank
+package dev.yidafu.nicemaker.themes.blank
 
-import dev.yidafu.blog.themes.DataModal
-import dev.yidafu.blog.themes.PageNames
+import dev.yidafu.nicemaker.themes.DataModal
+import dev.yidafu.nicemaker.themes.PageNames
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe

@@ -1,0 +1,34 @@
+package dev.yidafu.nicemaker.engine
+
+import dev.yidafu.nicemaker.common.dto.CommonArticleDTO
+import java.io.File
+import java.net.URI
+
+interface ArticleManager {
+  suspend fun needUpdate(
+    identifier: String,
+    rawContent: String,
+  ): Boolean
+
+  fun processImage(file: File): URI
+
+  suspend fun saveArticle(articleDTO: CommonArticleDTO)
+}
+
+open class DefaultArticleManager : ArticleManager {
+  override suspend fun needUpdate(
+    identifier: String,
+    rawContent: String,
+  ): Boolean {
+    return true
+  }
+
+  override fun processImage(file: File): URI {
+    return file.toURI()
+  }
+
+  override suspend fun saveArticle(articleDTO: CommonArticleDTO) {
+    File(articleDTO.filename + ".html").writeText(articleDTO.html)
+  }
+}
+

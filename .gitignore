@@ -196,3 +196,7 @@ server/nice-blog.db
 
 .idea/
 .vscode/
+nicemaker/output/sitemap.xml
+.idea/
+archive/
+*.md

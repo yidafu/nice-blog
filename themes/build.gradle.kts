@@ -1,47 +1,75 @@
 plugins {
-  alias(libs.plugins.kotlin.jvm)
-  alias(libs.plugins.kotlin.serialization)
-  alias(libs.plugins.ktlint)
-  alias(libs.plugins.ksp)
-  alias(libs.plugins.i18n4k)
+  kotlin("multiplatform") version "2.1.20"
+  kotlin("plugin.serialization") version "2.1.20"
+  id("de.comahe.i18n4k") version "0.11.0"
 }
 
-group = "dev.yidafu.blog"
+group = "dev.yidafu.nicemaker"
 version = "0.1.0"
 
 repositories {
   mavenCentral()
 }
 
-dependencies {
-  testImplementation(libs.kotlin.test)
-  implementation(libs.kotlinx.serialization.core)
-  implementation(libs.kotlinx.serialization.json)
-  implementation(libs.kotlinx.html)
-  implementation(libs.ktor.server.html.builder)
-  implementation(libs.kotlin.css)
-  implementation(libs.ksvg)
-  implementation(libs.i18n4k.core.jvm)
-  ksp(libs.auto.service.ksp)
-  implementation(libs.auto.service.annotations)
-  implementation(project(":common"))
-
-  testImplementation(libs.kotest.runner.junit5)
-  testImplementation(libs.kotest.assertions.core)
-  testImplementation(libs.kotest.property)
-  implementation(libs.kotlinx.datetime)
-}
-
-tasks.test {
-  useJUnitPlatform()
-}
 kotlin {
-  jvmToolchain(17)
+  jvm()
+
+  js(IR) {
+    nodejs()
+  }
+
+  linuxX64()
+  macosX64()
+  macosArm64()
+  mingwX64()
+
+  sourceSets {
+    commonMain {
+      dependencies {
+        // 依赖 nicemaker 获取接口定义
+        implementation(project(":nicemaker"))
+
+        // HTML
+        implementation(libs.kotlinx.html)
+
+        // 序列化
+        implementation(libs.kotlinx.serialization.core)
+        implementation(libs.kotlinx.serialization.json)
+
+        // 国际化（KMP 版本）
+        implementation(libs.i18n4k.core)
+
+        // 日期时间
+        implementation(libs.kotlinx.datetime)
+      }
+    }
+
+    commonTest {
+      dependencies {
+        implementation(libs.kotlin.test)
+      }
+    }
+
+    jvmMain {
+      dependencies {
+        // CSS
+        implementation(libs.kotlin.css)
+        implementation(libs.ksvg)
+      }
+    }
+
+    jvmTest {
+      dependencies {
+        implementation(libs.kotest.runner.junit5)
+        implementation(libs.kotest.assertions.core)
+        implementation(libs.kotest.property)
+      }
+    }
+  }
 }
 
-ksp {
-  arg("autoserviceKsp.verify", "true")
-  arg("autoserviceKsp.verbose", "true")
+tasks.named<Test>("jvmTest") {
+  useJUnitPlatform()
 }
 
 i18n4k {

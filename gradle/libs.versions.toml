@@ -16,9 +16,10 @@ kapt = "2.1.20"
 kotlinxSerialization = "1.8.0"  # 统一使用最新版本
 kotlinxCoroutines = "1.8.1"
 kotlinxDatetime = "0.7.1"
+kotlinxIo = "0.6.0"
 
-slf4j = "2.0.16"
-logback = "1.5.6"
+# slf4j = "2.0.16"  # 已移除，使用 kotlin-logging
+# logback = "1.5.6"  # 已移除
 mapstruct = "1.6.0"
 quartz = "2.5.0"
 jetbrainsMarkdown = "0.7.3"
@@ -34,6 +35,9 @@ jupyterNotebooksParser = "0.2.0-dev-10"
 highlights = "1.0.0"
 cryptography = "0.4.0"
 feishu2html = "1.0.2"
+kotlinx-cli = "0.3.6"
+kotlin-logging = "7.0.3"
+kmp-process = "2.0.2"
 
 # 测试框架
 junitJupiter = "5.9.1"
@@ -102,10 +106,9 @@ kotlinx-coroutines-core-jvm = { module = "org.jetbrains.kotlinx:kotlinx-coroutin
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
 kotlinx-datetime-jvm = { module = "org.jetbrains.kotlinx:kotlinx-datetime-jvm", version.ref = "kotlinxDatetime" }
 
-# 日志
-slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
-#logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
-slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "logback" }
+# 日志（KMP 版本）
+# slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }  # 已移除
+# slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "logback" }  # 已移除
 
 # 对象映射
 mapstruct = { module = "org.mapstruct:mapstruct", version.ref = "mapstruct" }
@@ -120,12 +123,12 @@ jetbrains-markdown = { module = "org.jetbrains:markdown", version.ref = "jetbrai
 # SVG处理
 ksvg = { module = "com.github.nwillc:ksvg", version.ref = "ksvg" }
 
-# 国际化
-i18n4k-core-jvm = { module = "de.comahe.i18n4k:i18n4k-core-jvm", version.ref = "i18n4k" }
+# 国际化（KMP 版本）
+i18n4k-core = { module = "de.comahe.i18n4k:i18n4k-core", version.ref = "i18n4k" }
 
-# AutoService相关
-auto-service-ksp = { module = "dev.zacsweers.autoservice:auto-service-ksp", version.ref = "autoServiceKsp" }
-auto-service-annotations = { module = "com.google.auto.service:auto-service-annotations", version.ref = "autoServiceAnnotations" }
+# AutoService相关（已移除，不再使用 ServiceLoader）
+# auto-service-ksp = { module = "dev.zacsweers.autoservice:auto-service-ksp", version.ref = "autoServiceKsp" }
+# auto-service-annotations = { module = "com.google.auto.service:auto-service-annotations", version.ref = "autoServiceAnnotations" }
 
 # JPA相关
 jakarta-persistence-api = { module = "jakarta.persistence:jakarta.persistence-api", version.ref = "jakartaPersistence" }
@@ -146,6 +149,16 @@ cryptography-provider-jdk = { module = "dev.whyoleg.cryptography:cryptography-pr
 # 飞书文档
 feishu2html = { module = "dev.yidafu.feishu2html:feishu2html", version.ref = "feishu2html" }
 
+# CLI 和日志（KMP 版本）
+kotlinx-cli = { module = "org.jetbrains.kotlinx:kotlinx-cli", version.ref = "kotlinx-cli" }
+kotlin-logging = { module = "io.github.oshai:kotlin-logging", version.ref = "kotlin-logging" }
+
+# kotlinx-io（KMP 文件 IO）
+kotlinx-io-core = { module = "org.jetbrains.kotlinx:kotlinx-io-core", version.ref = "kotlinxIo" }
+
+# kmp-process（跨平台进程）
+kmp-process = { module = "com.github.pgreze:kmp-process", version.ref = "kmp-process" }
+
 # 测试框架
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junitJupiter" }
 kotest-runner-junit5 = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }
@@ -157,6 +170,7 @@ symbol-processing-api = { module = "com.google.devtools.ksp:symbol-processing-ap
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kapt" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "kspplugin" }
