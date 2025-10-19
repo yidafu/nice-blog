@@ -1,8 +1,0 @@
-package dev.yidafu.blog.common.services
-
-import org.koin.core.annotation.ComponentScan
-import org.koin.core.annotation.Module
-
-@Module
-@ComponentScan
-class CommonServiceModule

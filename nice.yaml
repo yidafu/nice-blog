@@ -1,0 +1,33 @@
+# Nice Blog 静态生成器配置
+
+site:
+  title: "Dov Yih's Blog"
+  url: "https://blog.yidafu.dev"
+  description: "技术博客 - Kotlin, Web Development"
+  author: "Dov Yih"
+  language: zh-CN
+  timezone: "Asia/Shanghai"
+
+content:
+  source:
+    type: git
+    url: "https://github.com/yidafu/example-blog.git"
+    branch: "main"
+    localPath: "/Users/dovyih/Codes/nice-blog/sample-blog"
+
+  feishu:
+    enabled: false
+    appId: "${FEISHU_APP_ID}"
+    appSecret: "${FEISHU_APP_SECRET}"
+
+build:
+  output: "./output"
+  cleanBeforeBuild: true
+  incremental: false
+
+pagination:
+  pageSize: 10
+
+theme:
+  name: "simple"
+

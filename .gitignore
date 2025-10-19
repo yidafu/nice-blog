@@ -193,3 +193,10 @@ server/upload/
 server/nice-blog.db
 
 *.html
+
+.idea/
+.vscode/
+nicemaker/output/sitemap.xml
+.idea/
+archive/
+*.md

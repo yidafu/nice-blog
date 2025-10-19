@@ -1,0 +1,44 @@
+#!/bin/bash
+# NiceMaker CLI 便捷脚本
+
+cd "$(dirname "$0")"
+
+case "$1" in
+  build)
+    echo "🔨 Building static site..."
+    ./gradlew :nicemaker:jvmRun --args="build -c $(pwd)/nice.yaml ${@:2}" --console=plain
+    ;;
+
+  serve)
+    PORT="${2:-3000}"
+    echo "🌐 Starting preview server on port $PORT..."
+    ./gradlew :nicemaker:jvmRun --args="serve -p $PORT -d nicemaker/output" --console=plain
+    ;;
+
+  new)
+    if [ -z "$2" ]; then
+      echo "❌ Please provide article title"
+      echo "   Usage: ./maker new \"My Article\""
+      exit 1
+    fi
+    ./gradlew :nicemaker:jvmRun --args="new \"$2\" ${@:3}" --console=plain
+    ;;
+
+  *)
+    echo "📦 NiceMaker - Static Site Generator"
+    echo ""
+    echo "Usage:"
+    echo "  ./maker <command> [options]"
+    echo ""
+    echo "Commands:"
+    echo "  build        Generate static site"
+    echo "  serve [port] Start preview server (default port: 3000)"
+    echo "  new <title>  Create new article"
+    echo ""
+    echo "Examples:"
+    echo "  ./maker build"
+    echo "  ./maker serve 8080"
+    echo "  ./maker new \"My First Post\""
+    ;;
+esac
+

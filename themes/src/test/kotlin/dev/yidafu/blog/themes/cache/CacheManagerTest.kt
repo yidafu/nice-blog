@@ -1,4 +1,4 @@
-package dev.yidafu.blog.themes.cache
+package dev.yidafu.nicemaker.themes.cache
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe

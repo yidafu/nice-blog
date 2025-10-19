@@ -1,0 +1,66 @@
+# NiceMaker 静态生成器配置示例
+# 复制此文件为 nicemaker.yml 并根据需要修改
+
+site:
+  # 网站标题
+  title: "Dov Yih's Blog"
+
+  # 网站 URL（用于生成 sitemap）
+  url: "https://blog.yidafu.dev"
+
+  # 网站描述
+  description: "技术博客 - Kotlin, Web Development"
+
+  # 作者
+  author: "Dov Yih"
+
+  # 语言
+  language: zh-CN
+
+  # 时区
+  timezone: "Asia/Shanghai"
+
+content:
+  # Git 数据源配置
+  source:
+    # 数据源类型（目前仅支持 git）
+    type: git
+
+    # Git 仓库 URL
+    url: "https://github.com/yidafu/example-blog.git"
+
+    # 分支
+    branch: "main"
+
+    # 本地缓存路径
+    localPath: ".cache/content"
+
+  # 飞书文档配置（可选）
+  feishu:
+    # 是否启用飞书文档支持
+    enabled: true
+
+    # 飞书 App ID（支持环境变量 ${FEISHU_APP_ID}）
+    appId: "${FEISHU_APP_ID}"
+
+    # 飞书 App Secret（支持环境变量 ${FEISHU_APP_SECRET}）
+    appSecret: "${FEISHU_APP_SECRET}"
+
+build:
+  # 输出目录
+  output: "./output"
+
+  # 构建前清理输出目录
+  cleanBeforeBuild: true
+
+  # 增量构建（暂未实现）
+  incremental: false
+
+pagination:
+  # 每页文章数
+  pageSize: 10
+
+theme:
+  # 主题名称
+  name: "simple"
+
