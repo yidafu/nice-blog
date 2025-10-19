@@ -1,93 +1,58 @@
 package dev.yidafu.blog.themes.simple.pages.front
 
+import de.comahe.i18n4k.strings.asLocalizedString
+import de.comahe.i18n4k.strings.toString
 import dev.yidafu.blog.common.Routes
 import dev.yidafu.blog.common.ext.formatString
 import dev.yidafu.blog.common.vo.ArticleVO
 import dev.yidafu.blog.i18n.AdminTxt
 import dev.yidafu.blog.themes.*
-import io.github.allangomes.kotlinwind.css.I300
-import io.github.allangomes.kotlinwind.css.I800
-import io.github.allangomes.kotlinwind.css.LG
-import io.github.allangomes.kotlinwind.css.kw
 import kotlinx.html.*
 
-fun FlowContent.readMore(url: String?) {
-  a(if (url.isNullOrEmpty()) "/404" else url, classes = "center") {
-    button(classes = "read-more center") {
-      style =
-        kw.inline {
-          background.white
-          width[70].height[15]
-          border[1].rounded[7].gray[I300]
-          text.gray[I800]
-          font.size[4]
-        }
+fun FlowContent.readMore(url: String?, locale: de.comahe.i18n4k.Locale) {
+  a(if (url.isNullOrEmpty()) "/404" else url) {
+    classes = setOf("article-card__footer")
+    button {
+      classes = setOf("btn", "btn--read-more")
 
-      +"READ MORE"
+      +AdminTxt.read_more.toString(locale)
     }
   }
 }
 
-fun FlowContent.partialPost(vo: ArticleVO) {
-  AdminTxt.article
-  article("post") {
-    style =
-      kw.inline {
-        margin.top[20].bottom[16]
-        padding[4]
-        border.rounded[LG]
-      }
+fun FlowContent.partialPost(vo: ArticleVO, locale: de.comahe.i18n4k.Locale) {
+  article {
+    classes = setOf("article-card")
     div {
-      style =
-        kw.inline {
-          width[200].font.size[12].bold
-          text.center.color[HEADER_COLOR.toString()]
-        }
+      classes = setOf("article-card__title")
       +vo.title
     }
     div {
-      style =
-        kw.inline {
-          text.center.color[TEXT_COLOR_SECONDARY.toString()]
-          margin.y[4]
-        }
-      // span {
-      //   style = kw.inline { font.size[4] }
-      //   +"Hangzhou Xihu District"
-      // }
-      // span {
-      //   style = kw.inline { margin.x[4] }
-      //   +"•"
-      // }
+      classes = setOf("article-card__meta")
       span {
-        style = kw.inline { font.size[4] }
-        +"Author: Dov Yih"
+        classes = setOf("article-card__meta-item")
+        +"${AdminTxt.author.toString(locale)}: Dov Yih"
       }
       span {
-        style = kw.inline { margin.x[4] }
+        classes = setOf("article-card__meta-separator")
         +"•"
       }
       span {
-        style = kw.inline { font.size[4] }
-        +"Updated At ${vo.updatedAt.formatString()}"
+        classes = setOf("article-card__meta-item")
+        +"${AdminTxt.updated_at.toString(locale)} ${vo.updatedAt.formatString()}"
       }
     }
 
     vo.cover?.let { cover ->
-      div("shadow") {
-        style =
-          kw.inline {
-            flex.row.justify_center.items_center
-            padding.x[16].y[3]
-            margin.y[8]
-            background.image[cover].cover.center.no_repeat
-            height[80]
-          }
+      div {
+        classes = setOf("article-card__cover", "shadow")
+        attributes["style"] = "background-image: url('$cover');"
       }
     }
 
     vo.summary?.let { s ->
-      div("markdown-body") {
+      div {
+        classes = setOf("markdown-body", "article-card__summary")
         unsafe {
           +s
         }
@@ -95,12 +60,8 @@ fun FlowContent.partialPost(vo: ArticleVO) {
     }
 
     div {
-      style =
-        kw.inline {
-          flex.row.justify_center.items_center
-          margin.top[16]
-        }
-      readMore(vo.identifier?.let { Routes.ARTICLE_DETAIL.replace(":identifier", it) })
+      classes = setOf("article-card__footer")
+      readMore(vo.identifier?.let { Routes.ARTICLE_DETAIL.replace(":identifier", it) }, locale)
     }
   }
 }
@@ -108,21 +69,12 @@ fun FlowContent.partialPost(vo: ArticleVO) {
 class ArticleListPage(modal: DataModal) : FrontPage(modal) {
   override fun MAIN.createContent() {
     div {
-      attributes["class"] = "m-auto"
-      style =
-        kw.inline {
-          background.white
-          width[200]
-        }
-      modal.articleList.forEach { vo ->
-        partialPost(vo)
+      classes = setOf("m-auto", "bg-white", "w-200")
+      val articles = modal.list<ArticleVO>("articles")
+      articles.forEach { vo ->
+        partialPost(vo, locale)
         div {
-          style =
-            kw.inline {
-              height[0.25]
-              background.gray[I300]
-              margin.y[4]
-            }
+          classes = setOf("divider")
         }
       }
     }

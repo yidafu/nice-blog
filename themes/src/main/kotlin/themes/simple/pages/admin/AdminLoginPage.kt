@@ -10,10 +10,6 @@ import dev.yidafu.blog.themes.simple.components.FormItem
 import dev.yidafu.blog.themes.simple.components.alert
 import dev.yidafu.blog.themes.simple.components.formItem
 import dev.yidafu.blog.themes.simple.pages.SimplePage
-import io.github.allangomes.kotlinwind.css.I50
-import io.github.allangomes.kotlinwind.css.I500
-import io.github.allangomes.kotlinwind.css.I700
-import io.github.allangomes.kotlinwind.css.kw
 import kotlinx.html.*
 
 class AdminLoginPage(modal: DataModal) : SimplePage(modal) {
@@ -29,24 +25,15 @@ class AdminLoginPage(modal: DataModal) : SimplePage(modal) {
   }
 
   override val bodyBlock: BODY.() -> Unit = {
-    val vo = modal.loginVo
+    val publicKey = modal.str("publicKey")
+    val errorMessage = modal.str("errorMessage")
     div {
-      style =
-        kw.inline {
-          flex.col.grow.justify_center.items_center
-          width["100%"].height["100%"]
-          background.slate[I50]
-        }
-      div("shadow-lg") {
-        style =
-          kw.inline {
-            width[100].padding[4]
-            border.rounded[8]
-            background.white
-          }
+      classes = setOf("login-container")
+      div {
+        classes = setOf("login-form", "shadow-lg")
         // 避免提交表单时，被提交
         formItem(
-          FormItem(FormKeys.PUBLIC_KEY, "", vo.publicKey, InputType.hidden),
+          FormItem(FormKeys.PUBLIC_KEY, "", publicKey, InputType.hidden),
         )
 
         form {
@@ -57,19 +44,12 @@ class AdminLoginPage(modal: DataModal) : SimplePage(modal) {
           getOptions().forEach { opt ->
             formItem(opt)
           }
-          if (vo.errorMessage != null) {
-            alert(vo.errorMessage!!, EAlertType.ERROR)
+          if (errorMessage.isNotEmpty()) {
+            alert(errorMessage, EAlertType.ERROR)
           }
 
           button {
-            style =
-              kw.inline {
-                background.blue[I500]
-                text.white
-                font.bold
-                padding.y[2].x[4]
-                border.blue[I700].rounded[4]
-              }
+            classes = setOf("btn", "btn--primary", "py-2", "px-4", "rounded")
             id = FormKeys.SUBMIT
             +AdminTxt.submit.toText()
           }

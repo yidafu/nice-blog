@@ -1,17 +1,21 @@
 package dev.yidafu.blog.themes
 
-import kotlinx.html.h1
-import kotlinx.html.stream.createHTML
+import kotlinx.html.*
 
 class NotFoundPage : Page {
   override val modal: DataModal
     get() = DataModal()
 
-  override fun createPageHtml(): String {
-    return createHTML().apply {
-      h1 {
-        +"Not Found"
+  override fun render(html: HTML) {
+    html.apply {
+      head {
+        title { +"Not Found" }
       }
-    }.finalize()
+      body {
+        h1 {
+          +"Not Found"
+        }
+      }
+    }
   }
 }

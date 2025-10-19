@@ -1,48 +1,37 @@
 package dev.yidafu.blog.themes.simple.pages.admin.sync
 
 import dev.yidafu.blog.common.Routes
+import dev.yidafu.blog.common.vo.AdminSyncTaskVO
+import dev.yidafu.blog.common.vo.PaginationVO
 import dev.yidafu.blog.i18n.AdminTxt
 import dev.yidafu.blog.themes.*
 import dev.yidafu.blog.themes.simple.components.Button
-import dev.yidafu.blog.themes.syncLogPage
-import io.github.allangomes.kotlinwind.css.*
 import kotlinx.html.*
 
 class AdminSyncLogListPage(modal: DataModal) : AdminSyncPage(modal) {
   override fun DIV.createContent() {
-    val cellStyle = kw.inline { padding.x[4].y[6] }
-    val vo = modal.syncLogPage
+    val vo = modal.obj<PaginationVO<AdminSyncTaskVO>>("pagination") ?: PaginationVO()
     div {
-      style = kw.inline { background.gray[I50] }
+      classes = setOf("bg-gray-50")
       table {
-        attributes["border-collapse"] = "collapse"
-        style =
-          kw.inline {
-            text.gray[I500].left
-            width["100%"]
-          }
+        classes = setOf("admin-table")
         thead {
-          style =
-            kw.inline {
-              background.gray[I50]
-              text.gray[I700]
-              font.xs
-            }
+          classes = setOf("admin-table__head")
           tr {
             td {
-              style = cellStyle
+              classes = setOf("admin-table__cell")
               +AdminTxt.id.toText()
             }
             td {
-              style = cellStyle
+              classes = setOf("admin-table__cell")
               +AdminTxt.status.toText()
             }
             td {
-              style = cellStyle
+              classes = setOf("admin-table__cell")
               +AdminTxt.callback_url.toText()
             }
             td {
-              style = cellStyle
+              classes = setOf("admin-table__cell")
               +AdminTxt.created_at.toText()
             }
           }
@@ -50,29 +39,25 @@ class AdminSyncLogListPage(modal: DataModal) : AdminSyncPage(modal) {
         tbody {
           vo.list.forEach { i ->
             tr {
-              style =
-                kw.inline {
-                  background.white
-                  border.bottom[1].gray[I900]
-                }
+              classes = setOf("admin-table__row")
               td {
-                style = cellStyle
+                classes = setOf("admin-table__cell")
                 +i.id.toString()
               }
               td {
-                style = cellStyle
+                classes = setOf("admin-table__cell")
                 +i.status.toString()
               }
               td {
-                style = cellStyle
+                classes = setOf("admin-table__cell")
                 +i.callbackUrl
               }
               td {
-                style = cellStyle
+                classes = setOf("admin-table__cell")
                 +i.createdAt.toString()
               }
               td {
-                style = cellStyle
+                classes = setOf("admin-table__cell")
                 a {
                   href = Routes.SYNC_LOG_DETAIL_URL + "?uuid=" + i.uuid
                   +AdminTxt.detail.toText()
@@ -86,11 +71,7 @@ class AdminSyncLogListPage(modal: DataModal) : AdminSyncPage(modal) {
 
     // pagination
     div {
-      style =
-        kw.inline {
-          padding[3]
-          flex.row.justify_between
-        }
+      classes = setOf("p-3", "flex-row", "justify-between")
       if (vo.page > 1) {
         Button {
           a {

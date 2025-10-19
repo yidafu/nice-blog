@@ -9,9 +9,6 @@ import dev.yidafu.blog.themes.Page
 import dev.yidafu.blog.themes.PageNames
 import dev.yidafu.blog.themes.simple.components.FormItem
 import dev.yidafu.blog.themes.simple.components.formItem
-import io.github.allangomes.kotlinwind.css.I700
-import io.github.allangomes.kotlinwind.css.LG
-import io.github.allangomes.kotlinwind.css.kw
 import kotlinx.html.*
 
 class AdminConfigAppearancePage(modal: DataModal) : AdminConfigPage(modal) {
@@ -27,13 +24,7 @@ class AdminConfigAppearancePage(modal: DataModal) : AdminConfigPage(modal) {
       formItem(FormItem(FormKeys.GITHUB_URL, AdminTxt.github_url.toText(), githubUrl, InputType.url))
 
       button {
-        style =
-          kw.inline {
-            text.white.center
-            background.blue[I700]
-            border.rounded[LG]
-            padding.x[5].y[2]
-          }
+        classes = setOf("btn", "btn--primary", "text-white", "text-center", "rounded-lg", "px-5", "py-2")
         +AdminTxt.submit.toString()
       }
     }

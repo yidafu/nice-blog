@@ -6,7 +6,6 @@ import dev.yidafu.blog.themes.DataModal
 import dev.yidafu.blog.themes.icons.*
 import dev.yidafu.blog.themes.simple.components.footerComponent
 import dev.yidafu.blog.themes.simple.pages.SimplePage
-import io.github.allangomes.kotlinwind.css.*
 import kotlinx.html.*
 
 fun FlowOrInteractiveOrPhrasingContent.linkItem(
@@ -15,18 +14,11 @@ fun FlowOrInteractiveOrPhrasingContent.linkItem(
   active: Boolean = false,
 ) {
   a {
-    style =
-      kw.inline {
-        margin.top[4]
-        font.size[6]
-        margin.right[4]
-        if (active) {
-          text.green[I800]
-          border.bottom[1].green[I600]
-        } else {
-          text.black
-        }
-      }
+    classes = if (active) {
+      setOf("admin-nav__link", "admin-nav__link--active")
+    } else {
+      setOf("admin-nav__link")
+    }
     href = url
     +link
   }
@@ -35,14 +27,14 @@ fun FlowOrInteractiveOrPhrasingContent.linkItem(
 abstract class AdminPage(modal: DataModal) : SimplePage(modal) {
   internal fun TR.cell(text: String) {
     td {
-      style = kw.inline { padding.x[4].y[6] }
+      classes = setOf("admin-table__cell")
       +text
     }
   }
 
   internal fun TR.cell(block: TD.() -> Unit) {
     td {
-      style = kw.inline { padding.x[4].y[6] }
+      classes = setOf("admin-table__cell")
       block()
     }
   }
@@ -50,7 +42,6 @@ abstract class AdminPage(modal: DataModal) : SimplePage(modal) {
   private val linkList =
     listOf(
       Triple(AdminTxt.dashboard.toText(), Routes.ADMIN_DASHBOARD_URL, currentPath == Routes.ADMIN_DASHBOARD_URL),
-//    Triple(AdminTxt.appearance.toText(), Routes.CONFIG_APPEARANCE_URL, vo.currentPath == Routes.CONFIG_APPEARANCE_URL),
       Triple(
         AdminTxt.article.toText(),
         Routes.ADMIN_ARTICLE_LIST,
@@ -64,6 +55,7 @@ abstract class AdminPage(modal: DataModal) : SimplePage(modal) {
       Triple(AdminTxt.sync.toText(), Routes.SYNC_URL, currentPath == Routes.SYNC_URL),
       Triple(AdminTxt.pictures.toText(), Routes.PICTURES_URL, currentPath == Routes.PICTURES_URL),
     )
+
   override val headBlock: HEAD.() -> Unit = {
     script {
       src = "/public/htmx.min.js"
@@ -75,119 +67,71 @@ abstract class AdminPage(modal: DataModal) : SimplePage(modal) {
 
   override val bodyBlock: BODY.() -> Unit = {
     div {
-      style =
-        kw.inline {
-          border.gray[I200].bottom[1]
-          background.white
-        }
+      classes = setOf("admin-header")
 
-      nav("m-auto") {
-        style =
-          kw.inline {
-            padding[6]
-            flex.row.items_center.justify_between.wrap
-            max_width[256]
-          }
+      nav {
+        classes = setOf("admin-nav")
         div {
-          style =
-            kw.inline {
-              flex.row.items_center.shrink_0
-              text.black
-              margin.right[6]
-            }
-
+          classes = setOf("admin-nav__brand")
           span {
-            style = kw.inline { font.size[XL5].weight_600 }
+            classes = setOf("admin-nav__title")
             +siteTitle
           }
         }
 
         div {
-          style = kw.inline { flex.row.fill.items_center.justify_between }
+          classes = setOf("admin-nav__menu")
           div {
-            style = kw.inline { font.size[SM] }
+            classes = setOf("admin-nav__links")
             linkList.forEach { item ->
               linkItem(item.first, item.second, item.third)
             }
           }
 
           div {
-            style = kw.inline { flex.row }
+            classes = setOf("admin-nav__actions")
 
-            div("dropdown") {
-              style = kw.inline { relative }
-              style =
-                kw.inline {
-                  font.size[SM]
-                  width[8].height[6].margin.right[3]
-                }
+            div {
+              classes = setOf("dropdown", "admin-nav__lang")
               Language()
-              div("dropdown-content shadow") {
-                style =
-                  kw.inline {
-                    absolute.min_width[40].background.white
-                    hidden
-                  }
+              div {
+                classes = setOf("dropdown-content", "shadow")
                 a {
-                  style =
-                    kw.inline {
-                      flex.row.items_center
-                      text.gray[I600]
-                      padding.x[4].y[3]
-                    }
+                  classes = setOf("flex-row", "items-center", "text-gray-600", "px-4", "py-3")
                   href = "?lang=en-US"
                   div {
-                    style = kw.inline { inline_block.width[4].height[4].margin.right[2] }
+                    classes = setOf("inline-block", "w-4", "h-4", "mr-2")
                     English()
                   }
-                  +"English"
+                  +AdminTxt.language_english.toText()
                 }
                 a {
-                  style =
-                    kw.inline {
-                      flex.row.items_center
-                      text.gray[I600]
-                      padding.x[4].y[3]
-                    }
+                  classes = setOf("flex-row", "items-center", "text-gray-600", "px-4", "py-3")
                   href = "?lang=zh-CN"
                   div {
-                    style = kw.inline { inline_block.width[4].height[4].margin.right[2] }
+                    classes = setOf("inline-block", "w-4", "h-4", "mr-2")
                     Chinese()
                   }
-                  +"中文"
+                  +AdminTxt.language_chinese.toText()
                 }
               }
             }
 
             a {
-              style =
-                kw.inline {
-                  font.size[SM]
-                  width[6].height[6]
-                }
+              classes = setOf("admin-nav__github")
               href = githubUrl
               Github()
             }
 
             a {
-              style =
-                kw.inline {
-                  font.size[SM]
-                  height[6]
-                  text.slate[I600]
-                  margin.left[4]
-                  flex.row.items_center
-                }
+              classes = setOf("admin-nav__logout")
               href = Routes.LOGOUT_URL
               span {
-                style =
-                  kw.inline {
-                    font.size[SM]
-                  }
+                classes = setOf("text-sm")
                 +AdminTxt.logout.toText()
               }
               i {
-                style = kw.inline { size[5] }
+                classes = setOf("admin-nav__logout-icon")
                 Logout()
               }
             }
@@ -196,15 +140,8 @@ abstract class AdminPage(modal: DataModal) : SimplePage(modal) {
       }
     }
 
-    div("m-auto") {
-      style =
-        kw.inline {
-          max_width[256]
-          padding[6]
-          background.white
-          border.rounded[LG]
-          margin.y[8]
-        }
+    div {
+      classes = setOf("admin-container")
       layoutBlock()
     }
 

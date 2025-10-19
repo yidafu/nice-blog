@@ -1,43 +1,20 @@
 package dev.yidafu.blog.themes.simple.pages.admin
 
 import dev.yidafu.blog.themes.*
-import io.github.allangomes.kotlinwind.css.*
-import kotlinx.html.DIV
-import kotlinx.html.FlowContent
-import kotlinx.html.div
-import kotlinx.html.style
+import kotlinx.html.*
 
 fun FlowContent.statisticItem(
   label: String,
   value: String,
 ) {
-  div("shadow") {
-    style =
-      kw.inline {
-        padding[3]
-        width[75]
-        margin[4]
-        background.white
-      }
-
+  div {
+    classes = setOf("stat-card", "shadow")
     div {
-      style =
-        kw.inline {
-          text.neutral[I300]
-          font.size[4]
-          height[6]
-          flex.items_center.justify_start
-        }
+      classes = setOf("stat-card__label")
       +label
     }
     div {
-      style =
-        kw.inline {
-          text.neutral[I950]
-          font.size[8]
-          height[10]
-          flex.items_center.justify_start
-        }
+      classes = setOf("stat-card__value")
       +value
     }
   }
@@ -45,16 +22,12 @@ fun FlowContent.statisticItem(
 
 class AdminDashboardPage(modal: DataModal) : AdminPage(modal) {
   override fun DIV.layoutBlock() {
-    val vo = modal.dashboardData
+    val articleCount = modal.long("articleCount", 0L)
+    val accessCount = modal.long("accessCount", 0L)
     div {
-      style =
-        kw.inline {
-          flex.fill.row.wrap
-          background.zinc[I100]
-          padding[8]
-        }
-      statisticItem("文章数", vo.articleCount.toString())
-      statisticItem("访问总数", vo.accessCount.toString())
+      classes = setOf("flex-fill", "flex-row", "flex-wrap", "bg-zinc-100", "p-8")
+      statisticItem("文章数", articleCount.toString())
+      statisticItem("访问总数", accessCount.toString())
     }
   }
 }

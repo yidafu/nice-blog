@@ -1,48 +1,23 @@
 package dev.yidafu.blog.themes.simple.pages.admin.article
 
 import dev.yidafu.blog.common.ext.formatString
+import dev.yidafu.blog.common.vo.ArticleVO
 import dev.yidafu.blog.i18n.AdminTxt
 import dev.yidafu.blog.themes.*
-import io.github.allangomes.kotlinwind.css.I100
-import io.github.allangomes.kotlinwind.css.I50
-import io.github.allangomes.kotlinwind.css.XL2
-import io.github.allangomes.kotlinwind.css.kw
-import kotlinx.html.DIV
-import kotlinx.html.FlowContent
-import kotlinx.html.div
-import kotlinx.html.style
+import kotlinx.html.*
 
 fun FlowContent.descriptionItem(
   title: String,
   content: String,
 ) {
   div {
-    style =
-      kw.inline {
-        flex.row
-        width[60]
-        border.all[1].gray[I100]
-      }
+    classes = setOf("desc-item")
     div {
-      style =
-        kw.inline {
-          flex.items_center
-          font.bold.size[XL2]
-          background.gray[I50]
-          width[20]
-          padding[2]
-          font.size[6]
-        }
+      classes = setOf("desc-item__label")
       +title
     }
     div {
-      style =
-        kw.inline {
-          width[40]
-          padding[2]
-          flex.items_center
-          font.size[4]
-        }
+      classes = setOf("desc-item__content")
       +content
     }
   }
@@ -50,9 +25,9 @@ fun FlowContent.descriptionItem(
 
 class AdminArticleDetailPage(modal: DataModal) : AdminArticlePage(modal) {
   override fun DIV.createContent() {
-    val vo = modal.articleDetail
+    val vo = modal.obj<ArticleVO>("article") ?: ArticleVO()
     div {
-      style = kw.inline { flex.row.wrap }
+      classes = setOf("flex-row", "flex-wrap")
       descriptionItem(AdminTxt.column_id.toText(), vo.id.toString())
       descriptionItem(AdminTxt.column_identifier.toText(), vo.identifier ?: "-")
       descriptionItem(AdminTxt.column_title.toText(), vo.title)

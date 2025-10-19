@@ -2,19 +2,16 @@ package dev.yidafu.blog.themes.simple.pages.admin.config
 
 import dev.yidafu.blog.common.FormKeys
 import dev.yidafu.blog.common.Routes
+import dev.yidafu.blog.common.vo.AdminSynchronousVO
 import dev.yidafu.blog.i18n.AdminTxt
 import dev.yidafu.blog.themes.*
 import dev.yidafu.blog.themes.simple.components.FormItem
 import dev.yidafu.blog.themes.simple.components.formItem
-import io.github.allangomes.kotlinwind.css.I700
-import io.github.allangomes.kotlinwind.css.LG
-import io.github.allangomes.kotlinwind.css.kw
 import kotlinx.html.*
 
 class AdminConfigSyncPage(modal: DataModal) : AdminConfigPage(modal) {
-  val vo = modal.synchronousConfig
-
   override fun DIV.createContent() {
+    val vo = modal.obj<AdminSynchronousVO>("config") ?: AdminSynchronousVO("")
     h1 {
       +AdminTxt.sync.toText()
     }
@@ -27,13 +24,7 @@ class AdminConfigSyncPage(modal: DataModal) : AdminConfigPage(modal) {
       )
 
       button {
-        style =
-          kw.inline {
-            text.white.center
-            background.blue[I700]
-            border.rounded[LG]
-            padding.x[5].y[2]
-          }
+        classes = setOf("btn", "btn--primary", "text-white", "text-center", "rounded-lg", "px-5", "py-2")
         +AdminTxt.submit.toString()
       }
     }

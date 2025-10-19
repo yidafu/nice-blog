@@ -4,15 +4,11 @@ import dev.yidafu.blog.themes.CacheablePageProvider
 import dev.yidafu.blog.themes.DataModal
 import dev.yidafu.blog.themes.Page
 import dev.yidafu.blog.themes.PageNames
-import kotlinx.html.a
-import kotlinx.html.body
-import kotlinx.html.head
-import kotlinx.html.stream.createHTML
-import kotlinx.html.title
+import kotlinx.html.*
 
 class BlankPage(override val modal: DataModal) : Page {
-  override fun createPageHtml(): String {
-    return createHTML().apply {
+  override fun render(html: HTML) {
+    html.apply {
       head {
         title {
           +modal.siteTitle
@@ -24,7 +20,7 @@ class BlankPage(override val modal: DataModal) : Page {
           +modal.siteTitle
         }
       }
-    }.finalize()
+    }
   }
 }
 

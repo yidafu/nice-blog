@@ -1,10 +1,6 @@
 package dev.yidafu.blog.themes.simple.components
 
 import dev.yidafu.blog.themes.icons.Icon
-import io.github.allangomes.kotlinwind.css.I50
-import io.github.allangomes.kotlinwind.css.I700
-import io.github.allangomes.kotlinwind.css.LG
-import io.github.allangomes.kotlinwind.css.kw
 import kotlinx.html.*
 
 class TABS(initialAttributes: Map<String, String>, consumer: TagConsumer<*>) : DIV(initialAttributes, consumer)
@@ -23,23 +19,13 @@ inline fun FlowContent.tabs(
 ) {
   val layout: TABS.() -> Unit = {
     ul {
-      style =
-        kw.inline {
-          flex.auto.grow_0.shrink_0
-            .col
-          width[50]
-        }
+      this.classes = setOf("flex", "flex-col", "w-20")
       options.forEach { option ->
         tabItem(option)
       }
     }
-    div("shadow-lg") {
-      style =
-        kw.inline {
-          margin.left[6]
-          padding.y[4].x[8]
-          flex.auto
-        }
+    div {
+      this.classes = setOf("shadow-lg", "ml-6", "py-4", "px-8", "flex-fill")
       block()
     }
   }
@@ -64,25 +50,16 @@ fun UL.tabItem(
 ) {
   li("nav-list") {
     a {
-      style =
-        kw.inline {
-          flex.row.items_center
-          padding.x[4].y[3]
-          border.rounded[LG]
-          if (active) {
-            text.white
-            background.blue[I700]
-          } else {
-            background.gray[I50]
-          }
-        }
+      val cssClasses = mutableSetOf("flex-row", "items-center", "px-4", "py-3", "rounded-lg")
+      if (active) {
+        cssClasses.addAll(listOf("text-white", "bg-blue-700"))
+      } else {
+        cssClasses.add("bg-gray-50")
+      }
+      this.classes = cssClasses
       href = url
       i {
-        style =
-          kw.inline {
-            width[4].height[4]
-            margin.right[2]
-          }
+        this.classes = setOf("w-4", "h-4", "mr-2")
         icon.render(this@i)
       }
       +title

@@ -1,32 +1,23 @@
 package dev.yidafu.blog.themes.simple.pages.admin.article
 
 import dev.yidafu.blog.common.Routes
+import dev.yidafu.blog.common.vo.ArticleVO
+import dev.yidafu.blog.common.vo.PaginationVO
 import dev.yidafu.blog.i18n.AdminTxt
 import dev.yidafu.blog.themes.*
 import dev.yidafu.blog.themes.simple.components.Button
 import dev.yidafu.blog.themes.simple.pages.admin.AdminPage
-import io.github.allangomes.kotlinwind.css.*
 import kotlinx.html.*
 
 class AdminArticleListPage(modal: DataModal) : AdminPage(modal) {
   override fun DIV.layoutBlock() {
-    val vo = modal.articlePage
+    val vo = modal.obj<PaginationVO<ArticleVO>>("pagination") ?: PaginationVO()
     div {
-      style = kw.inline { background.gray[I50] }
+      classes = setOf("bg-gray-50")
       table {
-        attributes["border-collapse"] = "collapse"
-        style =
-          kw.inline {
-            text.gray[I500].left
-            width["100%"]
-          }
+        classes = setOf("admin-table")
         thead {
-          style =
-            kw.inline {
-              background.gray[I50]
-              text.gray[I700]
-              font.xs
-            }
+          classes = setOf("admin-table__head")
           tr {
             cell(AdminTxt.id.toText())
             cell(AdminTxt.column_title.toText())
@@ -39,11 +30,7 @@ class AdminArticleListPage(modal: DataModal) : AdminPage(modal) {
         tbody {
           vo.list.forEach { i ->
             tr {
-              style =
-                kw.inline {
-                  background.white
-                  border.bottom[1].gray[I900]
-                }
+              classes = setOf("admin-table__row")
               cell(i.id.toString())
               cell(i.title)
               cell(i.status.toString())
@@ -63,11 +50,7 @@ class AdminArticleListPage(modal: DataModal) : AdminPage(modal) {
 
     // pagination
     div {
-      style =
-        kw.inline {
-          padding[3]
-          flex.row.justify_between
-        }
+      classes = setOf("p-3", "flex-row", "justify-between")
       if (vo.page > 1) {
         Button {
           a {

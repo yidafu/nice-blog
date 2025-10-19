@@ -2,20 +2,18 @@ package dev.yidafu.blog.themes.simple.pages.admin.config
 
 import dev.yidafu.blog.common.FormKeys
 import dev.yidafu.blog.common.Routes
+import dev.yidafu.blog.common.vo.AdminDataSourceVO
 import dev.yidafu.blog.i18n.AdminTxt
 import dev.yidafu.blog.themes.*
 import dev.yidafu.blog.themes.simple.components.FormItem
 import dev.yidafu.blog.themes.simple.components.RadioItem
 import dev.yidafu.blog.themes.simple.components.formItem
 import dev.yidafu.blog.themes.simple.components.radioItem
-import io.github.allangomes.kotlinwind.css.I700
-import io.github.allangomes.kotlinwind.css.LG
-import io.github.allangomes.kotlinwind.css.kw
 import kotlinx.html.*
 
 class AdminConfigDataSourcePage(modal: DataModal) : AdminConfigPage(modal) {
   override fun DIV.createContent() {
-    val vo = modal.dataSource
+    val vo = modal.obj<AdminDataSourceVO>("config") ?: AdminDataSourceVO("", "", "", "", "", "")
     h1 {
       +AdminTxt.data_source.toText()
     }
@@ -48,14 +46,26 @@ class AdminConfigDataSourcePage(modal: DataModal) : AdminConfigPage(modal) {
         FormItem(FormKeys.SOURCE_TOKEN, AdminTxt.source_token.toText(), vo.sourceToken, InputType.text),
       )
 
+      // 飞书配置分隔符
+      div {
+        classes = setOf("divider", "my-4")
+      }
+
+      h2 {
+        classes = setOf("text-xl", "font-bold", "mb-4")
+        +AdminTxt.feishu_config.toText()
+      }
+
+      formItem(
+        FormItem(FormKeys.FEISHU_APP_ID, AdminTxt.feishu_app_id.toText(), vo.feishuAppId, InputType.text),
+      )
+
+      formItem(
+        FormItem(FormKeys.FEISHU_APP_SECRET, AdminTxt.feishu_app_secret.toText(), vo.feishuAppSecret, InputType.password),
+      )
+
       button {
-        style =
-          kw.inline {
-            text.white.center
-            background.blue[I700]
-            border.rounded[LG]
-            padding.x[5].y[2]
-          }
+        classes = setOf("btn", "btn--primary", "text-white", "text-center", "rounded-lg", "px-5", "py-2")
         +AdminTxt.submit.toString()
       }
     }

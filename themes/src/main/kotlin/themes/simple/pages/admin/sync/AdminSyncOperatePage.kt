@@ -6,47 +6,27 @@ import dev.yidafu.blog.themes.CacheablePageProvider
 import dev.yidafu.blog.themes.DataModal
 import dev.yidafu.blog.themes.Page
 import dev.yidafu.blog.themes.PageNames
-import io.github.allangomes.kotlinwind.css.I700
-import io.github.allangomes.kotlinwind.css.LG
-import io.github.allangomes.kotlinwind.css.kw
 import kotlinx.html.*
 
 class AdminSyncOperatePage(modal: DataModal) : AdminSyncPage(modal) {
   override fun DIV.createContent() {
     div {
       button {
-        style =
-          kw.inline {
-            padding.x[4].y[3]
-            border.rounded[LG]
-            text.white
-            background.blue[I700]
-            margin.right[6]
-          }
+        classes = setOf("btn", "btn--primary", "px-4", "py-3", "rounded-lg", "mr-6")
         attributes["hx-get"] = Routes.SYNC_API_START_URL
         attributes["hx-target"] = "#log-output"
         +AdminTxt.sync_start.toText()
       }
 
       button {
-        style =
-          kw.inline {
-            padding.x[4].y[3]
-            border.rounded[LG]
-            text.white
-            background.blue[I700]
-          }
+        classes = setOf("btn", "btn--primary", "px-4", "py-3", "rounded-lg")
         attributes["hx-get"] = Routes.SYNC_API_START_URL + "?force=1"
         attributes["hx-target"] = "#log-output"
         +AdminTxt.sync_force_start.toText()
       }
 
       div {
-        style =
-          kw.inline {
-            padding[4]
-            border.rounded[LG]
-          }
+        classes = setOf("sync-log__output")
         id = "log-output"
       }
     }

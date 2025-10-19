@@ -3,9 +3,9 @@ package dev.yidafu.blog.themes
 import de.comahe.i18n4k.Locale
 import dev.yidafu.blog.common.modal.SyncTaskStatus
 import dev.yidafu.blog.common.vo.*
-import kotlinx.serialization.json.*
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import kotlinx.serialization.json.*
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
@@ -34,6 +34,77 @@ class DataModal(
 
   val githubUrl: String = getValueAsString(GITHUB_URL)
 
+  // 新增的数据访问方法
+  fun str(path: String, default: String = ""): String {
+    return getByPathPublic(path)?.let {
+      when (it) {
+        is JsonPrimitive -> it.contentOrNull ?: default
+        else -> default
+      }
+    } ?: default
+  }
+
+  fun int(path: String, default: Int = 0): Int {
+    return getByPathPublic(path)?.let {
+      when (it) {
+        is JsonPrimitive -> it.intOrNull ?: default
+        else -> default
+      }
+    } ?: default
+  }
+
+  fun long(path: String, default: Long = 0L): Long {
+    return getByPathPublic(path)?.let {
+      when (it) {
+        is JsonPrimitive -> it.longOrNull ?: default
+        else -> default
+      }
+    } ?: default
+  }
+
+  fun bool(path: String, default: Boolean = false): Boolean {
+    return getByPathPublic(path)?.let {
+      when (it) {
+        is JsonPrimitive -> it.booleanOrNull ?: default
+        else -> default
+      }
+    } ?: default
+  }
+
+  inline fun <reified T> list(path: String): List<T> {
+    return getByPathPublic(path)?.let {
+      try {
+        Json.decodeFromJsonElement<List<T>>(it)
+      } catch (e: Exception) {
+        emptyList()
+      }
+    } ?: emptyList()
+  }
+
+  inline fun <reified T> obj(path: String): T? {
+    return getByPathPublic(path)?.let {
+      try {
+        Json.decodeFromJsonElement<T>(it)
+      } catch (e: Exception) {
+        null
+      }
+    }
+  }
+
+  fun getByPathPublic(path: String): JsonElement? {
+    val parts = path.split(".")
+    var current: JsonElement? = dataStore[VO_DATA]
+
+    for (part in parts) {
+      current = when (current) {
+        is JsonObject -> current[part]
+        else -> return null
+      }
+    }
+
+    return current
+  }
+
   companion object {
     const val COMMON_LOCALE = "locale"
     const val CURRENT_PATH = "currentPath"
@@ -50,8 +121,6 @@ inline val DataModal.articleList: List<ArticleVO>
       Json.decodeFromJsonElement<List<ArticleVO>>(it)
     } ?: emptyList()
   }
-
-// TODO: cache decode result
 inline val DataModal.articleDetail: ArticleVO
   get() {
     return getValue(DataModal.VO_DATA)?.let {
