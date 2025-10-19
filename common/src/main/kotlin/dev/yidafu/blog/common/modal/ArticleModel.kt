@@ -45,4 +45,5 @@ class ArticleModel(
 enum class ArticleSourceType {
   Markdown,
   Notebook,
+  Feishu,
 }

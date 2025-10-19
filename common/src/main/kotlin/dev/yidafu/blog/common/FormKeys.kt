@@ -8,6 +8,8 @@ object FormKeys {
   const val SOURCE_BRANCH = "sourceBranch"
   const val SOURCE_URL = "sourceUrl"
   const val SOURCE_TOKEN = "sourceToken"
+  const val FEISHU_APP_ID = "feishuAppId"
+  const val FEISHU_APP_SECRET = "feishuAppSecret"
   const val USER_NAME = "username"
   const val PASSWORD = "password"
   const val SUBMIT = "submit"

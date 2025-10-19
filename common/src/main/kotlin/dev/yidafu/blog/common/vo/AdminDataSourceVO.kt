@@ -8,4 +8,6 @@ class AdminDataSourceVO(
   val sourceUrl: String,
   val sourceToken: String,
   val sourceBranch: String,
+  val feishuAppId: String = "",
+  val feishuAppSecret: String = "",
 )

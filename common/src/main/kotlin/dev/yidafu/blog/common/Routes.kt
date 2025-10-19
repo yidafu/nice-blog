@@ -8,7 +8,7 @@ object Routes {
   const val ARTICLE_DETAIL = "/articles/:identifier"
 
   const val UPLOAD_URL = "/upload/*"
-  const val PUBLIC_URL = "/public/*"
+  const val PUBLIC_URL = "/public"
 
   const val ADMIN_URL = "/admin"
   const val ADMIN_DASHBOARD_URL = "/admin/dashboard"
