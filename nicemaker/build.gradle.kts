@@ -4,6 +4,7 @@ plugins {
 }
 
 repositories {
+  mavenLocal()  // 本地Maven仓库，用于jupyter-notebooks-parser
   mavenCentral()
   gradlePluginPortal()
   google()
@@ -83,6 +84,12 @@ kotlin {
 
         // 代码高亮（KMP 版本 1.1.0+）
         implementation(libs.highlights)
+
+        // Jupyter Notebook解析（KMP库）
+        implementation(libs.jupyter.notebooks.parser)
+
+        // 飞书文档（KMP 版本）
+        implementation(libs.feishu2html)
       }
     }
 
@@ -107,10 +114,6 @@ kotlin {
         // Ktor（用于 serve 命令）
         implementation(libs.ktor.server.cio)
         implementation(libs.ktor.server.host.common)
-
-        // Notebook（JVM only）
-        implementation(libs.jupyter.notebooks.parser)
-        implementation(libs.feishu2html)
 
         // 其他
         implementation(libs.mapstruct)

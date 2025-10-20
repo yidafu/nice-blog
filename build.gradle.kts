@@ -9,6 +9,7 @@ plugins {
 
 buildscript {
   repositories {
+    mavenLocal()  // 本地Maven仓库
     mavenCentral()
     gradlePluginPortal()
     google()
@@ -25,6 +26,7 @@ buildscript {
 allprojects {
   repositories {
     // Required to download KtLint
+    mavenLocal()  // 本地Maven仓库
     gradlePluginPortal()
     mavenCentral()
     maven {

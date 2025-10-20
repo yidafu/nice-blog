@@ -1,8 +1,9 @@
 package dev.yidafu.nicemaker.generator
+import dev.yidafu.nicemaker.parser.markdown.MarkdownParser
 
-import dev.yidafu.nicemaker.common.dto.CommonArticleDTO
-import dev.yidafu.nicemaker.engine.processor.*
-import dev.yidafu.nicemaker.engine.process.ProcessUtils
+import dev.yidafu.nicemaker.core.dto.CommonArticleDTO
+import dev.yidafu.nicemaker.parser.*
+import dev.yidafu.nicemaker.platform.process.ProcessUtils
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
@@ -134,28 +135,42 @@ class ContentLoader(
     }
   }
 
-  private fun createProcessors(): List<IProcessor> {
+  private fun createProcessors(): List<Parser> {
     // 创建简化的 ArticleManager（不依赖数据库）
     val articleManager = StaticArticleManager(config)
-    val processorLogger = StaticLogger()
 
-    // 基础处理器（所有平台）
-    val processors = mutableListOf<IProcessor>(
-      MarkdownProcessor(articleManager, processorLogger),
+    // 基础解析器（所有平台）
+    val parsers = mutableListOf<Parser>(
+      dev.yidafu.nicemaker.parser.markdown.MarkdownParser(articleManager),
+      dev.yidafu.nicemaker.parser.notebook.NotebookParser(articleManager),
     )
 
-    // 添加平台特定的处理器（JVM: Notebook, Feishu; Native: 无）
+    // 添加 Feishu 解析器（如果配置了）
     val feishuAppId = config.content.feishu?.appId
     val feishuAppSecret = config.content.feishu?.appSecret
-    val platformProcessors = dev.yidafu.nicemaker.engine.processor.ProcessorFactory.getPlatformProcessors(
+    if (feishuAppId != null && feishuAppSecret != null &&
+        feishuAppId.isNotBlank() && feishuAppSecret.isNotBlank()) {
+      try {
+        parsers.add(dev.yidafu.nicemaker.parser.feishu.FeishuParser(
+          articleManager,
+          feishuAppId,
+          feishuAppSecret
+        ))
+        logger.info { "[ContentLoader] ✓ Feishu parser enabled" }
+      } catch (e: Exception) {
+        logger.warn { "[ContentLoader] Failed to load FeishuParser: ${e.message}" }
+      }
+    }
+
+    // 添加平台特定解析器（目前为空）
+    val platformParsers = dev.yidafu.nicemaker.parser.ParserFactory.getPlatformParsers(
       articleManager,
-      processorLogger,
       feishuAppId,
       feishuAppSecret
     )
-    processors.addAll(platformProcessors)
+    parsers.addAll(platformParsers)
 
-    return processors
+    return parsers
   }
 
   fun loadAboutMe(): String {
@@ -170,10 +185,9 @@ class ContentLoader(
     }
 
     try {
-      // 使用 MarkdownProcessor 转换
+      // 使用 MarkdownParser 转换
       val articleManager = StaticArticleManager(config)
-      val processorLogger = StaticLogger()
-      val markdownProcessor = MarkdownProcessor(articleManager, processorLogger)
+      val markdownProcessor = dev.yidafu.nicemaker.parser.markdown.MarkdownParser(articleManager)
 
       val dto = markdownProcessor.transform(aboutMePath)
 

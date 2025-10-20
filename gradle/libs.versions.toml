@@ -31,10 +31,10 @@ autoServiceKsp = "1.2.0"
 autoServiceAnnotations = "1.1.1"
 jakartaPersistence = "3.2.0"
 kaml = "0.98.0"
-jupyterNotebooksParser = "0.2.0-dev-10"
+jupyterNotebooksParser = "0.3.0-dev.1"
 highlights = "1.1.0"
 cryptography = "0.4.0"
-feishu2html = "1.0.2"
+feishu2html = "1.0.3"
 kotlinx-cli = "0.3.6"
 kotlin-logging = "7.0.3"
 kmp-process = "0.4.0"
@@ -139,7 +139,7 @@ jakarta-persistence-api = { module = "jakarta.persistence:jakarta.persistence-ap
 kaml = { module = "com.charleskorn.kaml:kaml", version.ref = "kaml" }
 
 # Jupyter Notebook解析
-jupyter-notebooks-parser = { module = "org.jetbrains.kotlinx:jupyter-notebooks-parser", version.ref = "jupyterNotebooksParser" }
+jupyter-notebooks-parser = { module = "dev.yidafu.jupyter:jupyter-notebooks-parser", version.ref = "jupyterNotebooksParser" }
 
 # 代码高亮
 highlights = { module = "dev.snipme:highlights", version.ref = "highlights" }

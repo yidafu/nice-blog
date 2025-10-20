@@ -1,4 +1,4 @@
-package dev.yidafu.nicemaker.themes.simple.pages
+package dev.yidafu.nicemaker.theme.simple.pages
 
 import kotlinx.css.*
 import kotlinx.css.properties.BoxShadow

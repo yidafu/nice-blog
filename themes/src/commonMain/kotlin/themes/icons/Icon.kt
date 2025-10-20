@@ -1,4 +1,4 @@
-package dev.yidafu.nicemaker.themes.icons
+package dev.yidafu.nicemaker.theme.icons
 
 import kotlinx.html.FlowContent
 

@@ -1,6 +1,6 @@
-package dev.yidafu.nicemaker.themes.simple.components
+package dev.yidafu.nicemaker.theme.simple.components
 
-import dev.yidafu.nicemaker.themes.icons.*
+import dev.yidafu.nicemaker.theme.icons.*
 import kotlinx.html.*
 
 fun FlowContent.footerComponent() {

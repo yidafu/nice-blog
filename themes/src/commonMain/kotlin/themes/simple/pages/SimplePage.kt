@@ -1,9 +1,9 @@
-package dev.yidafu.nicemaker.themes.simple.pages
+package dev.yidafu.nicemaker.theme.simple.pages
 
 import de.comahe.i18n4k.Locale
 import de.comahe.i18n4k.messages.MessageBundleLocalizedString
-import dev.yidafu.nicemaker.themes.DataModal
-import dev.yidafu.nicemaker.themes.Page
+import dev.yidafu.nicemaker.theme.DataModal
+import dev.yidafu.nicemaker.theme.Page
 import kotlinx.html.*
 
 open class SimplePage(final override val modal: DataModal) : Page {

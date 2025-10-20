@@ -1,6 +1,6 @@
-package dev.yidafu.nicemaker.themes.simple.components
+package dev.yidafu.nicemaker.theme.simple.components
 
-import dev.yidafu.nicemaker.themes.icons.Icon
+import dev.yidafu.nicemaker.theme.icons.Icon
 import kotlinx.html.*
 
 class TABS(initialAttributes: Map<String, String>, consumer: TagConsumer<*>) : DIV(initialAttributes, consumer)

@@ -1,0 +1,12 @@
+package dev.yidafu.nicemaker.core.vo
+
+import kotlinx.serialization.Serializable
+@Serializable
+class AdminDataSourceVO(
+  val sourceType: String,
+  val sourceUrl: String,
+  val sourceToken: String,
+  val sourceBranch: String,
+  val feishuAppId: String = "",
+  val feishuAppSecret: String = "",
+)

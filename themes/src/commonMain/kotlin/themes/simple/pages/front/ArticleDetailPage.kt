@@ -1,7 +1,7 @@
-package dev.yidafu.nicemaker.themes.simple.pages.front
+package dev.yidafu.nicemaker.theme.simple.pages.front
 
-import dev.yidafu.nicemaker.common.vo.ArticleVO
-import dev.yidafu.nicemaker.themes.*
+import dev.yidafu.nicemaker.core.vo.ArticleVO
+import dev.yidafu.nicemaker.theme.*
 import kotlinx.html.*
 
 fun FlowContent.fullArticle(vo: ArticleVO) {

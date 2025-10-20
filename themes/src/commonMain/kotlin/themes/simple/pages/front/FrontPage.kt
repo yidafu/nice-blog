@@ -1,11 +1,11 @@
-package dev.yidafu.nicemaker.themes.simple.pages.front
+package dev.yidafu.nicemaker.theme.simple.pages.front
 
-import dev.yidafu.nicemaker.common.Routes
-import dev.yidafu.nicemaker.themes.DataModal
-import dev.yidafu.nicemaker.themes.icons.Email
-import dev.yidafu.nicemaker.themes.icons.Github
-import dev.yidafu.nicemaker.themes.simple.components.footerComponent
-import dev.yidafu.nicemaker.themes.simple.pages.SimplePage
+import dev.yidafu.nicemaker.engine.Routes
+import dev.yidafu.nicemaker.theme.DataModal
+import dev.yidafu.nicemaker.theme.icons.Email
+import dev.yidafu.nicemaker.theme.icons.Github
+import dev.yidafu.nicemaker.theme.simple.components.footerComponent
+import dev.yidafu.nicemaker.theme.simple.pages.SimplePage
 import kotlinx.html.*
 
 abstract class FrontPage(modal: DataModal) : SimplePage(modal) {

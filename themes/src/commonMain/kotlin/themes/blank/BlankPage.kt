@@ -1,9 +1,9 @@
-package dev.yidafu.nicemaker.themes.blank
+package dev.yidafu.nicemaker.theme.blank
 
-import dev.yidafu.nicemaker.themes.CacheablePageProvider
-import dev.yidafu.nicemaker.themes.DataModal
-import dev.yidafu.nicemaker.themes.Page
-import dev.yidafu.nicemaker.themes.PageNames
+import dev.yidafu.nicemaker.theme.CacheablePageProvider
+import dev.yidafu.nicemaker.theme.DataModal
+import dev.yidafu.nicemaker.theme.Page
+import dev.yidafu.nicemaker.theme.PageNames
 import kotlinx.html.*
 
 class BlankPage(override val modal: DataModal) : Page {

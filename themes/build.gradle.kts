@@ -8,6 +8,7 @@ group = "dev.yidafu.nicemaker"
 version = "0.1.0"
 
 repositories {
+  mavenLocal()  // 本地Maven仓库
   mavenCentral()
 }
 

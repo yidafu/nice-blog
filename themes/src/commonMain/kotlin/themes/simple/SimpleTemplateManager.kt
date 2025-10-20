@@ -1,10 +1,10 @@
-package dev.yidafu.nicemaker.themes.simple
+package dev.yidafu.nicemaker.theme.simple
 
-import dev.yidafu.nicemaker.themes.BaseTemplateManager
-import dev.yidafu.nicemaker.themes.TemplateManager
-import dev.yidafu.nicemaker.themes.simple.pages.error.Error404PageProvider
-import dev.yidafu.nicemaker.themes.simple.pages.error.Error500PageProvider
-import dev.yidafu.nicemaker.themes.simple.pages.front.*
+import dev.yidafu.nicemaker.theme.BaseTemplateManager
+import dev.yidafu.nicemaker.theme.TemplateManager
+import dev.yidafu.nicemaker.theme.simple.pages.error.Error404PageProvider
+import dev.yidafu.nicemaker.theme.simple.pages.error.Error500PageProvider
+import dev.yidafu.nicemaker.theme.simple.pages.front.*
 
 class SimpleTemplateManager : BaseTemplateManager() {
   override fun getName(): String = NAME

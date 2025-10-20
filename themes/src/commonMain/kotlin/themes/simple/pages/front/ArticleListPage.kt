@@ -1,12 +1,12 @@
-package dev.yidafu.nicemaker.themes.simple.pages.front
+package dev.yidafu.nicemaker.theme.simple.pages.front
 
 import de.comahe.i18n4k.strings.asLocalizedString
 import de.comahe.i18n4k.strings.toString
-import dev.yidafu.nicemaker.common.Routes
-import dev.yidafu.nicemaker.common.ext.formatString
-import dev.yidafu.nicemaker.common.vo.ArticleVO
+import dev.yidafu.nicemaker.engine.Routes
+import dev.yidafu.nicemaker.util.extension.formatString
+import dev.yidafu.nicemaker.core.vo.ArticleVO
 import dev.yidafu.nicemaker.i18n.AdminTxt
-import dev.yidafu.nicemaker.themes.*
+import dev.yidafu.nicemaker.theme.*
 import kotlinx.html.*
 
 fun FlowContent.readMore(url: String?, locale: de.comahe.i18n4k.Locale) {

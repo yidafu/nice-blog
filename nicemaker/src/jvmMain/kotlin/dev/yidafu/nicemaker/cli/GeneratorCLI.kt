@@ -1,6 +1,6 @@
 package dev.yidafu.nicemaker.cli
 
-import dev.yidafu.nicemaker.common.TemplateManagerLoader
+import dev.yidafu.nicemaker.theme.TemplateManagerLoader
 import dev.yidafu.nicemaker.generator.SiteConfig
 import dev.yidafu.nicemaker.generator.StaticSiteGenerator
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -25,15 +25,15 @@ private val logger = KotlinLogging.logger {}
  */
 private fun loadThemesViaReflection() {
   val themeClasses = listOf(
-    "dev.yidafu.nicemaker.themes.simple.SimpleTemplateManager",
-    "dev.yidafu.nicemaker.themes.blank.BlankTemplateManager",
+    "dev.yidafu.nicemaker.theme.simple.SimpleTemplateManager",
+    "dev.yidafu.nicemaker.theme.blank.BlankTemplateManager",
   )
 
   themeClasses.forEach { className ->
     try {
       val clazz = Class.forName(className)
       val instance = clazz.getDeclaredConstructor().newInstance()
-      TemplateManagerLoader.register(instance as dev.yidafu.nicemaker.themes.TemplateManager)
+      TemplateManagerLoader.register(instance as dev.yidafu.nicemaker.theme.TemplateManager)
       logger.info { "Loaded theme: $className" }
     } catch (e: Exception) {
       logger.warn { "Failed to load theme: $className - ${e.message}" }

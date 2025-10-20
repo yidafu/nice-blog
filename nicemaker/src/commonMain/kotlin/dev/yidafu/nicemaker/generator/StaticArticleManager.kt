@@ -1,7 +1,7 @@
 package dev.yidafu.nicemaker.generator
 
 import com.eygraber.uri.Uri
-import dev.yidafu.nicemaker.common.dto.CommonArticleDTO
+import dev.yidafu.nicemaker.core.dto.CommonArticleDTO
 import dev.yidafu.nicemaker.engine.ArticleManager
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.io.Buffer
@@ -32,7 +32,7 @@ class StaticArticleManager(private val config: SiteConfig) : ArticleManager {
       SystemFileSystem.createDirectories(outputDir)
     }
     val targetFile = Path(outputDir.toString() + "/" + img.name)
-    // 使用source和sink进行文件复制  
+    // 使用source和sink进行文件复制
     SystemFileSystem.source(img).use { source ->
       SystemFileSystem.sink(targetFile).use { sink ->
         val buffer = Buffer()

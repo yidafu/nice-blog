@@ -1,4 +1,4 @@
-package dev.yidafu.nicemaker.themes.simple.components
+package dev.yidafu.nicemaker.theme.simple.components
 
 import kotlinx.html.*
 

@@ -1,10 +1,10 @@
-package dev.yidafu.nicemaker.themes.simple.pages.error
+package dev.yidafu.nicemaker.theme.simple.pages.error
 
 import dev.yidafu.nicemaker.i18n.AdminTxt
-import dev.yidafu.nicemaker.themes.CacheablePageProvider
-import dev.yidafu.nicemaker.themes.DataModal
-import dev.yidafu.nicemaker.themes.Page
-import dev.yidafu.nicemaker.themes.PageNames
+import dev.yidafu.nicemaker.theme.CacheablePageProvider
+import dev.yidafu.nicemaker.theme.DataModal
+import dev.yidafu.nicemaker.theme.Page
+import dev.yidafu.nicemaker.theme.PageNames
 
 class Error404Page(modal: DataModal) : ErrorPage(
   modal = modal,

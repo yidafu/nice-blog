@@ -1,6 +1,6 @@
-package dev.yidafu.nicemaker.themes.blank
+package dev.yidafu.nicemaker.theme.blank
 
-import dev.yidafu.nicemaker.themes.*
+import dev.yidafu.nicemaker.theme.*
 
 class BlankTemplateManager : BaseTemplateManager() {
   init {

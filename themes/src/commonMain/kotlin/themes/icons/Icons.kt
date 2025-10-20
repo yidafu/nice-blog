@@ -1,4 +1,4 @@
-package dev.yidafu.nicemaker.themes.icons
+package dev.yidafu.nicemaker.theme.icons
 
 import com.github.nwillc.ksvg.elements.SVG
 import kotlinx.html.*

@@ -1,9 +1,9 @@
-package dev.yidafu.nicemaker.themes.simple.pages.error
+package dev.yidafu.nicemaker.theme.simple.pages.error
 
 import de.comahe.i18n4k.messages.MessageBundleLocalizedString
 import dev.yidafu.nicemaker.i18n.AdminTxt
-import dev.yidafu.nicemaker.themes.DataModal
-import dev.yidafu.nicemaker.themes.simple.pages.SimplePage
+import dev.yidafu.nicemaker.theme.DataModal
+import dev.yidafu.nicemaker.theme.simple.pages.SimplePage
 import kotlinx.html.*
 
 abstract class ErrorPage(

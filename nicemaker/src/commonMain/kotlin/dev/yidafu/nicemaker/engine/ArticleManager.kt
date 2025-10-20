@@ -1,7 +1,7 @@
 package dev.yidafu.nicemaker.engine
 
 import com.eygraber.uri.Uri
-import dev.yidafu.nicemaker.common.dto.CommonArticleDTO
+import dev.yidafu.nicemaker.core.dto.CommonArticleDTO
 import kotlinx.io.buffered
 import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
@@ -36,7 +36,7 @@ open class DefaultArticleManager : ArticleManager {
 
   override suspend fun saveArticle(articleDTO: CommonArticleDTO) {
     val outputPath = Path(articleDTO.filename + ".html")
-    SystemFileSystem.sink(outputPath).buffered().use { 
+    SystemFileSystem.sink(outputPath).buffered().use {
       it.writeString(articleDTO.html)
     }
   }

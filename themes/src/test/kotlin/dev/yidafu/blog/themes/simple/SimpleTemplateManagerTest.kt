@@ -1,10 +1,10 @@
-package dev.yidafu.nicemaker.themes.simple
+package dev.yidafu.nicemaker.theme.simple
 
-import dev.yidafu.nicemaker.common.vo.ArticleVO
-import dev.yidafu.nicemaker.themes.*
-import dev.yidafu.nicemaker.themes.simple.pages.front.AboutMePageProvider
-import dev.yidafu.nicemaker.themes.simple.pages.front.ArticleDetailPageProvider
-import dev.yidafu.nicemaker.themes.simple.pages.front.ArticleListPageProvider
+import dev.yidafu.nicemaker.core.vo.ArticleVO
+import dev.yidafu.nicemaker.theme.*
+import dev.yidafu.nicemaker.theme.simple.pages.front.AboutMePageProvider
+import dev.yidafu.nicemaker.theme.simple.pages.front.ArticleDetailPageProvider
+import dev.yidafu.nicemaker.theme.simple.pages.front.ArticleListPageProvider
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe

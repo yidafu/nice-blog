@@ -1,10 +1,10 @@
 package dev.yidafu.nicemaker.generator
 
 import de.comahe.i18n4k.Locale
-import dev.yidafu.nicemaker.common.TemplateManagerLoader
-import dev.yidafu.nicemaker.common.dto.CommonArticleDTO
-import dev.yidafu.nicemaker.common.vo.ArticleVO
-import dev.yidafu.nicemaker.themes.*
+import dev.yidafu.nicemaker.theme.TemplateManagerLoader
+import dev.yidafu.nicemaker.core.dto.CommonArticleDTO
+import dev.yidafu.nicemaker.core.vo.ArticleVO
+import dev.yidafu.nicemaker.theme.*
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.datetime.LocalDateTime
 import kotlinx.html.*
