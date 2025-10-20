@@ -1,8 +1,11 @@
 package dev.yidafu.nicemaker.engine
 
-import java.io.File
-import java.net.URL
+import kotlinx.io.files.Path
 
+/**
+ * Git配置 - KMP兼容版本
+ * 使用字符串解析代替java.net.URL
+ */
 data class GitConfig(
   var url: String = "",
   var branch: String = "",
@@ -10,12 +13,13 @@ data class GitConfig(
   val uuid: String = "",
   val forceSync: Boolean = false,
 ) {
-  fun getLocalRepoFile(): File {
+  fun getLocalRepoPath(): Path {
     if (localPath == DEFAULT_REPO_LOCATION) {
-      val repoName = URL(url).path.replace(".git", "").substringAfterLast('/')
-      return File(repoName)
+      // 手动解析URL路径，不依赖java.net.URL
+      val repoName = url.substringAfterLast('/').replace(".git", "")
+      return Path(repoName)
     }
-    return File(localPath)
+    return Path(localPath)
   }
 
   companion object {

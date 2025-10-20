@@ -5,7 +5,6 @@ import dev.yidafu.nicemaker.common.vo.*
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.json.*
-import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
 class DataModal(
@@ -20,11 +19,11 @@ class DataModal(
     if (value is JsonPrimitive) {
       return value.content
     }
-    throw IllegalAccessException("$key is not a string")
+    throw IllegalStateException("$key is not a string")  // 使用KMP兼容的异常
   }
 
   val locale: Locale by lazy {
-    Locale.forLanguageTag(getValueAsString(COMMON_LOCALE))
+    Locale(getValueAsString(COMMON_LOCALE))
   }
 
   val path: String = getValueAsString(CURRENT_PATH)

@@ -1,8 +1,11 @@
 package dev.yidafu.nicemaker.generator
 
 import com.charleskorn.kaml.Yaml
+import kotlinx.io.buffered
+import kotlinx.io.files.Path
+import kotlinx.io.files.SystemFileSystem
+import kotlinx.io.readString
 import kotlinx.serialization.Serializable
-import java.io.File
 
 @Serializable
 data class SiteConfig(
@@ -16,11 +19,16 @@ data class SiteConfig(
   var aboutContent: String? = null  // AboutMe 页面的 HTML 内容（运行时设置）
 
   companion object {
-    fun load(configFile: File = File("nice.yaml")): SiteConfig {
-      val yamlContent = configFile.readText()
-        .replace(Regex("\\$\\{([^}]+)\\}")) { match ->
-          System.getenv(match.groupValues[1]) ?: match.value
-        }
+    fun load(configFile: Path = Path("nice.yaml")): SiteConfig {
+      // 使用KMP版本的kaml直接解析
+      val yamlContent = SystemFileSystem.source(configFile).buffered().use { it.readString() }
+
+      // 环境变量替换（暂时禁用，等待kotlin-env-var库配置）
+      // val regex = Regex("\\$\\{([^}]+)}")
+      // val replaced = regex.replace(yamlContent) { match ->
+      //   envVar(match.groupValues[1]) ?: match.value
+      // }
+
       return Yaml.default.decodeFromString(serializer(), yamlContent)
     }
   }

@@ -11,7 +11,7 @@ private val logger = KotlinLogging.logger {}
 class StaticSiteGenerator(
   private val config: SiteConfig,
 ) {
-  fun build() {
+  suspend fun build() {
     logger.info { "🚀 Starting static site generation..." }
     logger.info { "   Site: ${config.site.title}" }
     logger.info { "   Theme: ${config.theme.name}" }

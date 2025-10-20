@@ -4,18 +4,18 @@
 # Kotlin
 exposed = "1.0.0-rc-1"
 h2 = "2.3.232"
-kotlin = "2.1.20"
+kotlin = "2.2.0"
 kotlinx-browser = "0.3"
 kotlinx-html = "0.12.0"
 ktor = "3.3.0"
 
-kapt = "2.1.20"
+kapt = "2.2.0"
 
 
 # 核心依赖版本
 kotlinxSerialization = "1.8.0"  # 统一使用最新版本
 kotlinxCoroutines = "1.8.1"
-kotlinxDatetime = "0.7.1"
+kotlinxDatetime = "0.6.1"
 kotlinxIo = "0.6.0"
 
 # slf4j = "2.0.16"  # 已移除，使用 kotlin-logging
@@ -30,14 +30,16 @@ ksvg = "2.2.0"
 autoServiceKsp = "1.2.0"
 autoServiceAnnotations = "1.1.1"
 jakartaPersistence = "3.2.0"
-kaml = "0.66.0"
+kaml = "0.98.0"
 jupyterNotebooksParser = "0.2.0-dev-10"
-highlights = "1.0.0"
+highlights = "1.1.0"
 cryptography = "0.4.0"
 feishu2html = "1.0.2"
 kotlinx-cli = "0.3.6"
 kotlin-logging = "7.0.3"
-kmp-process = "2.0.2"
+kmp-process = "0.4.0"
+uri-kmp = "0.0.18"
+kotlin-env-var = "1.0.6"
 
 # 测试框架
 junitJupiter = "5.9.1"
@@ -157,7 +159,13 @@ kotlin-logging = { module = "io.github.oshai:kotlin-logging", version.ref = "kot
 kotlinx-io-core = { module = "org.jetbrains.kotlinx:kotlinx-io-core", version.ref = "kotlinxIo" }
 
 # kmp-process（跨平台进程）
-kmp-process = { module = "com.github.pgreze:kmp-process", version.ref = "kmp-process" }
+kmp-process = { module = "io.matthewnelson.kmp-process:process", version.ref = "kmp-process" }
+
+# uri-kmp（跨平台URI）
+uri-kmp = { module = "com.eygraber:uri-kmp", version.ref = "uri-kmp" }
+
+# kotlin-env-var（跨平台环境变量）
+kotlin-env-var = { module = "dev.scottpierce:kotlin-env-var", version.ref = "kotlin-env-var" }
 
 # 测试框架
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junitJupiter" }

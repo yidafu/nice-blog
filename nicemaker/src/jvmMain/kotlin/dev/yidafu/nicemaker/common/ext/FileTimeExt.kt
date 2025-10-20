@@ -30,3 +30,9 @@ fun FileTime.toKotlinDateTimeWithNanos(timeZone: TimeZone = TimeZone.UTC): Local
   return Instant.fromEpochSeconds(seconds, nanos)
     .toLocalDateTime(timeZone)
 }
+
+// kotlinx.datetime.Instant 转换
+@OptIn(ExperimentalTime::class)
+fun Instant.toKotlinDateTime(timeZone: TimeZone = TimeZone.currentSystemDefault()): LocalDateTime {
+  return this.toLocalDateTime(timeZone)
+}

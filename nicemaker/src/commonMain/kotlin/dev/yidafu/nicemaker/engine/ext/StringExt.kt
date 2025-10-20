@@ -1,30 +1,31 @@
 package dev.yidafu.nicemaker.engine.ext
 
-import java.io.File
-import java.util.concurrent.TimeUnit
+import dev.yidafu.nicemaker.engine.process.ProcessUtils
+import kotlinx.coroutines.runBlocking
+import kotlinx.io.files.Path
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 
 /**
- * stackoverflow answer
- * @see https://stackoverflow.com/a/41495542
+ * 运行命令（使用 ProcessUtils）
  */
-fun String.runCommand(workingDir: File): String {
+suspend fun String.runCommand(workingDir: Path): String {
   return runCommand(workingDir, (1.0).minutes)
 }
 
-fun String.runCommand(
-  workingDir: File,
+suspend fun String.runCommand(
+  workingDir: Path,
   waitFor: Duration,
 ): String {
-  val proc =
-    ProcessBuilder(*split(" ").toTypedArray())
-      .directory(workingDir)
-      .redirectOutput(ProcessBuilder.Redirect.PIPE)
-      .redirectError(ProcessBuilder.Redirect.PIPE)
-      .start()
+  val result = ProcessUtils.executeGitCommand(*split(" ").toTypedArray(), workingDir = workingDir)
+  return result.output.joinToString("\n")
+}
 
-  proc.waitFor(waitFor.inWholeSeconds, TimeUnit.SECONDS)
-
-  return proc.inputReader().buffered().readText()
+/**
+ * 同步版本（阻塞）
+ */
+fun String.runCommandBlocking(workingDir: Path): String {
+  return runBlocking {
+    runCommand(workingDir)
+  }
 }

@@ -1,6 +1,6 @@
 package dev.yidafu.nicemaker.common.dto
 
-import java.time.LocalTime
+import kotlinx.datetime.LocalDateTime
 
 data class ArticleDTO(
   val title: String = "",
@@ -11,5 +11,5 @@ data class ArticleDTO(
   var summary: String? = null,
   var content: String? = null,
   var html: String? = null,
-  val updatedAt: LocalTime? = null,
+  val updatedAt: LocalDateTime? = null,
 )

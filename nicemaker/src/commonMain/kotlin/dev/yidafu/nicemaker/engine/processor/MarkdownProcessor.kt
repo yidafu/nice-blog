@@ -3,7 +3,6 @@ package dev.yidafu.nicemaker.engine.processor
 import com.charleskorn.kaml.Yaml
 import dev.yidafu.nicemaker.common.dto.CommonArticleDTO
 import dev.yidafu.nicemaker.common.dto.FrontMatterDTO
-import dev.yidafu.nicemaker.common.ext.toKotlinDateTime
 import dev.yidafu.nicemaker.common.modal.ArticleSourceType
 import dev.yidafu.nicemaker.engine.*
 import dev.yidafu.nicemaker.engine.ext.findChildrenOfType
@@ -11,7 +10,11 @@ import dev.yidafu.nicemaker.engine.ext.indexOf
 import dev.yidafu.nicemaker.engine.ext.slice
 import dev.yidafu.nicemaker.engine.md.CodeFenceGeneratingProvider
 import dev.yidafu.nicemaker.engine.md.ImageGeneratingProvider
-import kotlinx.serialization.decodeFromString
+import kotlinx.datetime.LocalDateTime
+import kotlinx.io.buffered
+import kotlinx.io.files.Path
+import kotlinx.io.files.SystemFileSystem
+import kotlinx.io.readString
 import org.intellij.markdown.IElementType
 import org.intellij.markdown.MarkdownElementTypes
 import org.intellij.markdown.MarkdownTokenTypes
@@ -23,21 +26,13 @@ import org.intellij.markdown.html.GeneratingProvider
 import org.intellij.markdown.html.HtmlGenerator
 import org.intellij.markdown.parser.LinkMap
 import org.intellij.markdown.parser.MarkdownParser
-import java.io.File
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
-import java.nio.file.attribute.BasicFileAttributes
-import kotlin.io.path.extension
-import kotlin.io.path.name
-import kotlin.io.path.nameWithoutExtension
 
 data class MLink(val url: String, val alt: String)
 
 class GFMFlavorExtendDescriptor(
   private val articleManager: ArticleManager,
   private val logger: Logger,
-  private val mdFile: File,
+  private val mdFile: Path,
 ) : GFMFlavourDescriptor() {
   override fun createHtmlGeneratingProviders(
     linkMap: LinkMap,
@@ -47,8 +42,8 @@ class GFMFlavorExtendDescriptor(
       hashMapOf(
         MarkdownElementTypes.CODE_FENCE to CodeFenceGeneratingProvider(),
         MarkdownElementTypes.IMAGE to
-          ImageGeneratingProvider(articleManager, logger) { path: String ->
-            Paths.get(mdFile.parentFile.absolutePath, path).toFile()
+          ImageGeneratingProvider(articleManager, logger) { pathStr: String ->
+            Path(mdFile.parent.toString() + "/" + pathStr)
           },
       )
   }
@@ -56,24 +51,27 @@ class GFMFlavorExtendDescriptor(
 
 class MarkdownProcessor(val articleManager: ArticleManager, private val logger: Logger) : IProcessor {
   override fun filter(path: Path): Boolean {
-    return path.extension == "md" &&
-      path.nameWithoutExtension != "README"
+    val extension = path.name.substringAfterLast('.', "")
+    val nameWithoutExtension = path.name.substringBeforeLast('.')
+    return extension == "md" && nameWithoutExtension != "README"
   }
 
   override fun transform(path: Path): CommonArticleDTO {
     logger.logSync("[Markdown] transform markdown $path")
-    val markdownFile = path.toFile()
-    val text = markdownFile.readText()
+    val text = SystemFileSystem.source(path).buffered().use { it.readString() }
     val filename = path.name
-    val attrs = Files.readAttributes(path, BasicFileAttributes::class.java)
+    val metadata = SystemFileSystem.metadataOrNull(path)
 
-    val flavour = GFMFlavorExtendDescriptor(articleManager, logger, markdownFile)
+    val flavour = GFMFlavorExtendDescriptor(articleManager, logger, path)
     val parser = MarkdownParser(flavour)
 
-    val createDate = attrs.creationTime().toKotlinDateTime()
-    val updateDate = attrs.lastModifiedTime().toKotlinDateTime()
+    // 使用FileTimeUtils获取文件真实时间戳
+    val createDate = dev.yidafu.nicemaker.common.utils.FileTimeUtils.getCreationTime(path)
+      ?: LocalDateTime(2024, 1, 1, 0, 0)  // fallback
+    val updateDate = dev.yidafu.nicemaker.common.utils.FileTimeUtils.getModifiedTime(path)
+      ?: LocalDateTime(2024, 1, 1, 0, 0)  // fallback
 
-    val frontMatterDTO = parseFrontMatter(markdownFile, text, parser.buildMarkdownTreeFromString(text))
+    val frontMatterDTO = parseFrontMatter(path, text, parser.buildMarkdownTreeFromString(text))
 
     val textWithoutFrontMatter =
       frontMatterDTO?.rawContent?.let { rawContent ->
@@ -98,7 +96,7 @@ class MarkdownProcessor(val articleManager: ArticleManager, private val logger: 
   }
 
   private fun parseFrontMatter(
-    markdownFile: File,
+    markdownFile: Path,
     text: String,
     tree: ASTNode,
   ): FrontMatterDTO? {
@@ -113,10 +111,10 @@ class MarkdownProcessor(val articleManager: ArticleManager, private val logger: 
           if (node is CompositeASTNode) {
             val frontMatterText = node.getTextInNode(text)
 
-            val dto = Yaml.default.decodeFromString<FrontMatterDTO>(frontMatterText.toString())
+            val dto = Yaml.default.decodeFromString(FrontMatterDTO.serializer(), frontMatterText.toString())
             val cover =
               dto.cover.let { cover ->
-                articleManager.processImage(File(markdownFile.parentFile.path, cover)).toString()
+                articleManager.processImage(Path(markdownFile.parent.toString() + "/" + cover)).toString()
               }
             val rawContent = text.substring(horizontalRules[0].startOffset, secondHorizontalRule.endOffset)
 

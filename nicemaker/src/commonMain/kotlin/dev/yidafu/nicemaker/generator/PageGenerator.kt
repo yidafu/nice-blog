@@ -9,10 +9,16 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.datetime.LocalDateTime
 import kotlinx.html.*
 import kotlinx.html.stream.appendHTML
+import kotlinx.io.Buffer
+import kotlinx.io.buffered
+import kotlinx.io.files.Path
+import kotlinx.io.files.SystemFileSystem
+import kotlinx.io.readString
+import kotlinx.io.readTo
+import kotlinx.io.writeString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.encodeToJsonElement
-import java.io.File
 
 private val logger = KotlinLogging.logger {}
 
@@ -29,16 +35,16 @@ class PageGenerator(
   )
 
   fun generate() {
-    val outputDir = File(config.build.output)
+    val outputDir = Path(config.build.output)
 
     // 清理输出目录
-    if (config.build.cleanBeforeBuild && outputDir.exists()) {
+    if (config.build.cleanBeforeBuild && SystemFileSystem.exists(outputDir)) {
       logger.info { "Cleaning output directory..." }
-      outputDir.deleteRecursively()
+      deleteRecursively(outputDir)
     }
-    outputDir.mkdirs()
+    SystemFileSystem.createDirectories(outputDir)
 
-    logger.info { "Generating static site to: ${outputDir.absolutePath}" }
+    logger.info { "Generating static site to: $outputDir" }
 
     // 转换为 VO
     val articleVOs =
@@ -74,11 +80,28 @@ class PageGenerator(
 
     logger.info { "✅ Site generated successfully!" }
     logger.info { "   Total pages: ${articleVOs.size + 1}" }
-    logger.info { "   Output: ${outputDir.absolutePath}" }
+    logger.info { "   Output: $outputDir" }
+  }
+
+  /**
+   * 递归删除目录
+   */
+  private fun deleteRecursively(path: Path) {
+    if (!SystemFileSystem.exists(path)) return
+
+    val metadata = SystemFileSystem.metadataOrNull(path) ?: return
+
+    if (metadata.isDirectory) {
+      SystemFileSystem.list(path).forEach { child ->
+        deleteRecursively(child)
+      }
+    }
+
+    SystemFileSystem.delete(path)
   }
 
   private fun generateIndexPage(
-    outputDir: File,
+    outputDir: Path,
     articles: List<ArticleVO>,
   ) {
     logger.info { "Generating index page..." }
@@ -89,17 +112,17 @@ class PageGenerator(
         data = mapOf("articles" to articles.take(config.pagination.pageSize)),
       )
 
-    writeFile(outputDir.resolve("index.html"), html)
+    writeFile(Path(outputDir.toString() + "/index.html"), html)
   }
 
   private fun generateArticleListPages(
-    outputDir: File,
+    outputDir: Path,
     articles: List<ArticleVO>,
   ) {
     logger.info { "Generating article list pages..." }
 
-    val articlesDir = outputDir.resolve("articles")
-    articlesDir.mkdirs()
+    val articlesDir = Path(outputDir.toString() + "/articles")
+    SystemFileSystem.createDirectories(articlesDir)
 
     val pageSize = config.pagination.pageSize
     val totalPages = (articles.size + pageSize - 1) / pageSize
@@ -121,20 +144,20 @@ class PageGenerator(
         )
 
       val filename = if (page == 1) "index.html" else "page-$page.html"
-      writeFile(articlesDir.resolve(filename), html)
+      writeFile(Path(articlesDir.toString() + "/$filename"), html)
     }
 
     logger.info { "✓ Generated $totalPages list pages" }
   }
 
   private fun generateArticleDetailPages(
-    outputDir: File,
+    outputDir: Path,
     articles: List<ArticleVO>,
   ) {
     logger.info { "Generating article detail pages..." }
 
-    val articlesDir = outputDir.resolve("articles")
-    articlesDir.mkdirs()
+    val articlesDir = Path(outputDir.toString() + "/articles")
+    SystemFileSystem.createDirectories(articlesDir)
 
     articles.forEach { article ->
       val html =
@@ -144,13 +167,13 @@ class PageGenerator(
         )
 
       val filename = "${article.identifier}.html"
-      writeFile(articlesDir.resolve(filename), html)
+      writeFile(Path(articlesDir.toString() + "/$filename"), html)
     }
 
     logger.info { "✓ Generated ${articles.size} detail pages" }
   }
 
-  private fun generateErrorPages(outputDir: File) {
+  private fun generateErrorPages(outputDir: Path) {
     logger.info { "Generating error pages..." }
 
     listOf(
@@ -158,25 +181,57 @@ class PageGenerator(
       PageNames.ERROR_500 to "500.html",
     ).forEach { (pageName, filename) ->
       val html = renderPage(pageName, emptyMap())
-      writeFile(outputDir.resolve(filename), html)
+      writeFile(Path(outputDir.toString() + "/$filename"), html)
     }
   }
 
-  private fun copyStaticAssets(outputDir: File) {
+  private fun copyStaticAssets(outputDir: Path) {
     logger.info { "Copying static assets..." }
 
-    val publicDir = File("themes/src/main/resources/public")
-    if (publicDir.exists()) {
-      publicDir.copyRecursively(
-        outputDir.resolve("public"),
-        overwrite = true,
-      )
-      logger.debug { "Copied static assets from: ${publicDir.absolutePath}" }
+    val publicDir = Path("themes/src/main/resources/public")
+    if (SystemFileSystem.exists(publicDir)) {
+      copyRecursively(publicDir, Path(outputDir.toString() + "/public"))
+      logger.debug { "Copied static assets from: $publicDir" }
+    }
+  }
+
+  /**
+   * 递归复制目录
+   */
+  private fun copyRecursively(source: Path, target: Path) {
+    if (!SystemFileSystem.exists(source)) return
+
+    val metadata = SystemFileSystem.metadataOrNull(source) ?: return
+
+    if (metadata.isRegularFile) {
+      target.parent?.let { parent ->
+        if (!SystemFileSystem.exists(parent)) {
+          SystemFileSystem.createDirectories(parent)
+        }
+      }
+      // 使用source和sink进行文件复制
+      SystemFileSystem.source(source).use { sourceStream ->
+        SystemFileSystem.sink(target).use { targetStream ->
+          val buffer = Buffer()
+          while (true) {
+            buffer.clear()
+            val bytesRead = sourceStream.readAtMostTo(buffer, 8192)
+            if (bytesRead == -1L) break
+            targetStream.write(buffer, bytesRead)
+          }
+        }
+      }
+    } else if (metadata.isDirectory) {
+      SystemFileSystem.createDirectories(target)
+      SystemFileSystem.list(source).forEach { child ->
+        val childName = child.name
+        copyRecursively(child, Path(target.toString() + "/$childName"))
+      }
     }
   }
 
   private fun generateTagListPage(
-    outputDir: File,
+    outputDir: Path,
     articles: List<CommonArticleDTO>,
   ) {
     logger.info { "Generating tag list page..." }
@@ -199,11 +254,11 @@ class PageGenerator(
       data = mapOf("tags" to tags),
     )
 
-    writeFile(outputDir.resolve("tags.html"), html)
+    writeFile(Path(outputDir.toString() + "/tags.html"), html)
   }
 
   private fun generateSeriesPages(
-    outputDir: File,
+    outputDir: Path,
     articles: List<CommonArticleDTO>,
   ) {
     logger.info { "Generating series pages..." }
@@ -232,11 +287,11 @@ class PageGenerator(
       pageName = PageNames.SERIES_LIST,
       data = mapOf("seriesList" to seriesList),
     )
-    writeFile(outputDir.resolve("series.html"), listHtml)
+    writeFile(Path(outputDir.toString() + "/series.html"), listHtml)
 
     // 生成每个系列的详情页
-    val seriesDir = outputDir.resolve("series")
-    seriesDir.mkdirs()
+    val seriesDir = Path(outputDir.toString() + "/series")
+    SystemFileSystem.createDirectories(seriesDir)
 
     seriesMap.forEach { (name, articleVOs) ->
       val seriesId = name.lowercase().replace(" ", "-")
@@ -252,13 +307,13 @@ class PageGenerator(
           )
         ),
       )
-      writeFile(seriesDir.resolve("$seriesId.html"), detailHtml)
+      writeFile(Path(seriesDir.toString() + "/$seriesId.html"), detailHtml)
     }
 
     logger.info { "✓ Generated ${seriesMap.size} series pages" }
   }
 
-  private fun generateAboutMePage(outputDir: File) {
+  private fun generateAboutMePage(outputDir: Path) {
     logger.info { "Generating about me page..." }
 
     // AboutMe 内容从 StaticSiteGenerator 传入
@@ -270,11 +325,11 @@ class PageGenerator(
       data = mapOf("aboutContent" to aboutContent),
     )
 
-    writeFile(outputDir.resolve("about.html"), html)
+    writeFile(Path(outputDir.toString() + "/about.html"), html)
   }
 
   private fun generateSitemap(
-    outputDir: File,
+    outputDir: Path,
     articles: List<ArticleVO>,
   ) {
     logger.info { "Generating sitemap.xml..." }
@@ -325,18 +380,18 @@ class PageGenerator(
         appendLine("</urlset>")
       }
 
-    writeFile(outputDir.resolve("sitemap.xml"), sitemap)
+    writeFile(Path(outputDir.toString() + "/sitemap.xml"), sitemap)
   }
 
   private fun renderPage(
     pageName: String,
     data: Map<String, Any>,
   ): String {
-    val locale = Locale.forLanguageTag(config.site.language)
+    val locale = de.comahe.i18n4k.Locale(config.site.language)
 
     // 构建 DataModal
     val dataMap = mutableMapOf<String, kotlinx.serialization.json.JsonElement>()
-    dataMap[DataModal.COMMON_LOCALE] = Json.encodeToJsonElement(locale.toLanguageTag())
+    dataMap[DataModal.COMMON_LOCALE] = Json.encodeToJsonElement(config.site.language)  // 直接使用语言字符串
     dataMap[DataModal.CURRENT_PATH] = Json.encodeToJsonElement("/")
     dataMap[DataModal.SITE_TITLE] = Json.encodeToJsonElement(config.site.title)
     dataMap[DataModal.GITHUB_URL] = Json.encodeToJsonElement("")
@@ -394,7 +449,7 @@ class PageGenerator(
         else -> Json.encodeToJsonElement(value.toString())
       }
       voDataMap[key] = jsonElement
-      logger.debug { "renderPage: $key = ${if (value is String) value.take(50) else value.javaClass.simpleName}" }
+      logger.debug { "renderPage: $key = ${if (value is String) value.take(50) else value::class.simpleName}" }
     }
 
     dataMap[DataModal.VO_DATA] = JsonObject(voDataMap)
@@ -419,11 +474,17 @@ class PageGenerator(
   }
 
   private fun writeFile(
-    file: File,
+    file: Path,
     content: String,
   ) {
-    file.parentFile?.mkdirs()
-    file.writeText(content)
+    file.parent?.let { parent ->
+      if (!SystemFileSystem.exists(parent)) {
+        SystemFileSystem.createDirectories(parent)
+      }
+    }
+    SystemFileSystem.sink(file).buffered().use { sink ->
+      sink.writeString(content)
+    }
   }
 
   /**

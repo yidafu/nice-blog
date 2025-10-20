@@ -1,7 +1,7 @@
 package dev.yidafu.nicemaker.engine.processor
 
 import dev.yidafu.nicemaker.common.dto.CommonArticleDTO
-import java.nio.file.Path
+import kotlinx.io.files.Path
 
 interface IProcessor {
   /*

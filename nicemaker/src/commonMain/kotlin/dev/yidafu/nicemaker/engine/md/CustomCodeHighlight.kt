@@ -4,8 +4,10 @@ import dev.snipme.highlights.Highlights
 import dev.snipme.highlights.model.*
 import kotlinx.html.*
 import kotlinx.html.stream.createHTML
-import java.util.Locale.getDefault
 
+/**
+ * 代码高亮工具 - KMP兼容版本
+ */
 object CustomCodeHighlight {
   private fun formatCode(code: String): String {
     return code.replace("\n", "<br/>\n")
@@ -28,7 +30,7 @@ object CustomCodeHighlight {
     if (code.isNotEmpty()) {
       span {
         if (color != Int.MIN_VALUE) {
-          style = "color: #${Integer.toHexString(color)}"
+          style = "color: #${color.toString(16).padStart(6, '0')}"  // 使用Kotlin标准API
         }
         appendCode(code)
       }
@@ -36,7 +38,7 @@ object CustomCodeHighlight {
   }
 
   private fun toSyntaxLanguage(language: String): SyntaxLanguage =
-    when (language.lowercase(getDefault())) {
+    when (language.lowercase()) {  // 使用Kotlin的lowercase()，不需要Locale参数
       "js", "javascript" -> SyntaxLanguage.JAVASCRIPT
       "ts", "typescript" -> SyntaxLanguage.TYPESCRIPT
       "c" -> SyntaxLanguage.C
@@ -138,7 +140,7 @@ object CustomCodeHighlight {
                 appendCode(codeSegment, highlight.rgb)
               } else {
                 span {
-                  style = "color: #${Integer.toHexString(highlight.rgb)}"
+                  style = "color: #${highlight.rgb.toString(16).padStart(6, '0')}"  // 使用Kotlin标准API
                   appendCode(
                     code.substring(highlight.location.start, node.getChildStart()),
                   )

@@ -2,11 +2,10 @@ package dev.yidafu.nicemaker.generator
 
 import dev.yidafu.nicemaker.common.dto.CommonArticleDTO
 import dev.yidafu.nicemaker.engine.processor.*
+import dev.yidafu.nicemaker.engine.process.ProcessUtils
 import io.github.oshai.kotlinlogging.KotlinLogging
-import java.io.File
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.attribute.BasicFileAttributes
+import kotlinx.io.files.Path
+import kotlinx.io.files.SystemFileSystem
 
 private val logger = KotlinLogging.logger {}
 
@@ -17,11 +16,11 @@ private val logger = KotlinLogging.logger {}
 class ContentLoader(
   private val config: SiteConfig,
 ) {
-  fun loadAllArticles(): List<CommonArticleDTO> {
+  suspend fun loadAllArticles(): List<CommonArticleDTO> {
     logger.info { "Loading content from: ${config.content.source.url}" }
 
     // 1. 克隆或拉取仓库
-    val repoDir = cloneOrPullRepository()
+    val repoPath = cloneOrPullRepository()
 
     // 2. 创建处理器
     val processors = createProcessors()
@@ -29,21 +28,11 @@ class ContentLoader(
     // 3. 扫描和处理文件
     val articles = mutableListOf<CommonArticleDTO>()
 
-    val files =
-      Files.find(
-        repoDir.toPath(),
-        Int.MAX_VALUE,
-        { path, attrs: BasicFileAttributes ->
-          attrs.isRegularFile &&
-            !path.contains(Path.of(".git")) &&
-            !path.contains(Path.of(".venv")) &&
-            !path.contains(Path.of(".ipynb_checkpoints"))
-        },
-      )
+    val files = findAllFiles(repoPath)
 
     files.forEach { path ->
       // 跳过 AboutMe.md（单独处理）
-      if (path.fileName.toString() == "AboutMe.md") {
+      if (path.name == "AboutMe.md") {
         return@forEach
       }
 
@@ -51,9 +40,9 @@ class ContentLoader(
         try {
           val article = processor.transform(path)
           articles.add(article)
-          logger.info { "✓ Processed: ${path.fileName}" }
+          logger.info { "✓ Processed: ${path.name}" }
         } catch (e: Exception) {
-          logger.error(e) { "✗ Failed to process: ${path.fileName}" }
+          logger.error(e) { "✗ Failed to process: ${path.name}" }
         }
       }
     }
@@ -62,10 +51,38 @@ class ContentLoader(
     return articles
   }
 
-  private fun cloneOrPullRepository(): File {
-    val localPath = File(config.content.source.localPath)
+  /**
+   * 递归查找所有文件
+   */
+  private fun findAllFiles(rootPath: Path): List<Path> {
+    val files = mutableListOf<Path>()
+    val excludeDirs = setOf(".git", ".venv", ".ipynb_checkpoints")
 
-    if (!localPath.exists()) {
+    fun scanDirectory(dirPath: Path) {
+      if (!SystemFileSystem.exists(dirPath)) return
+      if (!SystemFileSystem.metadataOrNull(dirPath)?.isDirectory!!) return
+
+      val pathString = dirPath.toString()
+      if (excludeDirs.any { pathString.contains(it) }) return
+
+      SystemFileSystem.list(dirPath).forEach { childPath ->
+        val metadata = SystemFileSystem.metadataOrNull(childPath)
+        when {
+          metadata == null -> {}
+          metadata.isRegularFile -> files.add(childPath)
+          metadata.isDirectory -> scanDirectory(childPath)
+        }
+      }
+    }
+
+    scanDirectory(rootPath)
+    return files
+  }
+
+  private suspend fun cloneOrPullRepository(): Path {
+    val localPath = Path(config.content.source.localPath)
+
+    if (!SystemFileSystem.exists(localPath)) {
       logger.info { "Cloning repository..." }
       cloneRepository(localPath)
     } else {
@@ -76,45 +93,44 @@ class ContentLoader(
     return localPath
   }
 
-  private fun cloneRepository(target: File) {
-    target.parentFile?.mkdirs()
-
-    val process =
-      ProcessBuilder(
-        "git",
-        "clone",
-        "-b",
-        config.content.source.branch,
-        config.content.source.url,
-        target.absolutePath,
-      ).redirectErrorStream(true).start()
-
-    process.inputStream.bufferedReader().useLines { lines ->
-      lines.forEach { logger.debug { it } }
+  private suspend fun cloneRepository(target: Path) {
+    // 创建父目录
+    target.parent?.let { parent ->
+      if (!SystemFileSystem.exists(parent)) {
+        SystemFileSystem.createDirectories(parent)
+      }
     }
 
-    val exitCode = process.waitFor()
-    if (exitCode != 0) {
-      throw RuntimeException("Failed to clone repository")
+    val result = ProcessUtils.executeGitCommand(
+      "git",
+      "clone",
+      "-b",
+      config.content.source.branch,
+      config.content.source.url,
+      target.toString(),
+      workingDir = null
+    )
+
+    logger.debug { result.output.joinToString("\n") }
+
+    if (result.resultCode != 0) {
+      throw RuntimeException("Failed to clone repository: ${result.output.joinToString("\n")}")
     }
   }
 
-  private fun pullRepository(repoDir: File) {
-    val process =
-      ProcessBuilder(
-        "git",
-        "pull",
-        "origin",
-        config.content.source.branch,
-      ).directory(repoDir).redirectErrorStream(true).start()
+  private suspend fun pullRepository(repoDir: Path) {
+    val result = ProcessUtils.executeGitCommand(
+      "git",
+      "pull",
+      "origin",
+      config.content.source.branch,
+      workingDir = repoDir
+    )
 
-    process.inputStream.bufferedReader().useLines { lines ->
-      lines.forEach { logger.debug { it } }
-    }
+    logger.debug { result.output.joinToString("\n") }
 
-    val exitCode = process.waitFor()
-    if (exitCode != 0) {
-      logger.warn { "Failed to pull repository, using existing content" }
+    if (result.resultCode != 0) {
+      logger.warn { "Failed to pull repository, using existing content: ${result.output.joinToString("\n")}" }
     }
   }
 
@@ -123,29 +139,21 @@ class ContentLoader(
     val articleManager = StaticArticleManager(config)
     val processorLogger = StaticLogger()
 
-    val processors =
-      mutableListOf<IProcessor>(
-        MarkdownProcessor(articleManager, processorLogger),
-        NotebookProcessor(articleManager, processorLogger),
-      )
+    // 基础处理器（所有平台）
+    val processors = mutableListOf<IProcessor>(
+      MarkdownProcessor(articleManager, processorLogger),
+    )
 
-    // 如果启用飞书
-    config.content.feishu?.let { feishuConfig ->
-      if (feishuConfig.enabled &&
-        feishuConfig.appId.isNotBlank() &&
-        feishuConfig.appSecret.isNotBlank()
-      ) {
-        processors.add(
-          FeishuProcessor(
-            articleManager,
-            processorLogger,
-            feishuConfig.appId,
-            feishuConfig.appSecret,
-          ),
-        )
-        logger.info { "Feishu processor enabled" }
-      }
-    }
+    // 添加平台特定的处理器（JVM: Notebook, Feishu; Native: 无）
+    val feishuAppId = config.content.feishu?.appId
+    val feishuAppSecret = config.content.feishu?.appSecret
+    val platformProcessors = dev.yidafu.nicemaker.engine.processor.ProcessorFactory.getPlatformProcessors(
+      articleManager,
+      processorLogger,
+      feishuAppId,
+      feishuAppSecret
+    )
+    processors.addAll(platformProcessors)
 
     return processors
   }
@@ -153,10 +161,10 @@ class ContentLoader(
   fun loadAboutMe(): String {
     logger.info { "Loading AboutMe.md..." }
 
-    val localPath = File(config.content.source.localPath)
-    val aboutMeFile = File(localPath, "AboutMe.md")
+    val localPath = Path(config.content.source.localPath)
+    val aboutMePath = Path(localPath.toString() + "/AboutMe.md")
 
-    if (!aboutMeFile.exists()) {
+    if (!SystemFileSystem.exists(aboutMePath)) {
       logger.warn { "AboutMe.md not found in repository" }
       return ""
     }
@@ -167,7 +175,6 @@ class ContentLoader(
       val processorLogger = StaticLogger()
       val markdownProcessor = MarkdownProcessor(articleManager, processorLogger)
 
-      val aboutMePath = aboutMeFile.toPath()
       val dto = markdownProcessor.transform(aboutMePath)
 
       logger.info { "✓ AboutMe.md loaded successfully" }

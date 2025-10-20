@@ -9,6 +9,11 @@ import io.ktor.server.engine.*
 import io.ktor.server.http.content.*
 import io.ktor.server.routing.*
 import kotlinx.cli.*
+import kotlinx.coroutines.runBlocking
+import kotlinx.io.buffered
+import kotlinx.io.files.Path
+import kotlinx.io.files.SystemFileSystem
+import kotlinx.io.writeString
 import java.io.File
 import java.time.LocalDate
 import kotlin.system.exitProcess
@@ -117,11 +122,11 @@ fun buildCommand(
     System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "debug")
   }
 
-  val configFile = File(configPath)
+  val configFile = Path(configPath)
 
-  if (!configFile.exists()) {
-    logger.error { "Configuration file not found: ${configFile.absolutePath}" }
-    println("❌ Configuration file not found: ${configFile.absolutePath}")
+  if (!SystemFileSystem.exists(configFile)) {
+    logger.error { "Configuration file not found: $configFile" }
+    println("❌ Configuration file not found: $configFile")
     println("   Create 'nice.yaml' in your project root")
     exitProcess(1)
   }
@@ -130,7 +135,9 @@ fun buildCommand(
     logger.info { "Loading configuration from: $configPath" }
     val config = SiteConfig.load(configFile)
     val generator = StaticSiteGenerator(config)
-    generator.build()
+    runBlocking {
+      generator.build()
+    }
 
     println()
     println("🎉 Done! Your site is ready.")
@@ -237,12 +244,18 @@ fun newCommand(
       else -> throw IllegalArgumentException("Unknown type: $type")
     }
 
-  val file = File("content/$date-$filename.$extension")
-  file.parentFile.mkdirs()
-  file.writeText(content)
+  val file = Path("content/$date-$filename.$extension")
+  file.parent?.let { parent ->
+    if (!SystemFileSystem.exists(parent)) {
+      SystemFileSystem.createDirectories(parent)
+    }
+  }
+  SystemFileSystem.sink(file).buffered().use { sink ->
+    sink.writeString(content)
+  }
 
-  logger.info { "Article created: ${file.absolutePath}" }
-  println("✅ Created: ${file.absolutePath}")
+  logger.info { "Article created: $file" }
+  println("✅ Created: $file")
 }
 
 fun printHelp() {

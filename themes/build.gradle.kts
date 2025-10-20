@@ -1,6 +1,6 @@
 plugins {
-  kotlin("multiplatform") version "2.1.20"
-  kotlin("plugin.serialization") version "2.1.20"
+  kotlin("multiplatform") version "2.2.0"
+  kotlin("plugin.serialization") version "2.2.0"
   id("de.comahe.i18n4k") version "0.11.0"
 }
 
