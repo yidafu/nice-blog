@@ -196,8 +196,13 @@ server/nice-blog.db
 
 .idea/
 .vscode/
-nicemaker/output/sitemap.xml
+nicemaker/output/
 .idea/
 archive/
 *.md
 output/
+
+# Organized directories
+.tmp/
+kotlin-js-store/
+logs/
