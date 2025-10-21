@@ -200,3 +200,4 @@ nicemaker/output/sitemap.xml
 .idea/
 archive/
 *.md
+output/

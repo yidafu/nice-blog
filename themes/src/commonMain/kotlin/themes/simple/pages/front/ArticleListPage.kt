@@ -61,7 +61,7 @@ fun FlowContent.partialPost(vo: ArticleVO, locale: de.comahe.i18n4k.Locale) {
 
     div {
       classes = setOf("article-card__footer")
-      readMore(vo.identifier?.let { Routes.ARTICLE_DETAIL.replace(":identifier", it) }, locale)
+      readMore(vo.identifier?.let { Routes.ARTICLE_DETAIL.replace(":identifier", it) + ".html" }, locale)
     }
   }
 }

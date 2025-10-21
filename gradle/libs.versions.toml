@@ -2,39 +2,25 @@
 
 [versions]
 # Kotlin
-exposed = "1.0.0-rc-1"
-h2 = "2.3.232"
 kotlin = "2.2.0"
-kotlinx-browser = "0.3"
-kotlinx-html = "0.12.0"
+kotlinx-html = "0.11.0"
 ktor = "3.3.0"
 
-kapt = "2.2.0"
-
-
 # 核心依赖版本
-kotlinxSerialization = "1.8.0"  # 统一使用最新版本
+kotlinxSerialization = "1.8.0"
 kotlinxCoroutines = "1.8.1"
 kotlinxDatetime = "0.6.1"
 kotlinxIo = "0.6.0"
 
-# slf4j = "2.0.16"  # 已移除，使用 kotlin-logging
-# logback = "1.5.6"  # 已移除
-mapstruct = "1.6.0"
-quartz = "2.5.0"
+# Markdown处理
 jetbrainsMarkdown = "0.7.3"
-
 
 # 第三方库
 ksvg = "2.2.0"
-autoServiceKsp = "1.2.0"
-autoServiceAnnotations = "1.1.1"
-jakartaPersistence = "3.2.0"
 kaml = "0.98.0"
 jupyterNotebooksParser = "0.3.0-dev.1"
 highlights = "1.1.0"
-cryptography = "0.4.0"
-feishu2html = "1.0.3"
+feishu2html = "1.0.3-dev.5"
 kotlinx-cli = "0.3.6"
 kotlin-logging = "7.0.3"
 kmp-process = "0.4.0"
@@ -42,98 +28,49 @@ uri-kmp = "0.0.18"
 kotlin-env-var = "1.0.6"
 
 # 测试框架
-junitJupiter = "5.9.1"
 kotest = "5.9.0"
 
 # Gradle插件
-kspplugin = "2.1.20-1.0.32"
 ktlint = "12.2.0"
 i18n4k = "0.11.0"
 
 
 [libraries]
-ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negotiation", version.ref = "ktor" }
-ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
-ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
-ktor-server-html-builder = { module = "io.ktor:ktor-server-html-builder", version.ref = "ktor" }
-kotlinx-html = { module = "org.jetbrains.kotlinx:kotlinx-html", version.ref = "kotlinx-html" }
-ktor-server-call-logging = { module = "io.ktor:ktor-server-call-logging", version.ref = "ktor" }
-ktor-server-rate-limiting = { module = "io.github.flaxoos:ktor-server-rate-limiting", version = "2.2.1" }
-#koin-ktor = { module = "io.insert-koin:koin-ktor", version.ref = "koin" }
-#koin-logger-slf4j = { module = "io.insert-koin:koin-logger-slf4j", version.ref = "koin" }
-exposed-core = { module = "org.jetbrains.exposed:exposed-core", version.ref = "exposed" }
-exposed-jdbc = { module = "org.jetbrains.exposed:exposed-jdbc", version.ref = "exposed" }
-exposed-dao = { module = "org.jetbrains.exposed:exposed-dao", version.ref = "exposed" }
-exposed-kotlin-datetime = { module = "org.jetbrains.exposed:exposed-kotlin-datetime", version.ref = "exposed" }
-
-h2 = { module = "com.h2database:h2", version.ref = "h2" }
-ktor-server-htmx = { module = "io.ktor:ktor-server-htmx", version.ref = "ktor" }
-ktor-htmx-html = { module = "io.ktor:ktor-htmx-html", version.ref = "ktor" }
-kotlinx-browser = { module = "org.jetbrains.kotlinx:kotlinx-browser", version.ref = "kotlinx-browser" }
-kotlin-css = { module = "org.jetbrains.kotlin-wrappers:kotlin-css-jvm", version = "2025.6.4" }
-#khealth = { module = "dev.hayden:khealth", version = "3.0.2" }
-ktor-server-call-id = { module = "io.ktor:ktor-server-call-id", version.ref = "ktor" }
-ktor-server-host-common = { module = "io.ktor:ktor-server-host-common", version.ref = "ktor" }
-ktor-server-status-pages = { module = "io.ktor:ktor-server-status-pages", version.ref = "ktor" }
-ktor-server-request-validation = { module = "io.ktor:ktor-server-request-validation", version.ref = "ktor" }
-ktor-server-sessions = { module = "io.ktor:ktor-server-sessions", version.ref = "ktor" }
-ktor-server-auth = { module = "io.ktor:ktor-server-auth", version.ref = "ktor" }
-ktor-simple-cache = { module = "com.ucasoft.ktor:ktor-simple-cache", version = "0.55.3" }
-ktor-server-openapi = { module = "io.ktor:ktor-server-openapi", version.ref = "ktor" }
-ktor-server-http-redirect = { module = "io.ktor:ktor-server-http-redirect", version.ref = "ktor" }
-ktor-server-default-headers = { module = "io.ktor:ktor-server-default-headers", version.ref = "ktor" }
-ktor-server-conditional-headers = { module = "io.ktor:ktor-server-conditional-headers", version.ref = "ktor" }
-ktor-server-compression = { module = "io.ktor:ktor-server-compression", version.ref = "ktor" }
-ktor-server-caching-headers = { module = "io.ktor:ktor-server-caching-headers", version.ref = "ktor" }
+# Ktor（仅保留实际使用的）
 ktor-server-cio = { module = "io.ktor:ktor-server-cio", version.ref = "ktor" }
-ktor-server-di = { module = "io.ktor:ktor-server-di", version.ref = "ktor" }
-ktor-server-config-yaml = { module = "io.ktor:ktor-server-config-yaml", version.ref = "ktor" }
-ktor-server-test-host = { module = "io.ktor:ktor-server-test-host", version.ref = "ktor" }
-kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
+ktor-server-host-common = { module = "io.ktor:ktor-server-host-common", version.ref = "ktor" }
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
+ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+
+# HTML
+kotlinx-html = { module = "org.jetbrains.kotlinx:kotlinx-html", version.ref = "kotlinx-html" }
+
+# CSS（仅 themes 模块使用）
+kotlin-css = { module = "org.jetbrains.kotlin-wrappers:kotlin-css-jvm", version = "2025.6.4" }
+
 # Kotlin 基础
-kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test" }
 
-# 序列化相关
+# 序列化
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinxSerialization" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
-kotlinx-serialization-core-jvm = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core-jvm", version.ref = "kotlinxSerialization" }
-kotlinx-serialization-json-jvm = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json-jvm", version.ref = "kotlinxSerialization" }
 
-# 协程相关
+# 协程
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
-kotlinx-coroutines-core-jvm = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm", version.ref = "kotlinxCoroutines" }
 
-# 时间日期
+# 日期时间
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
-kotlinx-datetime-jvm = { module = "org.jetbrains.kotlinx:kotlinx-datetime-jvm", version.ref = "kotlinxDatetime" }
-
-# 日志（KMP 版本）
-# slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }  # 已移除
-# slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "logback" }  # 已移除
-
-# 对象映射
-mapstruct = { module = "org.mapstruct:mapstruct", version.ref = "mapstruct" }
-mapstruct-processor = { module = "org.mapstruct:mapstruct-processor", version.ref = "mapstruct" }
-
-# 任务调度
-quartz = { module = "org.quartz-scheduler:quartz", version.ref = "quartz" }
 
 # Markdown处理
 jetbrains-markdown = { module = "org.jetbrains:markdown", version.ref = "jetbrainsMarkdown" }
 
-# SVG处理
+# SVG处理（themes 模块使用）
 ksvg = { module = "com.github.nwillc:ksvg", version.ref = "ksvg" }
 
-# 国际化（KMP 版本）
+# 国际化
 i18n4k-core = { module = "de.comahe.i18n4k:i18n4k-core", version.ref = "i18n4k" }
-
-# AutoService相关（已移除，不再使用 ServiceLoader）
-# auto-service-ksp = { module = "dev.zacsweers.autoservice:auto-service-ksp", version.ref = "autoServiceKsp" }
-# auto-service-annotations = { module = "com.google.auto.service:auto-service-annotations", version.ref = "autoServiceAnnotations" }
-
-# JPA相关
-jakarta-persistence-api = { module = "jakarta.persistence:jakarta.persistence-api", version.ref = "jakartaPersistence" }
 
 # YAML解析
 kaml = { module = "com.charleskorn.kaml:kaml", version.ref = "kaml" }
@@ -144,44 +81,34 @@ jupyter-notebooks-parser = { module = "dev.yidafu.jupyter:jupyter-notebooks-pars
 # 代码高亮
 highlights = { module = "dev.snipme:highlights", version.ref = "highlights" }
 
-# 加密
-cryptography-core-jvm = { module = "dev.whyoleg.cryptography:cryptography-core-jvm", version.ref = "cryptography" }
-cryptography-provider-jdk = { module = "dev.whyoleg.cryptography:cryptography-provider-jdk", version.ref = "cryptography" }
-
 # 飞书文档
 feishu2html = { module = "dev.yidafu.feishu2html:feishu2html", version.ref = "feishu2html" }
 
-# CLI 和日志（KMP 版本）
+# CLI
 kotlinx-cli = { module = "org.jetbrains.kotlinx:kotlinx-cli", version.ref = "kotlinx-cli" }
+
+# 日志
 kotlin-logging = { module = "io.github.oshai:kotlin-logging", version.ref = "kotlin-logging" }
 
-# kotlinx-io（KMP 文件 IO）
+# IO
 kotlinx-io-core = { module = "org.jetbrains.kotlinx:kotlinx-io-core", version.ref = "kotlinxIo" }
 
-# kmp-process（跨平台进程）
+# 进程执行
 kmp-process = { module = "io.matthewnelson.kmp-process:process", version.ref = "kmp-process" }
 
-# uri-kmp（跨平台URI）
+# URI
 uri-kmp = { module = "com.eygraber:uri-kmp", version.ref = "uri-kmp" }
 
-# kotlin-env-var（跨平台环境变量）
+# 环境变量
 kotlin-env-var = { module = "dev.scottpierce:kotlin-env-var", version.ref = "kotlin-env-var" }
 
 # 测试框架
-junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junitJupiter" }
 kotest-runner-junit5 = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }
 kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
 kotest-property = { module = "io.kotest:kotest-property", version.ref = "kotest" }
 
-# KSP插件相关
-symbol-processing-api = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "kspplugin" }
-
 [plugins]
-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
-kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kapt" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-ksp = { id = "com.google.devtools.ksp", version.ref = "kspplugin" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 i18n4k = { id = "de.comahe.i18n4k", version.ref = "i18n4k" }
-ktor = { id = "io.ktor.plugin", version.ref = "ktor" }

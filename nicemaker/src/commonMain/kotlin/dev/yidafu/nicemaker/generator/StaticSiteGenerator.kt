@@ -1,5 +1,6 @@
 package dev.yidafu.nicemaker.generator
 
+import dev.yidafu.nicemaker.config.SiteConfig
 import io.github.oshai.kotlinlogging.KotlinLogging
 
 private val logger = KotlinLogging.logger {}

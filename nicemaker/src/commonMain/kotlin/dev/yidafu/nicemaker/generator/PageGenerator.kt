@@ -1,9 +1,11 @@
 package dev.yidafu.nicemaker.generator
 
 import de.comahe.i18n4k.Locale
+import dev.yidafu.nicemaker.config.SiteConfig
 import dev.yidafu.nicemaker.theme.TemplateManagerLoader
 import dev.yidafu.nicemaker.core.dto.CommonArticleDTO
 import dev.yidafu.nicemaker.core.vo.ArticleVO
+import dev.yidafu.nicemaker.core.vo.TagVO
 import dev.yidafu.nicemaker.theme.*
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.datetime.LocalDateTime
@@ -241,13 +243,13 @@ class PageGenerator(
       .flatMap { dto -> dto.frontMatter?.tags ?: emptyList() }
       .groupBy { it }
       .map { (tag, list) ->
-        mapOf(
-          "name" to tag,
-          "count" to list.size,
-          "slug" to tag.lowercase().replace(" ", "-")
+        TagVO(
+          name = tag,
+          count = list.size,
+          slug = tag.lowercase().replace(" ", "-")
         )
       }
-      .sortedByDescending { it["count"] as Int }
+      .sortedByDescending { it.count }
 
     val html = renderPage(
       pageName = PageNames.TAG_LIST,
@@ -406,6 +408,7 @@ class PageGenerator(
           if (value.isNotEmpty()) {
             when (value.first()) {
               is ArticleVO -> Json.encodeToJsonElement(value as List<ArticleVO>)
+              is TagVO -> Json.encodeToJsonElement(value as List<TagVO>)
               is Map<*, *> -> {
                 // 手动构建 JsonArray，处理 Map<String, Any>
                 val jsonArray = value.map { item ->

@@ -10,9 +10,20 @@ case "$1" in
     ;;
 
   serve)
-    PORT="${2:-3000}"
+    # 智能解析参数
+    if [[ "$2" =~ ^[0-9]+$ ]]; then
+      # 第二个参数是数字，作为端口
+      PORT="$2"
+      OUTPUT_DIR="${3:-nicemaker/output}"
+    else
+      # 第二个参数不是数字，作为目录
+      PORT="3000"
+      OUTPUT_DIR="${2:-nicemaker/output}"
+    fi
+
     echo "🌐 Starting preview server on port $PORT..."
-    ./gradlew :nicemaker:jvmRun --args="serve -p $PORT -d nicemaker/output" --console=plain
+    echo "   Serving: $OUTPUT_DIR"
+    ./gradlew :nicemaker:jvmRun --args="serve -p $PORT -d $OUTPUT_DIR" --console=plain
     ;;
 
   new)
@@ -31,13 +42,16 @@ case "$1" in
     echo "  ./maker <command> [options]"
     echo ""
     echo "Commands:"
-    echo "  build        Generate static site"
-    echo "  serve [port] Start preview server (default port: 3000)"
-    echo "  new <title>  Create new article"
+    echo "  build              Generate static site"
+    echo "  serve [port|dir]   Start preview server (default port: 3000, dir: output)"
+    echo "  new <title>        Create new article"
     echo ""
     echo "Examples:"
     echo "  ./maker build"
-    echo "  ./maker serve 8080"
+    echo "  ./maker serve                # Port 3000, default output dir (./output)"
+    echo "  ./maker serve 8080           # Port 8080, default output dir"
+    echo "  ./maker serve ./output       # Port 3000, custom output dir"
+    echo "  ./maker serve 8080 ./output  # Port 8080, custom output dir"
     echo "  ./maker new \"My First Post\""
     ;;
 esac

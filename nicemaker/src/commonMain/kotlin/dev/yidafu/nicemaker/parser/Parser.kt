@@ -16,5 +16,5 @@ interface Parser {
   /**
    * 将文件解析为文章对象
    */
-  fun transform(path: Path): CommonArticleDTO
+  suspend fun transform(path: Path): CommonArticleDTO
 }

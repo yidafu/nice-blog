@@ -1,6 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <bytecodeTargetLevel target="17" />
+    <bytecodeTargetLevel target="21">
+      <module name="nice-blog" target="21" />
+      <module name="nice-blog.main" target="21" />
+      <module name="nice-blog.test" target="21" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="nice-blog" options="-proc:none" />
+      <module name="nice-blog.main" options="-proc:none" />
+      <module name="nice-blog.server" options="-proc:none" />
+      <module name="nice-blog.server.main" options="-proc:none" />
+      <module name="nice-blog.server.test" options="-proc:none" />
+      <module name="nice-blog.test" options="-proc:none" />
+    </option>
   </component>
 </project>

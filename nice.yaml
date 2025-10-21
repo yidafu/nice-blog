@@ -10,10 +10,8 @@ site:
 
 content:
   source:
-    type: git
-    url: "https://github.com/yidafu/example-blog.git"
-    branch: "main"
-    localPath: "/Users/dovyih/Codes/nice-blog/sample-blog"
+    type: file
+    path: "/Users/dovyih/Codes/nice-blog/example-blog"
 
   feishu:
     enabled: false

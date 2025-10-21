@@ -1,6 +1,7 @@
 package dev.yidafu.nicemaker.generator
-import dev.yidafu.nicemaker.parser.markdown.MarkdownParser
 
+import dev.yidafu.nicemaker.config.SiteConfig
+import dev.yidafu.nicemaker.config.SourceConfig
 import dev.yidafu.nicemaker.core.dto.CommonArticleDTO
 import dev.yidafu.nicemaker.parser.*
 import dev.yidafu.nicemaker.platform.process.ProcessUtils
@@ -18,7 +19,11 @@ class ContentLoader(
   private val config: SiteConfig,
 ) {
   suspend fun loadAllArticles(): List<CommonArticleDTO> {
-    logger.info { "Loading content from: ${config.content.source.url}" }
+    val sourceInfo = when (val source = config.content.source) {
+      is SourceConfig.GitSource -> "Git repository: ${source.url}"
+      is SourceConfig.FileSource -> "Local directory: ${source.path}"
+    }
+    logger.info { "Loading content from: $sourceInfo" }
 
     // 1. 克隆或拉取仓库
     val repoPath = cloneOrPullRepository()
@@ -42,8 +47,12 @@ class ContentLoader(
           val article = processor.transform(path)
           articles.add(article)
           logger.info { "✓ Processed: ${path.name}" }
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
           logger.error(e) { "✗ Failed to process: ${path.name}" }
+          // 飞书文件解析失败时给出友好提示
+          if (path.name.endsWith(".feishu.yml")) {
+            logger.warn { "⚠️  Feishu parser may have compatibility issues. Skipping ${path.name}" }
+          }
         }
       }
     }
@@ -81,20 +90,30 @@ class ContentLoader(
   }
 
   private suspend fun cloneOrPullRepository(): Path {
-    val localPath = Path(config.content.source.localPath)
-
-    if (!SystemFileSystem.exists(localPath)) {
-      logger.info { "Cloning repository..." }
-      cloneRepository(localPath)
-    } else {
-      logger.info { "Pulling latest changes..." }
-      pullRepository(localPath)
+    return when (val source = config.content.source) {
+      is SourceConfig.GitSource -> {
+        val localPath = Path(source.localPath)
+        if (!SystemFileSystem.exists(localPath)) {
+          logger.info { "Cloning repository..." }
+          cloneRepository(source, localPath)
+        } else {
+          logger.info { "Pulling latest changes..." }
+          pullRepository(source, localPath)
+        }
+        localPath
+      }
+      is SourceConfig.FileSource -> {
+        val path = Path(source.path)
+        logger.info { "Using local directory: ${source.path}" }
+        if (!SystemFileSystem.exists(path)) {
+          throw RuntimeException("Local directory not found: ${source.path}")
+        }
+        path
+      }
     }
-
-    return localPath
   }
 
-  private suspend fun cloneRepository(target: Path) {
+  private suspend fun cloneRepository(source: SourceConfig.GitSource, target: Path) {
     // 创建父目录
     target.parent?.let { parent ->
       if (!SystemFileSystem.exists(parent)) {
@@ -106,8 +125,8 @@ class ContentLoader(
       "git",
       "clone",
       "-b",
-      config.content.source.branch,
-      config.content.source.url,
+      source.branch,
+      source.url,
       target.toString(),
       workingDir = null
     )
@@ -119,12 +138,12 @@ class ContentLoader(
     }
   }
 
-  private suspend fun pullRepository(repoDir: Path) {
+  private suspend fun pullRepository(source: SourceConfig.GitSource, repoDir: Path) {
     val result = ProcessUtils.executeGitCommand(
       "git",
       "pull",
       "origin",
-      config.content.source.branch,
+      source.branch,
       workingDir = repoDir
     )
 
@@ -139,7 +158,7 @@ class ContentLoader(
     // 创建简化的 ArticleManager（不依赖数据库）
     val articleManager = StaticArticleManager(config)
 
-    // 基础解析器（所有平台）
+    // 所有解析器（全平台通用）
     val parsers = mutableListOf<Parser>(
       dev.yidafu.nicemaker.parser.markdown.MarkdownParser(articleManager),
       dev.yidafu.nicemaker.parser.notebook.NotebookParser(articleManager),
@@ -158,25 +177,20 @@ class ContentLoader(
         ))
         logger.info { "[ContentLoader] ✓ Feishu parser enabled" }
       } catch (e: Exception) {
-        logger.warn { "[ContentLoader] Failed to load FeishuParser: ${e.message}" }
+        logger.warn(e) { "[ContentLoader] Failed to load FeishuParser" }
       }
     }
-
-    // 添加平台特定解析器（目前为空）
-    val platformParsers = dev.yidafu.nicemaker.parser.ParserFactory.getPlatformParsers(
-      articleManager,
-      feishuAppId,
-      feishuAppSecret
-    )
-    parsers.addAll(platformParsers)
 
     return parsers
   }
 
-  fun loadAboutMe(): String {
+  suspend fun loadAboutMe(): String {
     logger.info { "Loading AboutMe.md..." }
 
-    val localPath = Path(config.content.source.localPath)
+    val localPath = when (val source = config.content.source) {
+      is SourceConfig.GitSource -> Path(source.localPath)
+      is SourceConfig.FileSource -> Path(source.path)
+    }
     val aboutMePath = Path(localPath.toString() + "/AboutMe.md")
 
     if (!SystemFileSystem.exists(aboutMePath)) {

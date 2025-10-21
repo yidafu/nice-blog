@@ -2,6 +2,7 @@ package dev.yidafu.nicemaker.parser.markdown
 import dev.yidafu.nicemaker.parser.Parser
 
 import com.charleskorn.kaml.Yaml
+import com.charleskorn.kaml.YamlConfiguration
 import dev.yidafu.nicemaker.core.dto.CommonArticleDTO
 import dev.yidafu.nicemaker.core.dto.FrontMatterDTO
 import dev.yidafu.nicemaker.core.model.ArticleSourceType
@@ -59,7 +60,7 @@ class MarkdownParser(val articleManager: ArticleManager) : Parser {
     return extension == "md" && nameWithoutExtension != "README"
   }
 
-  override fun transform(path: Path): CommonArticleDTO {
+  override suspend fun transform(path: Path): CommonArticleDTO {
     logger.info { "[Markdown] transform markdown $path" }
     val text = SystemFileSystem.source(path).buffered().use { it.readString() }
     val filename = path.name
@@ -108,22 +109,23 @@ class MarkdownParser(val articleManager: ArticleManager) : Parser {
       // markdown file start with `---`
       if (tree.indexOf(horizontalRules[0]) == 0) {
         val secondHorizontalRule = tree.indexOf(MarkdownTokenTypes.HORIZONTAL_RULE, 1)
-        val secondHorizontalRuleIdx = tree.indexOf(secondHorizontalRule)
-        val frontMatter = tree.slice(1, secondHorizontalRuleIdx)
-        frontMatter.forEach { node ->
-          if (node is CompositeASTNode) {
-            val frontMatterText = node.getTextInNode(text)
 
-            val dto = Yaml.default.decodeFromString(FrontMatterDTO.serializer(), frontMatterText.toString())
-            val cover =
-              dto.cover.let { cover ->
-                articleManager.processImage(Path(markdownFile.parent.toString() + "/" + cover)).toString()
-              }
-            val rawContent = text.substring(horizontalRules[0].startOffset, secondHorizontalRule.endOffset)
+        // Extract front matter text directly from the source text
+        val frontMatterStart = horizontalRules[0].endOffset
+        val frontMatterEnd = secondHorizontalRule.startOffset
+        val frontMatterText = text.substring(frontMatterStart, frontMatterEnd).trim()
 
-            return dto.copy(cover = cover, rawContent = rawContent)
+        val yaml = Yaml(configuration = YamlConfiguration(
+          strictMode = false
+        ))
+        val dto = yaml.decodeFromString(FrontMatterDTO.serializer(), frontMatterText)
+        val cover =
+          dto.cover.let { cover ->
+            articleManager.processImage(Path(markdownFile.parent.toString() + "/" + cover)).toString()
           }
-        }
+        val rawContent = text.substring(horizontalRules[0].startOffset, secondHorizontalRule.endOffset)
+
+        return dto.copy(cover = cover, rawContent = rawContent)
       }
     }
     return null

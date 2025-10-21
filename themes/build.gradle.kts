@@ -56,6 +56,9 @@ kotlin {
         // CSS
         implementation(libs.kotlin.css)
         implementation(libs.ksvg)
+
+        // 日志（用于 ThemesInit）
+        implementation(libs.kotlin.logging)
       }
     }
 

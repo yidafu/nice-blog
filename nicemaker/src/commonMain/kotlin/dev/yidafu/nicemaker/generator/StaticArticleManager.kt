@@ -1,6 +1,7 @@
 package dev.yidafu.nicemaker.generator
 
 import com.eygraber.uri.Uri
+import dev.yidafu.nicemaker.config.SiteConfig
 import dev.yidafu.nicemaker.core.dto.CommonArticleDTO
 import dev.yidafu.nicemaker.engine.ArticleManager
 import io.github.oshai.kotlinlogging.KotlinLogging

@@ -4,8 +4,8 @@ import kotlinx.io.files.Path
 
 /**
  * 跨平台进程执行工具
- * JVM: 使用 io.matthewnelson.kmp-process 库
- * Native: 使用 platform.posix.popen/pclose
+ * - JVM, JS, Linux, macOS: 使用 io.matthewnelson.kmp-process 库
+ * - Windows (mingwX64): 手动实现
  */
 expect object ProcessUtils {
   suspend fun executeGitCommand(

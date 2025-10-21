@@ -1,49 +1,26 @@
 package dev.yidafu.nicemaker.cli
 
-import dev.yidafu.nicemaker.theme.TemplateManagerLoader
-import dev.yidafu.nicemaker.generator.SiteConfig
-import dev.yidafu.nicemaker.generator.StaticSiteGenerator
+import dev.yidafu.nicemaker.cli.buildCommand
+import dev.yidafu.nicemaker.cli.newCommand
+import dev.yidafu.nicemaker.cli.printHelp
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.server.cio.*
 import io.ktor.server.engine.*
 import io.ktor.server.http.content.*
 import io.ktor.server.routing.*
 import kotlinx.cli.*
-import kotlinx.coroutines.runBlocking
-import kotlinx.io.buffered
-import kotlinx.io.files.Path
-import kotlinx.io.files.SystemFileSystem
-import kotlinx.io.writeString
 import java.io.File
-import java.time.LocalDate
 import kotlin.system.exitProcess
 
 private val logger = KotlinLogging.logger {}
 
-/**
- * 动态加载主题（通过反射）
- */
-private fun loadThemesViaReflection() {
-  val themeClasses = listOf(
-    "dev.yidafu.nicemaker.theme.simple.SimpleTemplateManager",
-    "dev.yidafu.nicemaker.theme.blank.BlankTemplateManager",
-  )
-
-  themeClasses.forEach { className ->
-    try {
-      val clazz = Class.forName(className)
-      val instance = clazz.getDeclaredConstructor().newInstance()
-      TemplateManagerLoader.register(instance as dev.yidafu.nicemaker.theme.TemplateManager)
-      logger.info { "Loaded theme: $className" }
-    } catch (e: Exception) {
-      logger.warn { "Failed to load theme: $className - ${e.message}" }
-    }
-  }
-}
-
 fun main(args: Array<String>) {
-  // 动态加载主题
-  loadThemesViaReflection()
+  // 触发 themes 模块的加载，自动注册主题
+  try {
+    Class.forName("dev.yidafu.nicemaker.theme.ThemesInit")
+  } catch (e: Exception) {
+    logger.warn { "Failed to load themes module: ${e.message}" }
+  }
 
   val parser = ArgParser("maker")
 
@@ -111,51 +88,6 @@ fun main(args: Array<String>) {
   }
 }
 
-fun buildCommand(
-  configPath: String,
-  verbose: Boolean,
-) {
-  println("📦 NiceMaker - Static Site Generator")
-  println()
-
-  if (verbose) {
-    System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "debug")
-  }
-
-  val configFile = Path(configPath)
-
-  if (!SystemFileSystem.exists(configFile)) {
-    logger.error { "Configuration file not found: $configFile" }
-    println("❌ Configuration file not found: $configFile")
-    println("   Create 'nice.yaml' in your project root")
-    exitProcess(1)
-  }
-
-  try {
-    logger.info { "Loading configuration from: $configPath" }
-    val config = SiteConfig.load(configFile)
-    val generator = StaticSiteGenerator(config)
-    runBlocking {
-      generator.build()
-    }
-
-    println()
-    println("🎉 Done! Your site is ready.")
-    println("   Output: ${config.build.output}")
-    println()
-    println("Next steps:")
-    println("  - Run 'maker serve' to preview")
-    println("  - Deploy the '${config.build.output}' directory to your host")
-  } catch (e: Exception) {
-    logger.error(e) { "Build failed" }
-    println("❌ Build failed: ${e.message}")
-    if (System.getProperty("org.slf4j.simpleLogger.defaultLogLevel") == "debug") {
-      e.printStackTrace()
-    }
-    exitProcess(1)
-  }
-}
-
 fun serveCommand(
   port: Int,
   outputDir: String,
@@ -184,102 +116,5 @@ fun serveCommand(
       }
     }
   }.start(wait = true)
-}
-
-fun newCommand(
-  title: String,
-  type: String,
-) {
-  logger.info { "Creating new $type article: $title" }
-
-  val filename =
-    title.lowercase()
-      .replace(Regex("[^a-z0-9\\s]"), "")
-      .replace(Regex("\\s+"), "-")
-
-  val date = LocalDate.now()
-
-  val (content, extension) =
-    when (type) {
-      "markdown" -> {
-        val template =
-          """
-          ---
-          title: $title
-          cover:
-          description:
-          ---
-
-          # $title
-
-          Your content here...
-
-          """.trimIndent()
-        template to "md"
-      }
-      "feishu" -> {
-        val template =
-          """
-          # 必填：飞书文档 ID
-          docxId: "YOUR_DOCX_ID_HERE"
-
-          # 可选：文章标题
-          title: "$title"
-
-          # 可选：封面图片
-          cover: ""
-
-          # 可选：文章标签
-          tags:
-            -
-
-          # 可选：系列名称
-          series: ""
-
-          # 可选：文章摘要
-          summary: ""
-          """.trimIndent()
-        template to "feishu.yml"
-      }
-      else -> throw IllegalArgumentException("Unknown type: $type")
-    }
-
-  val file = Path("content/$date-$filename.$extension")
-  file.parent?.let { parent ->
-    if (!SystemFileSystem.exists(parent)) {
-      SystemFileSystem.createDirectories(parent)
-    }
-  }
-  SystemFileSystem.sink(file).buffered().use { sink ->
-    sink.writeString(content)
-  }
-
-  logger.info { "Article created: $file" }
-  println("✅ Created: $file")
-}
-
-fun printHelp() {
-  println(
-    """
-    📦 NiceMaker - Static Site Generator
-
-    Usage:
-      maker <command> [options]
-
-    Commands:
-      build [options]       Generate static site
-      serve [options]       Start preview server
-      new <title> [options] Create new article
-
-    Examples:
-      maker build
-      maker build -c my-config.yaml -v
-      maker serve -p 8080
-      maker new "My First Post"
-      maker new "Feishu Doc" -t feishu
-
-    Learn more: https://github.com/yidafu/nicemaker
-    """.trimIndent(),
-  )
 }
 

@@ -1,11 +1,32 @@
 package dev.yidafu.nicemaker.config
 
 import com.charleskorn.kaml.Yaml
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.io.buffered
 import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
 import kotlinx.io.readString
 import kotlinx.serialization.Serializable
+private val logger = KotlinLogging.logger {"SiteConfig"}
+
+/**
+ * 获取环境变量
+ * @param name 环境变量名
+ * @return 环境变量值，如果不存在则返回 null
+ */
+expect fun getEnvVar(name: String): String?
+
+/**
+ * 替换字符串中的环境变量
+ * 格式：${VAR_NAME}
+ */
+fun replaceEnvVars(content: String): String {
+  val regex = Regex("\\$\\{([^}]+)}")
+  return regex.replace(content) { match ->
+    val envVarName = match.groupValues[1]
+    getEnvVar(envVarName) ?: match.value
+  }
+}
 
 @Serializable
 data class SiteConfig(
@@ -21,15 +42,17 @@ data class SiteConfig(
   companion object {
     fun load(configFile: Path = Path("nice.yaml")): SiteConfig {
       // 使用KMP版本的kaml直接解析
-      val yamlContent = SystemFileSystem.source(configFile).buffered().use { it.readString() }
+      var yamlContent = SystemFileSystem.source(configFile).buffered().use { it.readString() }
 
-      // 环境变量替换（暂时禁用，等待kotlin-env-var库配置）
-      // val regex = Regex("\\$\\{([^}]+)}")
-      // val replaced = regex.replace(yamlContent) { match ->
-      //   envVar(match.groupValues[1]) ?: match.value
-      // }
+      // 环境变量替换（使用 expect/actual 模式）
+      yamlContent = replaceEnvVars(yamlContent)
+      logger.info { "Loaded site config from $configFile" }
+      // 配置 Yaml 以支持 polymorphic types
+      val yaml = Yaml(configuration = com.charleskorn.kaml.YamlConfiguration(
+        polymorphismStyle = com.charleskorn.kaml.PolymorphismStyle.Property
+      ))
 
-      return Yaml.default.decodeFromString(serializer(), yamlContent)
+      return yaml.decodeFromString(serializer(), yamlContent)
     }
   }
 }
@@ -51,12 +74,23 @@ data class ContentConfig(
 )
 
 @Serializable
-data class SourceConfig(
-  val type: String = "git",
-  val url: String,
-  val branch: String = "main",
-  val localPath: String = ".cache/content",
-)
+@kotlinx.serialization.SerialName("SourceConfig")
+@kotlinx.serialization.json.JsonClassDiscriminator("type")
+sealed interface SourceConfig {
+  @Serializable
+  @kotlinx.serialization.SerialName("git")
+  data class GitSource(
+    val url: String,
+    val branch: String = "main",
+    val localPath: String = ".cache/content",
+  ) : SourceConfig
+
+  @Serializable
+  @kotlinx.serialization.SerialName("file")
+  data class FileSource(
+    val path: String,
+  ) : SourceConfig
+}
 
 @Serializable
 data class FeishuConfig(

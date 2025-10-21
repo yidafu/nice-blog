@@ -35,7 +35,7 @@ class NotebookParser(
     return path.name.endsWith(".ipynb")
   }
 
-  override fun transform(path: KPath): CommonArticleDTO {
+  override suspend fun transform(path: KPath): CommonArticleDTO {
     logger.info { "[Notebook] transform notebook $path" }
 
     // 使用kotlinx-io读取文件内容
